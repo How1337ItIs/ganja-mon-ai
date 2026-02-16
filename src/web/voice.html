@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasta Voice Dashboard - Grok & Mon</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0E091C;
+            --bg-card: #12101f;
+            --bg-card-hover: #1a1730;
+            --text-primary: #FAFAFA;
+            --text-secondary: #C8C8D8;
+            --text-muted: #8888A0;
+            --rasta-red: #C8102E;
+            --rasta-gold: #FFD700;
+            --rasta-green: #009B3A;
+            --accent-green: #4ade80;
+            --accent-green-dim: #22c55e;
+            --accent-blue: #85E6FF;
+            --border: rgba(139, 92, 246, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .dashboard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-badge.offline {
+            background: rgba(200, 16, 46, 0.2);
+            color: var(--rasta-red);
+            border: 1px solid var(--rasta-red);
+        }
+
+        .status-badge.online {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+            50% { box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.2); }
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, var(--rasta-green) 0%, var(--accent-green-dim) 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+        }
+
+        .toggle-btn.stop {
+            background: linear-gradient(135deg, var(--rasta-red) 0%, #e53935 100%);
+        }
+
+        .toggle-btn.stop:hover {
+            box-shadow: 0 4px 20px rgba(200, 16, 46, 0.4);
+        }
+
+        .toggle-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--rasta-gold);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .feed-header h3 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .clear-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        .feed {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .feed::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .feed::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        .feed::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .event {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .event.transcript {
+            border-left-color: var(--accent-blue);
+        }
+
+        .event.rasta {
+            border-left-color: var(--rasta-green);
+        }
+
+        .event.error {
+            border-left-color: var(--rasta-red);
+        }
+
+        .event.status {
+            border-left-color: var(--rasta-gold);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-type {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .event-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .event-text {
+            color: var(--text-primary);
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .event.rasta .event-text {
+            color: var(--accent-green);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 3rem;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-required {
+            background: rgba(200, 16, 46, 0.1);
+            border: 1px solid var(--rasta-red);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .auth-required p {
+            color: var(--rasta-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-link {
+            color: var(--rasta-gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Rasta Voice Dashboard</h1>
+            <a href="/" class="back-link">← Back to Main Site</a>
+        </div>
+
+        <!-- Localhost only - no auth needed -->
+
+        <div class="dashboard">
+            <div class="status-bar">
+                <div class="status-info">
+                    <span class="status-badge offline" id="status-badge">OFFLINE</span>
+                    <span id="connection-info" style="color: var(--text-muted); font-size: 0.85rem;">Not connected</span>
+                </div>
+                <button class="toggle-btn" id="toggle-btn" onclick="togglePipeline()">
+                    <span id="toggle-icon">▶</span>
+                    <span id="toggle-text">Start Voice</span>
+                </button>
+            </div>
+
+            <div class="metrics" id="metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="metric-latency">--</div>
+                    <div class="metric-label">Avg Latency (ms)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metric-events">0</div>
+                    <div class="metric-label">Events</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metric-activity">--</div>
+                    <div class="metric-label">Last Activity</div>
+                </div>
+            </div>
+
+            <div class="feed-header">
+                <h3>Live Feed</h3>
+                <button class="clear-btn" onclick="clearFeed()">Clear</button>
+            </div>
+
+            <div class="feed" id="feed">
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state-icon">🌿</div>
+                    <p>Voice pipeline is not running</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">Click "Start Voice" to begin real-time transformation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        let isRunning = false;
+        let pollInterval = null;
+        let eventCount = 0;
+        let lastEventTime = '';
+
+        // No auth needed - localhost only
+        function getAuthHeaders() {
+            return { 'Content-Type': 'application/json' };
+        }
+
+        // Toggle pipeline
+        async function togglePipeline() {
+            const btn = document.getElementById('toggle-btn');
+            btn.disabled = true;
+
+            try {
+                const endpoint = isRunning ? '/voice/stop' : '/voice/start';
+                const response = await fetch(API_BASE + endpoint, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    alert('Error: ' + (errData.detail || response.statusText));
+                    return;
+                }
+
+                if (result.success) {
+                    isRunning = !isRunning;
+                    updateUI();
+                    if (isRunning) {
+                        startPolling();
+                    } else {
+                        stopPolling();
+                    }
+                } else {
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Toggle error:', error);
+                alert('Connection error: ' + error.message);
+            }
+
+            btn.disabled = false;
+        }
+
+        // Update UI based on state
+        function updateUI() {
+            const badge = document.getElementById('status-badge');
+            const btn = document.getElementById('toggle-btn');
+            const icon = document.getElementById('toggle-icon');
+            const text = document.getElementById('toggle-text');
+            const info = document.getElementById('connection-info');
+            const empty = document.getElementById('empty-state');
+
+            if (isRunning) {
+                badge.textContent = 'LIVE';
+                badge.className = 'status-badge online';
+                btn.className = 'toggle-btn stop';
+                icon.textContent = '■';
+                text.textContent = 'Stop Voice';
+                info.textContent = 'Pipeline running';
+                if (empty) empty.style.display = 'none';
+            } else {
+                badge.textContent = 'OFFLINE';
+                badge.className = 'status-badge offline';
+                btn.className = 'toggle-btn';
+                icon.textContent = '▶';
+                text.textContent = 'Start Voice';
+                info.textContent = 'Not connected';
+            }
+        }
+
+        // Add event to feed
+        function addEvent(event) {
+            const feed = document.getElementById('feed');
+            const empty = document.getElementById('empty-state');
+            if (empty) empty.style.display = 'none';
+
+            const typeLabels = {
+                'transcript': '📝 You said',
+                'rasta': '🌿 Rasta voice',
+                'error': '❌ Error',
+                'status': '📡 Status',
+                'latency': '⏱️ Latency'
+            };
+
+            const eventEl = document.createElement('div');
+            eventEl.className = `event ${event.type}`;
+
+            const time = new Date(event.timestamp).toLocaleTimeString();
+
+            eventEl.innerHTML = `
+                <div class="event-header">
+                    <span class="event-type">${typeLabels[event.type] || event.type}</span>
+                    <span class="event-time">${time}</span>
+                </div>
+                <div class="event-text">${escapeHtml(event.text)}</div>
+            `;
+
+            feed.appendChild(eventEl);
+            feed.scrollTop = feed.scrollHeight;
+            eventCount++;
+            document.getElementById('metric-events').textContent = eventCount;
+
+            // Limit to 100 events
+            while (feed.querySelectorAll('.event').length > 100) {
+                const first = feed.querySelector('.event');
+                if (first) first.remove();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function clearFeed() {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = `
+                <div class="empty-state" id="empty-state" ${isRunning ? 'style="display:none"' : ''}>
+                    <div class="empty-state-icon">🌿</div>
+                    <p>Voice pipeline is not running</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">Click "Start Voice" to begin</p>
+                </div>
+            `;
+            eventCount = 0;
+            lastEventTime = '';
+            document.getElementById('metric-events').textContent = '0';
+        }
+
+        // Polling for status and events
+        function startPolling() {
+            pollInterval = setInterval(async () => {
+                try {
+                    // Get status
+                    const statusRes = await fetch(API_BASE + '/voice/status');
+                    const status = await statusRes.json();
+
+                    // Update metrics
+                    if (status.avg_latency_ms) {
+                        document.getElementById('metric-latency').textContent = Math.round(status.avg_latency_ms);
+                    }
+
+                    if (status.last_activity) {
+                        const ago = Math.round((Date.now() - new Date(status.last_activity).getTime()) / 1000);
+                        document.getElementById('metric-activity').textContent =
+                            ago < 60 ? `${ago}s` : `${Math.round(ago/60)}m`;
+                    }
+
+                    // Check if stopped externally
+                    if (!status.running && isRunning) {
+                        isRunning = false;
+                        updateUI();
+                        stopPolling();
+                        return;
+                    }
+
+                    // Get new events
+                    const eventsRes = await fetch(API_BASE + '/voice/events?limit=10');
+                    const eventsData = await eventsRes.json();
+
+                    if (eventsData.events && eventsData.events.length > 0) {
+                        eventsData.events.forEach(event => {
+                            if (event.timestamp > lastEventTime) {
+                                addEvent(event);
+                                lastEventTime = event.timestamp;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.log('Poll error:', e);
+                }
+            }, 1500);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        // Check initial status
+        async function init() {
+            try {
+                const response = await fetch(API_BASE + '/voice/status');
+                const status = await response.json();
+
+                isRunning = status.running;
+                updateUI();
+
+                if (isRunning) {
+                    startPolling();
+                }
+
+                if (status.avg_latency_ms) {
+                    document.getElementById('metric-latency').textContent = Math.round(status.avg_latency_ms);
+                }
+            } catch (e) {
+                console.log('Init error:', e);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burn $MON - Ganja Mon Token Sink</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <meta property="og:title" content="Burn $MON - Power the Ganja Mon Agent">
+    <meta property="og:description" content="Burn $MON tokens to unlock AI agent services. Real on-chain burns, real deflation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0E091C;
+            --bg-card: #12101f;
+            --bg-card-hover: #1a1730;
+            --text-primary: #FAFAFA;
+            --text-secondary: #C8C8D8;
+            --text-muted: #8888A0;
+            --rasta-red: #C8102E;
+            --rasta-gold: #FFD700;
+            --rasta-green: #009B3A;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Space Grotesk', sans-serif;
+            --display: 'Caprasimo', cursive;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: var(--sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-family: var(--display);
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--rasta-red), var(--rasta-gold), var(--rasta-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            color: var(--text-secondary);
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        .card h2 {
+            font-family: var(--sans);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Amount selector */
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .amount-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px 8px;
+            color: var(--text-primary);
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .amount-btn:hover {
+            background: rgba(255,215,0,0.08);
+            border-color: var(--rasta-gold);
+        }
+        .amount-btn.selected {
+            background: rgba(255,215,0,0.12);
+            border-color: var(--rasta-gold);
+            color: var(--rasta-gold);
+        }
+        .amount-btn .uses {
+            display: block;
+            font-family: var(--sans);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Custom amount */
+        .custom-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .custom-row input {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: var(--mono);
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .custom-row input:focus {
+            border-color: var(--rasta-gold);
+        }
+        .custom-row input::placeholder { color: var(--text-muted); }
+
+        /* Burn button */
+        .burn-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-family: var(--sans);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .burn-btn.connect {
+            background: linear-gradient(135deg, var(--rasta-gold) 0%, #FFA500 100%);
+            color: #000;
+        }
+        .burn-btn.burn {
+            background: linear-gradient(135deg, var(--rasta-red) 0%, #ff4444 100%);
+            color: #fff;
+        }
+        .burn-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .burn-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
+        /* Status */
+        .status {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            display: none;
+        }
+        .status.info { display: block; background: rgba(255,215,0,0.08); color: var(--rasta-gold); }
+        .status.success { display: block; background: rgba(0,155,58,0.12); color: #4ade80; }
+        .status.error { display: block; background: rgba(200,16,46,0.12); color: #f87171; }
+
+        /* Wallet info */
+        .wallet-info {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+        .wallet-info .addr {
+            color: var(--rasta-gold);
+        }
+
+        /* TX result */
+        .tx-result {
+            display: none;
+            text-align: center;
+        }
+        .tx-result.show { display: block; }
+        .tx-result .check {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .tx-result h3 {
+            font-family: var(--display);
+            font-size: 1.4rem;
+            color: var(--rasta-gold);
+            margin-bottom: 8px;
+        }
+        .tx-result p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        /* Copy box */
+        .copy-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            margin-bottom: 12px;
+        }
+        .copy-box:hover { border-color: var(--rasta-gold); }
+        .copy-box code {
+            flex: 1;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+        .copy-box .copy-icon {
+            color: var(--rasta-gold);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .copied-toast {
+            color: var(--rasta-green);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .copied-toast.show { opacity: 1; }
+
+        /* Info section */
+        .info-list {
+            list-style: none;
+        }
+        .info-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        .info-list li:last-child { border: none; }
+        .info-list .label { color: var(--text-muted); }
+        .info-list .value {
+            font-family: var(--mono);
+            color: var(--text-primary);
+        }
+
+        /* Contract addresses */
+        .addr-display {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        .addr-display:hover { color: var(--rasta-gold); }
+
+        /* Footer link */
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-bottom: 32px;
+        }
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .footer a:hover { color: var(--rasta-gold); }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Burn $MON</h1>
+            <p>Burn tokens to unlock agent services in Telegram</p>
+        </div>
+
+        <!-- Step 1: Connect Wallet -->
+        <div id="step-connect" class="card">
+            <h2>1. Connect Wallet</h2>
+            <button id="btn-connect" class="burn-btn connect" onclick="connectWallet()">
+                Connect Wallet
+            </button>
+            <div id="wallet-status" class="wallet-info" style="display:none"></div>
+        </div>
+
+        <!-- Step 2: Choose Amount -->
+        <div id="step-amount" class="card" style="opacity:0.4; pointer-events:none">
+            <h2>2. Choose Amount</h2>
+            <div class="amount-grid">
+                <button class="amount-btn selected" onclick="selectAmount(this, 4200)">
+                    4,200<span class="uses">1 use</span>
+                </button>
+                <button class="amount-btn" onclick="selectAmount(this, 21000)">
+                    21,000<span class="uses">5 uses</span>
+                </button>
+                <button class="amount-btn" onclick="selectAmount(this, 42000)">
+                    42,000<span class="uses">10 uses</span>
+                </button>
+            </div>
+            <div class="custom-row">
+                <input id="custom-amount" type="number" placeholder="Custom amount..." min="4200" step="4200"
+                    oninput="customAmount(this.value)">
+            </div>
+            <button id="btn-burn" class="burn-btn burn" onclick="burnTokens()" disabled>
+                Burn 4,200 $MON
+            </button>
+            <div id="burn-status" class="status"></div>
+        </div>
+
+        <!-- Step 3: Result -->
+        <div id="step-result" class="card tx-result">
+            <div class="check">🔥</div>
+            <h3>Burn Complete!</h3>
+            <p id="result-amount"></p>
+
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:8px">
+                Copy this command and send it to <a href="https://t.me/MonGardenBot" target="_blank"
+                    style="color:var(--rasta-gold)">@MonGardenBot</a> on Telegram:
+            </p>
+            <div class="copy-box" onclick="copyCommand()">
+                <code id="deposit-cmd"></code>
+                <span class="copy-icon">📋</span>
+            </div>
+            <div id="copied-toast" class="copied-toast">Copied!</div>
+
+            <button class="burn-btn connect" onclick="resetFlow()" style="margin-top:16px; font-size:0.9rem">
+                Burn More
+            </button>
+        </div>
+
+        <!-- Info -->
+        <div class="card">
+            <h2>How It Works</h2>
+            <ul class="info-list">
+                <li>
+                    <span class="label">Cost per use</span>
+                    <span class="value">4,200 $MON</span>
+                </li>
+                <li>
+                    <span class="label">USD equiv.</span>
+                    <span class="value">~$0.15</span>
+                </li>
+                <li>
+                    <span class="label">Burn address</span>
+                    <span class="value">0x...dEaD</span>
+                </li>
+                <li>
+                    <span class="label">Network</span>
+                    <span class="value">Monad</span>
+                </li>
+            </ul>
+            <div class="addr-display" onclick="copyAddr(this, '0x000000000000000000000000000000000000dEaD')">
+                Burn: 0x000000000000000000000000000000000000dEaD
+            </div>
+            <div class="addr-display" onclick="copyAddr(this, '0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b')" style="margin-top:6px">
+                $MON: 0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Services</h2>
+            <ul class="info-list">
+                <li>
+                    <span class="label">/irie</span>
+                    <span class="value">Ganjafy images & rasta-translate</span>
+                </li>
+                <li>
+                    <span class="label">/askmon</span>
+                    <span class="value">Consult the agent brain</span>
+                </li>
+                <li>
+                    <span class="label">/credits</span>
+                    <span class="value">Check your balance</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <a href="/">← grokandmon.com</a> · <a href="https://t.me/ganjamonai" target="_blank">Telegram</a>
+        </div>
+    </div>
+
+    <!-- ethers.js v6 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+    <script>
+        const MON_CONTRACT = '0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b';
+        const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD';
+        const MONAD_CHAIN_ID = 143;
+        const MONAD_CHAIN = {
+            chainId: '0x' + MONAD_CHAIN_ID.toString(16),
+            chainName: 'Monad',
+            nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 },
+            rpcUrls: ['https://rpc.monad.xyz'],
+            blockExplorerUrls: ['https://monadexplorer.com']
+        };
+
+        // ERC-20 ABI (just transfer)
+        const ERC20_ABI = [
+            'function transfer(address to, uint256 amount) returns (bool)',
+            'function balanceOf(address owner) view returns (uint256)',
+            'function decimals() view returns (uint8)',
+            'function symbol() view returns (string)'
+        ];
+
+        let provider = null;
+        let signer = null;
+        let selectedAmount = 4200;
+        let monDecimals = 18;
+
+        async function connectWallet() {
+            const btn = document.getElementById('btn-connect');
+            btn.innerHTML = '<span class="spinner"></span> Connecting...';
+            btn.disabled = true;
+
+            try {
+                if (!window.ethereum) {
+                    throw new Error('No wallet found. Install MetaMask or another EVM wallet.');
+                }
+
+                provider = new ethers.BrowserProvider(window.ethereum);
+                await provider.send('eth_requestAccounts', []);
+
+                // Switch to Monad if needed
+                try {
+                    await provider.send('wallet_switchEthereumChain', [{ chainId: MONAD_CHAIN.chainId }]);
+                } catch (switchErr) {
+                    if (switchErr.code === 4902) {
+                        await provider.send('wallet_addEthereumChain', [MONAD_CHAIN]);
+                    } else {
+                        throw switchErr;
+                    }
+                }
+
+                signer = await provider.getSigner();
+                const address = await signer.getAddress();
+
+                // Show wallet
+                const walletDiv = document.getElementById('wallet-status');
+                walletDiv.style.display = 'block';
+                walletDiv.innerHTML = 'Connected: <span class="addr">' +
+                    address.slice(0, 6) + '...' + address.slice(-4) + '</span>';
+
+                btn.innerHTML = 'Connected';
+                btn.style.background = 'rgba(0,155,58,0.2)';
+                btn.style.color = '#4ade80';
+
+                // Enable step 2
+                const step2 = document.getElementById('step-amount');
+                step2.style.opacity = '1';
+                step2.style.pointerEvents = 'auto';
+                document.getElementById('btn-burn').disabled = false;
+
+                // Check $MON balance
+                const contract = new ethers.Contract(MON_CONTRACT, ERC20_ABI, provider);
+                try {
+                    monDecimals = await contract.decimals();
+                } catch(e) { monDecimals = 18; }
+                const balance = await contract.balanceOf(address);
+                const balFormatted = parseFloat(ethers.formatUnits(balance, monDecimals));
+                walletDiv.innerHTML += '<br>$MON balance: ' + balFormatted.toLocaleString();
+
+            } catch (err) {
+                btn.innerHTML = 'Connect Wallet';
+                btn.disabled = false;
+                showStatus('burn-status', 'error', err.message || 'Connection failed');
+            }
+        }
+
+        function selectAmount(el, amount) {
+            document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedAmount = amount;
+            document.getElementById('custom-amount').value = '';
+            document.getElementById('btn-burn').textContent = 'Burn ' + amount.toLocaleString() + ' $MON';
+        }
+
+        function customAmount(val) {
+            const num = parseInt(val);
+            if (num >= 4200) {
+                document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('selected'));
+                selectedAmount = num;
+                document.getElementById('btn-burn').textContent = 'Burn ' + num.toLocaleString() + ' $MON';
+            }
+        }
+
+        async function burnTokens() {
+            const btn = document.getElementById('btn-burn');
+            btn.innerHTML = '<span class="spinner"></span> Confirm in wallet...';
+            btn.disabled = true;
+            showStatus('burn-status', 'info', 'Waiting for wallet confirmation...');
+
+            try {
+                const contract = new ethers.Contract(MON_CONTRACT, ERC20_ABI, signer);
+                const amount = ethers.parseUnits(selectedAmount.toString(), monDecimals);
+
+                const tx = await contract.transfer(BURN_ADDRESS, amount);
+                showStatus('burn-status', 'info', 'Transaction sent. Waiting for confirmation...');
+
+                const receipt = await tx.wait();
+
+                if (receipt.status === 1) {
+                    showResult(tx.hash, selectedAmount);
+                } else {
+                    showStatus('burn-status', 'error', 'Transaction failed on-chain');
+                    btn.innerHTML = 'Burn ' + selectedAmount.toLocaleString() + ' $MON';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                const msg = err.reason || err.message || 'Transaction failed';
+                showStatus('burn-status', 'error', msg.length > 100 ? msg.slice(0, 100) + '...' : msg);
+                btn.innerHTML = 'Burn ' + selectedAmount.toLocaleString() + ' $MON';
+                btn.disabled = false;
+            }
+        }
+
+        function showResult(txHash, amount) {
+            document.getElementById('step-connect').style.display = 'none';
+            document.getElementById('step-amount').style.display = 'none';
+
+            const result = document.getElementById('step-result');
+            result.classList.add('show');
+
+            const uses = Math.floor(amount / 4200);
+            document.getElementById('result-amount').textContent =
+                amount.toLocaleString() + ' $MON burned (~' + uses + ' service uses)';
+            document.getElementById('deposit-cmd').textContent = '/deposit ' + txHash;
+        }
+
+        function copyCommand() {
+            const cmd = document.getElementById('deposit-cmd').textContent;
+            navigator.clipboard.writeText(cmd).then(() => {
+                const toast = document.getElementById('copied-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        function copyAddr(el, addr) {
+            navigator.clipboard.writeText(addr).then(() => {
+                const orig = el.textContent;
+                el.textContent = 'Copied!';
+                el.style.color = 'var(--rasta-green)';
+                setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 1500);
+            });
+        }
+
+        function resetFlow() {
+            document.getElementById('step-connect').style.display = 'block';
+            document.getElementById('step-amount').style.display = 'block';
+            document.getElementById('step-result').classList.remove('show');
+            document.getElementById('burn-status').className = 'status';
+            const btn = document.getElementById('btn-burn');
+            btn.innerHTML = 'Burn ' + selectedAmount.toLocaleString() + ' $MON';
+            btn.disabled = false;
+        }
+
+        function showStatus(id, type, msg) {
+            const el = document.getElementById(id);
+            el.className = 'status ' + type;
+            el.textContent = msg;
+        }
+    </script>
+</body>
+</html>

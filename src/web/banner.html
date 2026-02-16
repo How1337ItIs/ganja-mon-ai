@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+}
+
+.banner {
+    font-family: 'Bangers', cursive;
+    font-size: 72px;
+    text-align: center;
+    padding: 20px 40px;
+    animation: flash 0.5s infinite, rainbow 2s infinite;
+    text-shadow: 4px 4px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
+    letter-spacing: 4px;
+}
+
+@keyframes flash {
+    0%, 50% { opacity: 1; }
+    25%, 75% { opacity: 0.7; }
+}
+
+@keyframes rainbow {
+    0% { color: #00ff00; }
+    25% { color: #ffff00; }
+    50% { color: #ff6600; }
+    75% { color: #00ff88; }
+    100% { color: #00ff00; }
+}
+
+.ganja { color: #00ff00; }
+.mon { color: #ffd700; }
+.url { 
+    font-size: 48px; 
+    color: #00ffff;
+    display: block;
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="banner">
+    <span>GANJA $MON</span>
+    <span class="url">grokandmon.com</span>
+</div>
+</body>
+</html>

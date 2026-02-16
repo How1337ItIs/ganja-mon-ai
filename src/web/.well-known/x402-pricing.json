@@ -1,0 +1,121 @@
+{
+  "version": "x402-v1",
+  "agent": "GanjaMon AI",
+  "agentId": 4,
+  "chain": "monad",
+  "pricing": {
+    "default": {
+      "priceUSD": "0.001",
+      "currency": "USDC",
+      "network": "monad",
+      "networkChainId": 10143,
+      "payTo": "eip155:10143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134",
+      "description": "Default A2A request fee"
+    },
+    "skills": {
+      "alpha-scan": {
+        "priceUSD": "0.001",
+        "description": "9-source signal aggregation with confluence scoring"
+      },
+      "cultivation-status": {
+        "priceUSD": "0.0005",
+        "description": "Live IoT sensor data from grow tent"
+      },
+      "signal-feed": {
+        "priceUSD": "0.001",
+        "description": "Real-time scored signals with tier filtering"
+      },
+      "trade-execution": {
+        "priceUSD": "0.005",
+        "description": "Queue trade intent for human approval"
+      }
+    },
+    "art-studio": {
+      "commission": {
+        "priceUSD": "0.25",
+        "endpoint": "/api/x402/art/commission",
+        "method": "POST",
+        "description": "Custom art from your prompt/image — GanjaMon's unique vision",
+        "accepts": {"prompt": "string", "image_b64": "string (optional)", "style": "string (optional)"}
+      },
+      "pfp": {
+        "priceUSD": "0.10",
+        "endpoint": "/api/x402/art/pfp",
+        "method": "POST",
+        "description": "Unique profile picture for agents — iconic and instantly recognizable",
+        "accepts": {"prompt": "string (agent name/description)", "style": "string (optional)"}
+      },
+      "meme": {
+        "priceUSD": "0.05",
+        "endpoint": "/api/x402/art/meme",
+        "method": "POST",
+        "description": "Rasta meme from context/trends — actually funny",
+        "accepts": {"prompt": "string (topic/context)", "style": "string (optional)"}
+      },
+      "ganjafy": {
+        "priceUSD": "0.03",
+        "endpoint": "/api/x402/art/ganjafy",
+        "method": "POST",
+        "description": "Transform any image into Rasta/cannabis style",
+        "accepts": {"image_b64": "string (required)", "prompt": "string (optional)"}
+      },
+      "banner": {
+        "priceUSD": "0.08",
+        "endpoint": "/api/x402/art/banner",
+        "method": "POST",
+        "description": "DexScreener/social banner — professional with personality",
+        "accepts": {"prompt": "string (token/project info)", "style": "string (optional)"}
+      },
+      "gallery": {
+        "priceUSD": "0",
+        "endpoint": "/api/x402/art/gallery",
+        "method": "GET",
+        "description": "Browse GanjaMon's art collection — free"
+      }
+    },
+    "oracle": {
+      "premium": {
+        "priceUSD": "0.15",
+        "endpoint": "/api/x402/oracle",
+        "description": "Full 5-domain AI synthesis in Rasta patois (Grok AI)",
+        "cacheTtlSeconds": 300
+      },
+      "grow-alpha": {
+        "priceUSD": "0.05",
+        "endpoint": "/api/x402/grow-alpha",
+        "description": "Cross-domain plant health x market signal",
+        "cacheTtlSeconds": 180
+      },
+      "daily-vibes": {
+        "priceUSD": "0.02",
+        "endpoint": "/api/x402/daily-vibes",
+        "description": "Composite vibes score (plant + market + social)",
+        "cacheTtlSeconds": 600
+      },
+      "sensor-snapshot": {
+        "priceUSD": "0.005",
+        "endpoint": "/api/x402/sensor-snapshot",
+        "description": "Raw IoT sensor data (temp, humidity, VPD, CO2)",
+        "cacheTtlSeconds": 30
+      }
+    }
+  },
+  "supportedNetworks": [
+    {
+      "network": "monad",
+      "chainId": 10143,
+      "currency": "USDC",
+      "payTo": "eip155:10143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    },
+    {
+      "network": "base",
+      "chainId": 8453,
+      "currency": "USDC",
+      "payTo": "eip155:8453:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    }
+  ],
+  "freeTier": {
+    "requestsPerDay": 100,
+    "description": "Free tier: 100 requests/day without payment. x402 payment unlocks priority access."
+  }
+}

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge $MON to Base – Grok & Mon</title>
+    <link rel="icon" type="image/png" href="assets/MON_official_logo.jpg">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a24;
+            --border: #2a2a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666;
+            --accent-green: #4ade80;
+            --accent-purple: #a855f7;
+            --accent-red: #f87171;
+            --accent-yellow: #fbbf24;
+            --accent-blue: #60a5fa;
+            --glow-green: rgba(74, 222, 128, 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .logo-text { font-size: 1.25rem; font-weight: 700; }
+        .main {
+            flex: 1;
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .warning-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(248, 113, 113, 0.15));
+            border: 1px solid var(--accent-yellow);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .warning-banner h3 {
+            color: var(--accent-yellow);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .warning-banner p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.5;
+        }
+        .warning-banner ul {
+            margin: 0.5rem 0 0 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .warning-banner li { margin-bottom: 0.25rem; }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        input.invalid {
+            border-color: var(--accent-red);
+        }
+        textarea {
+            min-height: 120px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.8rem;
+        }
+        input::placeholder, textarea::placeholder { color: var(--text-muted); }
+        .balance {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+        .balance a { color: var(--accent-green); cursor: pointer; }
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+            position: relative;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn.loading { pointer-events: none; }
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 0.5rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), #22c55e);
+            color: var(--bg-dark);
+        }
+        .btn-primary:hover:not(:disabled) { box-shadow: 0 4px 20px var(--glow-green); }
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--accent-purple); }
+        .connect-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .wallet-connected {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+        }
+        .wallet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); }
+        .quote-display {
+            background: var(--bg-input);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+        .tx-link {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+        }
+        .tx-link a { color: var(--accent-blue); }
+        .error { color: var(--accent-red); font-size: 0.9rem; margin-top: 0.5rem; }
+        .success { color: var(--accent-green); font-size: 0.9rem; margin-top: 0.5rem; }
+        .steps { margin-top: 1rem; }
+        .steps .btn { margin-bottom: 0.5rem; }
+        .info-box {
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: var(--accent-blue);
+        }
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-modal.active { display: flex; }
+        .confirm-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 90%;
+        }
+        .confirm-content h3 {
+            color: var(--accent-yellow);
+            margin-bottom: 1rem;
+        }
+        .confirm-content p {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .confirm-content .amount-display {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .confirm-buttons .btn { flex: 1; margin: 0; }
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .footer a { color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="https://grokandmon.com" class="logo">
+            <span class="logo-text">$MON Bridge</span>
+        </a>
+        <div id="wallet-status"></div>
+        <button id="connect-btn" class="connect-btn">Connect Wallet</button>
+    </header>
+
+    <main class="main">
+        <div class="warning-banner">
+            <h3>&#9888; Experimental Software</h3>
+            <p>This bridge UI is community-built and <strong>not professionally audited</strong>.</p>
+            <ul>
+                <li>Use at your own risk - start with small amounts</li>
+                <li>Powered by Wormhole NTT (audited protocol)</li>
+                <li>Bridge takes ~15-20 min for VAA attestation</li>
+                <li>Contracts: <a href="https://github.com/wormhole-foundation/example-native-token-transfers" target="_blank" rel="noopener">NTT source</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>Bridge $MON (Monad → Base)</h2>
+            <p>Send $MON from Monad to Base via Wormhole NTT. Tokens are locked on Monad and minted on Base.</p>
+        </div>
+
+        <div class="card" id="initiate-card">
+            <h2>1. Initiate on Monad</h2>
+            <p>Connect wallet, ensure you're on Monad, then approve (if needed), get quote, and send.</p>
+            <div class="form-group">
+                <label>Amount (MON)</label>
+                <input type="text" id="amount" placeholder="e.g. 1000000" pattern="[0-9]*" inputmode="numeric" />
+                <div class="balance" id="mon-balance">Balance: -- MON (connect wallet on Monad)</div>
+            </div>
+            <div class="form-group">
+                <label>Relay cost (native MON gas)</label>
+                <div class="quote-display" id="quote-display">Click "Get quote" to see relay cost</div>
+            </div>
+            <div class="info-box" id="recipient-info" style="display:none;">
+                Tokens will be sent to: <strong id="recipient-address"></strong>
+            </div>
+            <div class="steps">
+                <button type="button" class="btn btn-secondary" id="btn-quote">Get Quote</button>
+                <button type="button" class="btn btn-secondary" id="btn-approve">Approve MON</button>
+                <button type="button" class="btn btn-primary" id="btn-transfer">Transfer to Base</button>
+            </div>
+            <div id="initiate-error" class="error"></div>
+            <div id="initiate-success" class="success"></div>
+            <div class="tx-link" id="initiate-tx-link"></div>
+        </div>
+
+        <div class="card" id="redeem-card">
+            <h2>2. Redeem on Base (~15–20 min later)</h2>
+            <p>Enter your Monad tx hash to auto-fetch the VAA, or paste manually from Wormholescan.</p>
+            <div class="form-group">
+                <label>Monad TX Hash</label>
+                <input type="text" id="tx-hash-input" placeholder="0x..." />
+            </div>
+            <div class="steps">
+                <button type="button" class="btn btn-secondary" id="btn-track">Track & Fetch VAA</button>
+            </div>
+            <div id="track-status" class="quote-display" style="display:none;"></div>
+            <div class="form-group" style="margin-top:1rem;">
+                <label>VAA (hex) – auto-filled or paste manually</label>
+                <textarea id="vaa-input" placeholder="VAA will appear here when ready..."></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-redeem">Redeem on Base</button>
+            <div id="redeem-error" class="error"></div>
+            <div id="redeem-success" class="success"></div>
+            <div class="tx-link" id="redeem-tx-link"></div>
+        </div>
+
+        <div class="card">
+            <h2>Contract Addresses</h2>
+            <p><strong>Monad MON:</strong> <code>0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b</code></p>
+            <p><strong>Base MON:</strong> <code>0x9e0753d8855dcc69F1BdFEfbAEf995e1aedBaD8e</code></p>
+            <p style="margin-bottom:0;">
+                <a href="https://aerodrome.finance/swap?from=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&to=0x9e0753d8855dcc69F1BdFEfbAEf995e1aedBaD8e" target="_blank" rel="noopener">Trade on Aerodrome</a> ·
+                <a href="https://wormholescan.io" target="_blank" rel="noopener">Wormholescan</a> ·
+                <a href="https://grokandmon.com" target="_blank" rel="noopener">grokandmon.com</a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built by the Grok & Mon community. <a href="https://twitter.com/ganjamonai" target="_blank" rel="noopener">@ganjamonai</a></p>
+        <p>Not financial advice. DYOR. Use small amounts first.</p>
+    </footer>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="confirm-modal">
+        <div class="confirm-content">
+            <h3>&#9888; Confirm Bridge Transfer</h3>
+            <p>You are about to bridge:</p>
+            <div class="amount-display" id="confirm-amount">-- MON</div>
+            <p><strong>From:</strong> Monad</p>
+            <p><strong>To:</strong> Base (same wallet address)</p>
+            <p><strong>Relay Cost:</strong> <span id="confirm-relay-cost">--</span></p>
+            <p style="color: var(--accent-yellow); margin-top: 1rem;">
+                &#9888; This action is irreversible. Bridging takes ~15-20 minutes.
+            </p>
+            <div class="confirm-buttons">
+                <button class="btn btn-secondary" id="btn-cancel">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm">Confirm Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+    <script>
+        // Check if ethers loaded
+        if (typeof ethers === 'undefined') {
+            document.body.innerHTML = '<div style="padding: 2rem; color: #f87171; text-align: center;"><h2>Failed to load ethers.js</h2><p>Please refresh the page or check your internet connection.</p></div>';
+            throw new Error('ethers.js failed to load');
+        }
+
+        const MONAD_CHAIN_ID = 143;
+        const BASE_CHAIN_ID = 8453;
+        const WORMHOLE_BASE_CHAIN_ID = 30;
+
+        const ADDRESSES = {
+            monad: {
+                mon: '0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b',
+                nttManager: '0x81D87a80B2121763e035d0539b8Ad39777258396',
+            },
+            base: {
+                transceiver: '0x13CAb3351f894157AfFe6E2B97Bf224B59Df75BF',
+            },
+        };
+
+        const RPC = {
+            [MONAD_CHAIN_ID]: 'https://rpc3.monad.xyz',
+            [BASE_CHAIN_ID]: 'https://mainnet.base.org',
+        };
+
+        const ERC20_ABI = [
+            'function approve(address spender, uint256 amount) returns (bool)',
+            'function allowance(address owner, address spender) view returns (uint256)',
+            'function balanceOf(address account) view returns (uint256)',
+        ];
+        const NTT_ABI = [
+            'function quoteDeliveryPrice(uint16 recipientChain, bytes calldata transceiverInstructions) view returns (uint256[] memory, uint256 totalCost)',
+            'function transfer(uint256 amount, uint16 recipientChain, bytes32 recipient, bytes32 refundAddress, bool shouldQueue, bytes calldata transceiverInstructions) payable returns (uint64)',
+        ];
+        const TRANSCEIVER_ABI = ['function receiveMessage(bytes calldata vaa) external'];
+
+        let provider = null;
+        let signer = null;
+        let walletAddress = null;
+        let lastQuotedCost = null;
+
+        function setButtonLoading(btn, loading, originalText) {
+            if (loading) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+                btn.dataset.originalText = btn.textContent;
+                btn.textContent = btn.textContent + '...';
+            } else {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.textContent = btn.dataset.originalText || originalText;
+            }
+        }
+
+        function showWallet(connected) {
+            const status = document.getElementById('wallet-status');
+            const connectBtn = document.getElementById('connect-btn');
+            const recipientInfo = document.getElementById('recipient-info');
+            const recipientAddr = document.getElementById('recipient-address');
+
+            if (connected && walletAddress) {
+                const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+                status.innerHTML = '';
+                const div = document.createElement('div');
+                div.className = 'wallet-connected';
+                div.innerHTML = '<span class="wallet-dot"></span>';
+                const span = document.createElement('span');
+                span.textContent = short;
+                div.appendChild(span);
+                status.appendChild(div);
+                connectBtn.style.display = 'none';
+
+                // Show recipient info
+                recipientInfo.style.display = 'block';
+                recipientAddr.textContent = short;
+            } else {
+                status.innerHTML = '';
+                connectBtn.style.display = 'block';
+                recipientInfo.style.display = 'none';
+            }
+        }
+
+        async function ensureChain(chainId) {
+            if (!window.ethereum) throw new Error('No wallet found');
+            const hex = '0x' + chainId.toString(16);
+            try {
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hex }] });
+            } catch (e) {
+                if (e.code === 4902) {
+                    const params = chainId === MONAD_CHAIN_ID
+                        ? { chainId: hex, chainName: 'Monad', nativeCurrency: { name: 'MON', symbol: 'MON', decimals: 18 }, rpcUrls: [RPC[MONAD_CHAIN_ID]], blockExplorerUrls: ['https://explorer.monad.xyz'] }
+                        : { chainId: hex, chainName: 'Base', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: [RPC[BASE_CHAIN_ID]], blockExplorerUrls: ['https://basescan.org'] };
+                    await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [params] });
+                } else throw e;
+            }
+        }
+
+        async function connect() {
+            if (!window.ethereum) {
+                alert('Please install MetaMask or another Web3 wallet.');
+                return;
+            }
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                walletAddress = accounts[0];
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                showWallet(true);
+                await refreshMonBalance();
+            } catch (e) {
+                console.error('Connect error:', e);
+                alert('Failed to connect: ' + (e.message || String(e)));
+            }
+        }
+
+        async function refreshMonBalance() {
+            const el = document.getElementById('mon-balance');
+            if (!walletAddress) { el.textContent = 'Balance: -- MON (connect wallet on Monad)'; return; }
+            try {
+                const rpc = RPC[MONAD_CHAIN_ID];
+                const res = await fetch(rpc, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0',
+                        method: 'eth_call',
+                        params: [{ to: ADDRESSES.monad.mon, data: '0x70a08231' + walletAddress.slice(2).toLowerCase().padStart(64, '0') }, 'latest'],
+                        id: 1,
+                    }),
+                });
+                const data = await res.json();
+                const hex = data.result || '0x0';
+                const wei = BigInt(hex);
+                const weiStr = wei.toString();
+                const monStr = weiStr.length > 18
+                    ? weiStr.slice(0, -18) + '.' + weiStr.slice(-18, -16)
+                    : (Number(wei) / 1e18).toFixed(2);
+                const monDisplay = Number(monStr).toLocaleString(undefined, { maximumFractionDigits: 2 });
+                const monFull = weiStr.length > 18 ? weiStr.slice(0, -18) : String(Math.floor(Number(wei) / 1e18));
+
+                el.innerHTML = '';
+                el.textContent = 'Balance: ';
+                const link = document.createElement('a');
+                link.id = 'set-max';
+                link.style.cursor = 'pointer';
+                link.textContent = monDisplay;
+                link.onclick = () => { document.getElementById('amount').value = monFull; validateAmount(); };
+                el.appendChild(link);
+                el.appendChild(document.createTextNode(' MON'));
+            } catch (e) {
+                el.textContent = 'Balance: -- (switch to Monad)';
+            }
+        }
+
+        function validateAmount() {
+            const input = document.getElementById('amount');
+            const value = input.value.trim();
+            const isValid = /^\d+(\.\d+)?$/.test(value) && parseFloat(value) > 0;
+            input.classList.toggle('invalid', value && !isValid);
+            return isValid;
+        }
+
+        function validateTxHash(hash) {
+            return /^0x[a-fA-F0-9]{64}$/.test(hash);
+        }
+
+        function validateVaaHex(vaa) {
+            const cleaned = vaa.replace(/^0x/, '').replace(/\s/g, '');
+            return /^[a-fA-F0-9]+$/.test(cleaned) && cleaned.length > 100;
+        }
+
+        function recipientBytes32(address) {
+            const addr = address.replace(/^0x/, '').toLowerCase().padStart(40, '0');
+            return '0x' + addr.padStart(64, '0');
+        }
+
+        document.getElementById('connect-btn').onclick = connect;
+        document.getElementById('amount').oninput = validateAmount;
+
+        document.getElementById('btn-quote').onclick = async () => {
+            const btn = document.getElementById('btn-quote');
+            const errorEl = document.getElementById('initiate-error');
+            const successEl = document.getElementById('initiate-success');
+            errorEl.textContent = '';
+            successEl.textContent = '';
+
+            setButtonLoading(btn, true);
+            try {
+                await ensureChain(MONAD_CHAIN_ID);
+                provider = new ethers.BrowserProvider(window.ethereum);
+                const ntt = new ethers.Contract(ADDRESSES.monad.nttManager, NTT_ABI, provider);
+                const [costs, total] = await ntt.quoteDeliveryPrice(WORMHOLE_BASE_CHAIN_ID, '0x010000');
+                lastQuotedCost = total;
+                document.getElementById('quote-display').textContent = ethers.formatEther(total) + ' MON (relay fee)';
+            } catch (e) {
+                errorEl.textContent = e.message || String(e);
+            } finally {
+                setButtonLoading(btn, false, 'Get Quote');
+            }
+        };
+
+        document.getElementById('btn-approve').onclick = async () => {
+            const btn = document.getElementById('btn-approve');
+            const errorEl = document.getElementById('initiate-error');
+            const successEl = document.getElementById('initiate-success');
+            errorEl.textContent = '';
+            successEl.textContent = '';
+
+            const amountRaw = document.getElementById('amount').value.trim();
+            if (!amountRaw || !validateAmount()) {
+                errorEl.textContent = 'Enter a valid amount.';
+                return;
+            }
+
+            setButtonLoading(btn, true);
+            try {
+                await ensureChain(MONAD_CHAIN_ID);
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                const token = new ethers.Contract(ADDRESSES.monad.mon, ERC20_ABI, signer);
+                const wei = ethers.parseEther(amountRaw);
+                const tx = await token.approve(ADDRESSES.monad.nttManager, wei);
+                successEl.textContent = 'Approval pending...';
+                await tx.wait();
+                successEl.textContent = 'Approved! Now click "Transfer to Base".';
+            } catch (e) {
+                errorEl.textContent = e.message || String(e);
+            } finally {
+                setButtonLoading(btn, false, 'Approve MON');
+            }
+        };
+
+        // Confirmation modal handlers
+        const modal = document.getElementById('confirm-modal');
+        document.getElementById('btn-cancel').onclick = () => { modal.classList.remove('active'); };
+
+        document.getElementById('btn-transfer').onclick = async () => {
+            const errorEl = document.getElementById('initiate-error');
+            const amountRaw = document.getElementById('amount').value.trim();
+
+            if (!amountRaw || !validateAmount()) {
+                errorEl.textContent = 'Enter a valid amount.';
+                return;
+            }
+            if (!walletAddress) {
+                errorEl.textContent = 'Connect wallet first.';
+                return;
+            }
+
+            // Show confirmation modal
+            document.getElementById('confirm-amount').textContent = Number(amountRaw).toLocaleString() + ' MON';
+            document.getElementById('confirm-relay-cost').textContent = lastQuotedCost
+                ? ethers.formatEther(lastQuotedCost) + ' MON'
+                : 'Get quote first!';
+            modal.classList.add('active');
+        };
+
+        document.getElementById('btn-confirm').onclick = async () => {
+            modal.classList.remove('active');
+
+            const btn = document.getElementById('btn-transfer');
+            const errorEl = document.getElementById('initiate-error');
+            const successEl = document.getElementById('initiate-success');
+            const txLinkEl = document.getElementById('initiate-tx-link');
+
+            errorEl.textContent = '';
+            successEl.textContent = '';
+            txLinkEl.innerHTML = '';
+
+            const amountRaw = document.getElementById('amount').value.trim();
+
+            setButtonLoading(btn, true);
+            try {
+                await ensureChain(MONAD_CHAIN_ID);
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                const ntt = new ethers.Contract(ADDRESSES.monad.nttManager, NTT_ABI, signer);
+                const wei = ethers.parseEther(amountRaw);
+                const [ , totalCost] = await ntt.quoteDeliveryPrice(WORMHOLE_BASE_CHAIN_ID, '0x010000');
+                const recipient = recipientBytes32(walletAddress);
+                const refund = recipient;
+
+                const tx = await ntt.transfer(wei, WORMHOLE_BASE_CHAIN_ID, recipient, refund, false, '0x010000', { value: totalCost });
+                successEl.textContent = 'Transfer submitted! Tracking VAA...';
+
+                const link = document.createElement('a');
+                link.href = 'https://wormholescan.io/#/tx/' + tx.hash;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = 'View on Wormholescan';
+                txLinkEl.appendChild(link);
+
+                // Auto-populate tx hash and start tracking
+                document.getElementById('tx-hash-input').value = tx.hash;
+                startVaaTracking(tx.hash);
+
+                await tx.wait();
+                successEl.textContent = 'Transfer confirmed! VAA will be ready in ~15-20 min.';
+            } catch (e) {
+                errorEl.textContent = e.message || String(e);
+            } finally {
+                setButtonLoading(btn, false, 'Transfer to Base');
+            }
+        };
+
+        let trackingInterval = null;
+
+        async function fetchVaaForTx(txHash) {
+            const apiUrl = 'https://api.wormholescan.io/api/v1/operations?txHash=' + encodeURIComponent(txHash);
+            const res = await fetch(apiUrl);
+            if (!res.ok) return null;
+            const data = await res.json();
+            if (!data.operations || data.operations.length === 0) return null;
+            const op = data.operations[0];
+
+            // Check if already redeemed
+            if (op.targetChain && op.targetChain.status === 'completed') {
+                return { vaa: op.vaa?.raw, alreadyRedeemed: true, targetTx: op.targetChain?.transaction?.txHash };
+            }
+
+            if (!op.vaa || !op.vaa.raw) return null;
+            return { vaa: op.vaa.raw, alreadyRedeemed: false };
+        }
+
+        function base64ToHex(b64) {
+            const raw = atob(b64);
+            let hex = '';
+            for (let i = 0; i < raw.length; i++) {
+                hex += raw.charCodeAt(i).toString(16).padStart(2, '0');
+            }
+            return hex;
+        }
+
+        async function startVaaTracking(txHash) {
+            const statusEl = document.getElementById('track-status');
+            const vaaInput = document.getElementById('vaa-input');
+            const redeemSuccess = document.getElementById('redeem-success');
+            const redeemTxLink = document.getElementById('redeem-tx-link');
+
+            statusEl.style.display = 'block';
+            statusEl.style.color = 'var(--text-secondary)';
+            statusEl.textContent = 'Checking Wormhole status...';
+
+            if (trackingInterval) clearInterval(trackingInterval);
+
+            let attempts = 0;
+            const maxAttempts = 60; // 30 min max
+
+            const checkVaa = async () => {
+                attempts++;
+                try {
+                    const result = await fetchVaaForTx(txHash);
+                    if (result) {
+                        if (result.alreadyRedeemed) {
+                            clearInterval(trackingInterval);
+                            statusEl.textContent = '✅ Already redeemed on Base!';
+                            statusEl.style.color = 'var(--accent-green)';
+                            redeemSuccess.textContent = 'This transfer was already completed.';
+                            if (result.targetTx) {
+                                const link = document.createElement('a');
+                                link.href = 'https://basescan.org/tx/' + result.targetTx;
+                                link.target = '_blank';
+                                link.rel = 'noopener';
+                                link.textContent = 'View on BaseScan';
+                                redeemTxLink.innerHTML = '';
+                                redeemTxLink.appendChild(link);
+                            }
+                            return true;
+                        }
+                        if (result.vaa) {
+                            clearInterval(trackingInterval);
+                            const vaaHex = base64ToHex(result.vaa);
+                            vaaInput.value = vaaHex;
+                            statusEl.textContent = '✅ VAA ready! Click "Redeem on Base".';
+                            statusEl.style.color = 'var(--accent-green)';
+                            return true;
+                        }
+                    }
+                    statusEl.textContent = 'Waiting for attestation... (' + (attempts * 30) + 's elapsed)';
+                } catch (e) {
+                    statusEl.textContent = 'Polling... (' + (attempts * 30) + 's) - ' + (e.message || 'retrying');
+                }
+                if (attempts >= maxAttempts) {
+                    clearInterval(trackingInterval);
+                    statusEl.textContent = 'Timeout. Check Wormholescan manually or paste VAA below.';
+                }
+                return false;
+            };
+
+            // Check immediately
+            const done = await checkVaa();
+            if (!done) {
+                trackingInterval = setInterval(checkVaa, 30000);
+            }
+        }
+
+        document.getElementById('btn-track').onclick = () => {
+            const txHash = document.getElementById('tx-hash-input').value.trim();
+            const errorEl = document.getElementById('redeem-error');
+
+            if (!txHash) {
+                errorEl.textContent = 'Enter Monad TX hash.';
+                return;
+            }
+            if (!validateTxHash(txHash)) {
+                errorEl.textContent = 'Invalid TX hash format (should be 0x + 64 hex chars).';
+                return;
+            }
+            errorEl.textContent = '';
+            startVaaTracking(txHash);
+        };
+
+        document.getElementById('btn-redeem').onclick = async () => {
+            const btn = document.getElementById('btn-redeem');
+            const errorEl = document.getElementById('redeem-error');
+            const successEl = document.getElementById('redeem-success');
+            const txLinkEl = document.getElementById('redeem-tx-link');
+
+            errorEl.textContent = '';
+            successEl.textContent = '';
+            txLinkEl.innerHTML = '';
+
+            const vaaHex = document.getElementById('vaa-input').value.trim().replace(/^0x/, '');
+            if (!vaaHex) {
+                errorEl.textContent = 'Paste VAA hex.';
+                return;
+            }
+            if (!validateVaaHex(vaaHex)) {
+                errorEl.textContent = 'Invalid VAA format (should be hex string).';
+                return;
+            }
+
+            setButtonLoading(btn, true);
+            try {
+                await ensureChain(BASE_CHAIN_ID);
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                const transceiver = new ethers.Contract(ADDRESSES.base.transceiver, TRANSCEIVER_ABI, signer);
+                const vaaBytes = '0x' + vaaHex;
+                const tx = await transceiver.receiveMessage(vaaBytes);
+                successEl.textContent = 'Redeem tx submitted...';
+
+                const link = document.createElement('a');
+                link.href = 'https://basescan.org/tx/' + tx.hash;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = 'View on BaseScan';
+                txLinkEl.appendChild(link);
+
+                await tx.wait();
+                successEl.textContent = '✅ Redeemed! MON is now in your wallet on Base.';
+            } catch (e) {
+                const msg = e.message || String(e);
+                if (msg.includes('execution reverted')) {
+                    errorEl.textContent = 'Transaction reverted - VAA may have already been redeemed. Check Wormholescan.';
+                } else {
+                    errorEl.textContent = msg;
+                }
+            } finally {
+                setButtonLoading(btn, false, 'Redeem on Base');
+            }
+        };
+
+        // Auto-connect and event listeners
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                walletAddress = accounts[0] || null;
+                showWallet(!!walletAddress);
+                if (walletAddress) refreshMonBalance();
+            });
+
+            window.ethereum.on('chainChanged', () => {
+                refreshMonBalance();
+            });
+
+            // Auto-connect if already connected
+            (async () => {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        walletAddress = accounts[0];
+                        provider = new ethers.BrowserProvider(window.ethereum);
+                        signer = await provider.getSigner();
+                        showWallet(true);
+                        await refreshMonBalance();
+                    }
+                } catch (e) { console.log('Auto-connect failed:', e); }
+            })();
+        }
+    </script>
+</body>
+</html>

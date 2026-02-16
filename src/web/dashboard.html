@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok & Mon Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #141414;
+            --text: #ffffff;
+            --text-dim: #888;
+            --green: #4ade80;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --purple: #a78bfa;
+            --blue: #60a5fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #222;
+            flex-shrink: 0;
+        }
+        h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        .strain-info { font-size: 14px; color: var(--purple); margin-top: 4px; }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+        .status-dot.offline { background: var(--red); animation: none; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .left-column, .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 0;
+        }
+        @media (max-width: 768px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #222;
+        }
+        .card-header {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .metric {
+            font-size: 36px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .metric-unit {
+            font-size: 16px;
+            color: var(--text-dim);
+            margin-left: 4px;
+        }
+        .metric-status {
+            margin-top: 8px;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .metric-status.good { background: rgba(74, 222, 128, 0.2); color: var(--green); }
+        .metric-status.warning { background: rgba(251, 191, 36, 0.2); color: var(--yellow); }
+        .metric-status.bad { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+
+        .webcam-container {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #222;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .webcam-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #222;
+            font-size: 12px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .webcam-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            background: #000;
+            flex: 1;
+        }
+
+        .devices {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .device {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .device-indicator {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #333;
+        }
+        .device-indicator.on {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+        .device-name { font-size: 12px; }
+
+        .ai-output {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #222;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+        .ai-text {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #ccc;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .btn {
+            background: var(--purple);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn.secondary { background: #333; }
+        .btn.success { background: var(--green); color: #000; }
+
+        .meter-result {
+            background: #1a1a1a;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+            display: none;
+        }
+        .meter-result.show { display: block; }
+
+        .footer {
+            text-align: center;
+            padding: 12px;
+            color: var(--text-dim);
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🌿 Grok & Mon</h1>
+                <div class="strain-info">
+                    Day <span id="grow-day">1</span> · <span id="growth-stage">CLONE</span> · Granddaddy Purple Runtz Clone
+                </div>
+            </div>
+            <div class="status">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <div class="left-column">
+                <div class="metrics-grid">
+                    <div class="card">
+                        <div class="card-header">Temperature</div>
+                        <div class="metric">
+                            <span id="temp">--</span>
+                            <span class="metric-unit">°F</span>
+                        </div>
+                        <div class="metric-status" id="temp-status">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Humidity</div>
+                        <div class="metric">
+                            <span id="humidity">--</span>
+                            <span class="metric-unit">%</span>
+                        </div>
+                        <div class="metric-status" id="humidity-status">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">VPD</div>
+                        <div class="metric">
+                            <span id="vpd">--</span>
+                            <span class="metric-unit">kPa</span>
+                        </div>
+                        <div class="metric-status" id="vpd-status">--</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">CO2</div>
+                        <div class="metric">
+                            <span id="co2">--</span>
+                            <span class="metric-unit">ppm</span>
+                        </div>
+                        <div class="metric-status" id="co2-status">--</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="card-header">Devices</div>
+                    <div class="devices">
+                        <div class="device">
+                            <div class="device-indicator" id="light-indicator"></div>
+                            <span class="device-name">Light</span>
+                        </div>
+                        <div class="device">
+                            <div class="device-indicator" id="exhaust-indicator"></div>
+                            <span class="device-name">Exhaust</span>
+                        </div>
+                        <div class="device">
+                            <div class="device-indicator" id="circ-indicator"></div>
+                            <span class="device-name">Circ Fan</span>
+                        </div>
+                        <div class="device">
+                            <div class="device-indicator" id="pump-indicator"></div>
+                            <span class="device-name">Pump</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ai-output">
+                    <div class="ai-header">
+                        <span>🤖</span>
+                        <span>Grok's Latest Analysis</span>
+                    </div>
+                    <div class="ai-text" id="ai-output">Waiting for decision cycle...</div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="webcam-container" id="camera">
+                    <div class="webcam-header">
+                        <span>📷 Live Feed</span>
+                        <span id="webcam-status">Connecting...</span>
+                    </div>
+                    <img class="webcam-stream" id="webcam" src="" alt="Camera feed">
+                </div>
+
+                <div class="actions">
+                    <button class="btn" onclick="refreshData()">🔄 Refresh All</button>
+                    <button class="btn secondary" onclick="readMeters()">📊 Read pH/Moisture</button>
+                    <button class="btn secondary" onclick="runGrok()">🧠 Run Grok</button>
+                </div>
+
+                <div class="meter-result" id="meter-result">
+                    <strong>Meter Reading:</strong>
+                    <div id="meter-values"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Last updated: <span id="last-update">--</span> ·
+            <a href="/api/docs" style="color: var(--purple);">API Docs</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const VPD_TARGETS = {
+            'SEEDLING': { min: 0.4, max: 0.8 },
+            'VEGETATIVE': { min: 0.8, max: 1.2 },
+            'FLOWERING': { min: 1.0, max: 1.5 },
+        };
+        const TEMP_TARGETS = { min: 70, max: 82 };
+        const HUMIDITY_TARGETS = { min: 40, max: 70 };
+        const CO2_TARGETS = { min: 400, max: 1500 };
+
+        let currentStage = 'VEGETATIVE';
+
+        function getStatus(value, targets) {
+            if (value === null || value === undefined || isNaN(value)) return { class: '', text: '--' };
+            if (value >= targets.min && value <= targets.max) {
+                return { class: 'good', text: 'Optimal' };
+            } else if (value < targets.min * 0.85 || value > targets.max * 1.15) {
+                return { class: 'bad', text: value < targets.min ? 'Low' : 'High' };
+            } else {
+                return { class: 'warning', text: 'Borderline' };
+            }
+        }
+
+        function updateDevice(id, isOn) {
+            const el = document.getElementById(id);
+            if (el) el.className = isOn ? 'device-indicator on' : 'device-indicator';
+        }
+
+        // Start live video stream
+        function startStream() {
+            const img = document.getElementById('webcam');
+            img.src = `${API_BASE}/api/webcam/stream`;
+            img.onload = () => document.getElementById('webcam-status').textContent = 'Live';
+            img.onerror = () => {
+                document.getElementById('webcam-status').textContent = 'Offline';
+                // Retry in 5 seconds
+                setTimeout(startStream, 5000);
+            };
+        }
+
+        async function fetchJSON(endpoint) {
+            try {
+                const r = await fetch(`${API_BASE}${endpoint}`);
+                return r.ok ? await r.json() : null;
+            } catch (e) { return null; }
+        }
+
+        async function refreshData() {
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+
+            try {
+                const [sensors, devices, ai, stage] = await Promise.all([
+                    fetchJSON('/api/sensors/live'),
+                    fetchJSON('/api/devices/latest'),
+                    fetchJSON('/api/ai/latest'),
+                    fetchJSON('/api/grow/stage'),
+                ]);
+
+                if (stage) {
+                    currentStage = stage.current_stage?.toUpperCase() || 'VEGETATIVE';
+                    document.getElementById('grow-day').textContent = stage.current_day || 1;
+                    document.getElementById('growth-stage').textContent = currentStage;
+                }
+
+                if (sensors) {
+                    // Temperature (handle both C and F)
+                    let temp = sensors.temperature_f || sensors.air_temp;
+                    if (temp < 50) temp = temp * 9/5 + 32; // Convert C to F
+                    document.getElementById('temp').textContent = temp.toFixed(1);
+                    const ts = getStatus(temp, TEMP_TARGETS);
+                    document.getElementById('temp-status').textContent = ts.text;
+                    document.getElementById('temp-status').className = `metric-status ${ts.class}`;
+
+                    // Humidity
+                    const hum = sensors.humidity_percent || sensors.humidity;
+                    document.getElementById('humidity').textContent = hum?.toFixed(0) || '--';
+                    const hs = getStatus(hum, HUMIDITY_TARGETS);
+                    document.getElementById('humidity-status').textContent = hs.text;
+                    document.getElementById('humidity-status').className = `metric-status ${hs.class}`;
+
+                    // VPD
+                    const vpd = sensors.vpd_kpa || sensors.vpd;
+                    document.getElementById('vpd').textContent = vpd?.toFixed(2) || '--';
+                    const vs = getStatus(vpd, VPD_TARGETS[currentStage] || VPD_TARGETS.VEGETATIVE);
+                    document.getElementById('vpd-status').textContent = vs.text;
+                    document.getElementById('vpd-status').className = `metric-status ${vs.class}`;
+
+                    // CO2
+                    const co2 = sensors.co2_ppm || sensors.co2;
+                    document.getElementById('co2').textContent = co2 ? co2.toFixed(0) : '--';
+                    const cs = getStatus(co2, CO2_TARGETS);
+                    document.getElementById('co2-status').textContent = co2 ? cs.text : 'No sensor';
+                    document.getElementById('co2-status').className = `metric-status ${co2 ? cs.class : ''}`;
+                }
+
+                if (devices) {
+                    updateDevice('light-indicator', devices.grow_light);
+                    updateDevice('exhaust-indicator', devices.exhaust_fan);
+                    updateDevice('circ-indicator', devices.circulation_fan);
+                    updateDevice('pump-indicator', devices.water_pump);
+                }
+
+                if (ai?.output_text) {
+                    document.getElementById('ai-output').textContent = ai.output_text;
+                }
+
+                statusDot.className = 'status-dot';
+                statusText.textContent = 'Connected';
+                document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+
+            } catch (e) {
+                statusDot.className = 'status-dot offline';
+                statusText.textContent = 'Error';
+            }
+        }
+
+        async function readMeters() {
+            const resultDiv = document.getElementById('meter-result');
+            const valuesDiv = document.getElementById('meter-values');
+
+            resultDiv.className = 'meter-result show';
+            valuesDiv.innerHTML = '<em>Reading meters...</em>';
+
+            try {
+                const result = await fetchJSON('/api/meters/visual-read');
+                if (result?.error) {
+                    valuesDiv.innerHTML = `<span style="color: var(--red);">Error: ${result.error}</span>`;
+                } else {
+                    valuesDiv.innerHTML = `<pre style="margin-top: 8px; color: #ccc;">${result.raw_response || 'No reading'}</pre>`;
+                }
+            } catch (e) {
+                valuesDiv.innerHTML = `<span style="color: var(--red);">Failed to read meters</span>`;
+            }
+        }
+
+        async function runGrok() {
+            alert('Running Grok decision cycle... Check terminal for output.');
+            // This would need a backend endpoint to trigger the agent
+        }
+
+        // Initial load
+        startStream();
+        refreshData();
+        setInterval(refreshData, 30000);
+
+        // Auto-scroll to camera for kiosk mode
+        setTimeout(() => {
+            const camera = document.getElementById('camera');
+            if (camera) camera.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 1000);
+    </script>
+</body>
+</html>

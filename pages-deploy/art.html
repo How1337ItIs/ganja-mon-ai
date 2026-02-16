@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Studio - GanjaMon AI</title>
+    <link rel="icon" type="image/png" href="assets/MON_official_logo.jpg">
+    <meta name="description" content="GanjaMon AI Art Studio - 7 generative art styles, Irie Milady NFTs, Ganjafy social tool, and live plant canvas.">
+    <meta property="og:title" content="GanjaMon AI - Art Studio">
+    <meta property="og:image" content="https://grokandmon.com/assets/MON_official_logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #1a1a2e;
+            --card-hover: #222240;
+            --green: #00ff88;
+            --green-dim: rgba(0,255,136,0.12);
+            --gold: #FFD700;
+            --gold-dim: rgba(255,215,0,0.12);
+            --rasta-red: #ff2200;
+            --rasta-green: #00cc00;
+            --border: #2a2a3e;
+            --text: #e8e8f0;
+            --text-sec: #a0a0b8;
+            --text-mute: #606078;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        body::before {
+            content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+            background:
+                radial-gradient(ellipse at 20% 15%, rgba(255,34,0,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(255,215,0,0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0,255,136,0.05) 0%, transparent 50%);
+        }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Header */
+        .header {
+            position:sticky; top:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between;
+            padding:14px 28px;
+            background:rgba(10,10,10,0.92);
+            border-bottom:1px solid var(--border);
+            backdrop-filter:blur(14px);
+        }
+        .header-left { display:flex; align-items:center; gap:14px; }
+        .header-left img { width:32px; height:32px; border-radius:50%; }
+        .header-left h1 {
+            font-size:18px; font-weight:700;
+            background:linear-gradient(135deg, var(--gold), #ffaa00);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .tag {
+            font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em;
+            color:var(--green); background:var(--green-dim);
+            border:1px solid rgba(0,255,136,0.3); padding:3px 10px; border-radius:99px;
+        }
+        nav { display:flex; gap:20px; }
+        nav a {
+            font-size:13px; color:var(--text-mute); text-decoration:none;
+            transition:color .2s; letter-spacing:0.02em;
+        }
+        nav a:hover { color:var(--gold); }
+        nav a.active { color:var(--green); font-weight:600; }
+
+        /* Hero */
+        .hero {
+            text-align:center; padding:80px 20px 50px;
+            position:relative; z-index:1;
+        }
+        .hero-label {
+            font-family:'JetBrains Mono',monospace; font-size:11px;
+            letter-spacing:0.4em; color:var(--green); margin-bottom:12px;
+        }
+        .hero h2 {
+            font-size:clamp(2.5rem,7vw,4.5rem); font-weight:700;
+            background:linear-gradient(180deg, var(--gold) 0%, #fff 50%, var(--gold) 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            filter:drop-shadow(0 0 40px rgba(255,215,0,0.25));
+            margin-bottom:14px;
+        }
+        .hero p { color:var(--text-sec); max-width:550px; margin:0 auto; font-size:16px; }
+        .hero p em { color:var(--gold); font-style:normal; font-weight:600; }
+
+        /* Shared section */
+        .wrap { max-width:1200px; margin:0 auto; padding:60px 24px; position:relative; z-index:1; }
+        .sec-label {
+            font-family:'JetBrains Mono',monospace; font-size:10px;
+            letter-spacing:0.35em; color:var(--green); margin-bottom:6px;
+        }
+        .sec-title { font-size:28px; font-weight:700; color:var(--gold); margin-bottom:8px; }
+        .sec-desc { color:var(--text-mute); margin-bottom:28px; max-width:650px; }
+        .divider { max-width:1200px; margin:0 auto; height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); }
+
+        /* Gallery grid */
+        .gallery { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+        .art-card {
+            background:var(--card); border:1px solid rgba(255,215,0,0.06);
+            border-radius:14px; overflow:hidden; transition:all .35s ease;
+        }
+        .art-card:hover { transform:translateY(-5px); border-color:rgba(255,215,0,0.2); box-shadow:0 16px 50px rgba(0,0,0,0.5); }
+        .art-img {
+            width:100%; aspect-ratio:1; position:relative;
+        }
+        .art-card-body { padding:16px; }
+        .art-card-body h4 { font-size:15px; font-weight:600; color:var(--gold); margin-bottom:4px; }
+        .art-card-body .date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-mute); }
+
+        /* 7 gradient placeholders */
+        .grad-roots-dub { background:linear-gradient(135deg,#ff0000 0%,#ff6600 25%,#FFD700 50%,#00cc00 75%,#006600 100%); }
+        .grad-irie-milady { background:linear-gradient(135deg,#ff69b4 0%,#FFD700 30%,#00cc00 60%,#ff0066 100%); }
+        .grad-ganja-gothic { background:linear-gradient(160deg,#0d0d0d 0%,#1a3a1a 30%,#004400 60%,#0d0d0d 80%,#2a0a2a 100%); }
+        .grad-zion-vapor { background:linear-gradient(135deg,#ff00ff 0%,#00ffff 25%,#FFD700 50%,#ff6600 75%,#ff0044 100%); }
+        .grad-dub-nouveau { background:linear-gradient(135deg,#8B6914 0%,#FFD700 20%,#B8860B 40%,#228B22 60%,#006400 80%,#8B4513 100%); }
+        .grad-fyah-pixel { background:linear-gradient(135deg,#ff2200 0%,#ff6600 30%,#FFD700 50%,#ff4400 70%,#cc0000 100%); image-rendering:pixelated; }
+        .grad-sacred-geo { background:conic-gradient(from 0deg,#FFD700,#00cc00,#00ffff,#8800ff,#ff0066,#FFD700); }
+
+        .art-img-overlay {
+            position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+            font-size:48px; opacity:0.6;
+            background:radial-gradient(circle at center,rgba(0,0,0,0) 40%,rgba(0,0,0,0.4) 100%);
+        }
+
+        /* Styles showcase */
+        .styles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+        .style-card {
+            background:var(--card); border:1px solid rgba(255,215,0,0.06);
+            border-radius:12px; padding:20px 22px; position:relative; overflow:hidden;
+            transition:all .35s ease;
+        }
+        .style-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            background:var(--accent,var(--gold)); opacity:0; transition:opacity .3s;
+        }
+        .style-card:hover { background:var(--card-hover); transform:translateY(-3px); border-color:rgba(255,215,0,0.18); }
+        .style-card:hover::before { opacity:1; }
+        .style-swatch {
+            width:100%; height:80px; border-radius:8px; margin-bottom:14px;
+        }
+        .style-card h4 { font-size:16px; font-weight:600; color:var(--gold); margin-bottom:5px; }
+        .style-card p { font-size:13px; color:var(--text-mute); line-height:1.55; }
+        .style-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+        .style-tags span {
+            font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.08em;
+            color:var(--text-mute); background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08); padding:2px 8px; border-radius:3px;
+        }
+
+        /* NFT Section */
+        .nft-section { display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:center; }
+        .nft-info h3 { font-size:22px; font-weight:700; color:var(--gold); margin-bottom:10px; }
+        .nft-info p { color:var(--text-sec); margin-bottom:12px; }
+        .nft-stats { display:flex; gap:24px; margin:18px 0; }
+        .nft-stat-val {
+            font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700;
+            color:var(--gold); display:block;
+            text-shadow:0 0 18px rgba(255,215,0,0.3);
+        }
+        .nft-stat-lbl { font-size:10px; letter-spacing:0.15em; color:var(--text-mute); text-transform:uppercase; }
+        .nft-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+        .nft-thumb {
+            aspect-ratio:1; border-radius:8px; width:100%; object-fit:cover;
+            border:2px solid transparent; transition:all .3s;
+        }
+        .nft-thumb:hover { transform:scale(1.08); border-color:var(--gold); box-shadow:0 0 20px rgba(255,215,0,0.25); z-index:2; position:relative; }
+        .btn {
+            display:inline-block; font-weight:600; font-size:13px; letter-spacing:0.08em;
+            padding:10px 24px; border-radius:6px; text-decoration:none; transition:all .3s;
+        }
+        .btn-green { background:linear-gradient(135deg,var(--rasta-green),#007a3d); color:#fff; box-shadow:0 0 16px rgba(0,204,0,0.3); }
+        .btn-green:hover { box-shadow:0 0 30px rgba(0,204,0,0.5); transform:scale(1.03); }
+        .btn-gold { background:linear-gradient(135deg,var(--gold),#b8860b); color:#000; box-shadow:0 0 16px rgba(255,215,0,0.3); }
+        .btn-gold:hover { box-shadow:0 0 30px rgba(255,215,0,0.5); transform:scale(1.03); }
+
+        /* Ganjafy */
+        .ganjafy-box {
+            background:linear-gradient(135deg,rgba(26,26,46,0.8),rgba(10,10,10,0.9));
+            border:1px solid rgba(0,255,136,0.15); border-radius:14px; padding:32px;
+        }
+        .ganjafy-box h3 { font-size:22px; font-weight:700; color:var(--green); margin-bottom:8px; }
+        .ganjafy-flow {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:14px; margin-top:20px;
+        }
+        .gf-step {
+            background:rgba(0,0,0,0.4); border:1px solid rgba(0,255,136,0.08);
+            border-radius:10px; padding:18px; text-align:center; position:relative;
+        }
+        .gf-step .num {
+            position:absolute; top:6px; right:10px;
+            font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700;
+            color:var(--green); opacity:0.15;
+        }
+        .gf-step .icon { font-size:28px; margin-bottom:8px; display:block; }
+        .gf-step h5 { font-size:13px; font-weight:600; color:var(--green); margin-bottom:4px; }
+        .gf-step p { font-size:11px; color:var(--text-mute); line-height:1.5; }
+        .ganjafy-example {
+            margin-top:22px; display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center;
+        }
+        .gf-before, .gf-after {
+            background:rgba(0,0,0,0.5); border-radius:10px; padding:16px;
+            font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6;
+        }
+        .gf-before { border:1px solid rgba(255,255,255,0.08); color:var(--text-mute); }
+        .gf-after { border:1px solid rgba(0,255,136,0.2); color:var(--green); }
+        .gf-arrow { font-size:28px; color:var(--gold); text-align:center; }
+
+        /* Live Plant */
+        .plant-grid { display:grid; grid-template-columns:2fr 1fr; gap:24px; align-items:start; }
+        .plant-frame {
+            border-radius:12px; overflow:hidden; position:relative;
+            border:2px solid rgba(0,204,0,0.2); background:var(--card);
+        }
+        .plant-frame img { width:100%; display:block; min-height:280px; object-fit:cover; }
+        .plant-placeholder {
+            width:100%; min-height:320px; display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            background:linear-gradient(135deg,#0d0d1a,#1a1a2e);
+            color:var(--text-mute); font-family:'JetBrains Mono',monospace; font-size:12px;
+        }
+        .plant-placeholder .ico { font-size:40px; opacity:0.3; margin-bottom:10px; }
+        .live-badge {
+            position:absolute; top:12px; right:12px;
+            font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em;
+            color:var(--rasta-red); background:rgba(10,10,10,0.85);
+            border:1px solid rgba(255,34,0,0.4); padding:4px 10px; border-radius:4px;
+            animation:pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 4px rgba(255,34,0,0.3)} 50%{box-shadow:0 0 14px rgba(255,34,0,0.6)} }
+        .plant-sidebar { display:flex; flex-direction:column; gap:12px; }
+        .plant-info {
+            background:var(--card); border:1px solid rgba(255,215,0,0.06);
+            border-radius:10px; padding:16px;
+        }
+        .plant-info h5 { font-size:13px; color:var(--gold); margin-bottom:6px; }
+        .plant-info p { font-size:12px; color:var(--text-mute); line-height:1.5; }
+
+        /* Footer */
+        footer {
+            text-align:center; padding:50px 20px 30px; position:relative; z-index:1;
+            border-top:1px solid var(--border);
+        }
+        .footer-nav { display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-bottom:16px; }
+        .footer-nav a { font-size:12px; color:var(--text-mute); text-decoration:none; letter-spacing:0.05em; }
+        .footer-nav a:hover { color:var(--gold); }
+        footer p { font-size:13px; color:#444; font-style:italic; }
+        footer p em { color:var(--gold); font-style:normal; }
+
+        /* Rasta stripe */
+        .rasta-stripe {
+            height:3px;
+            background:linear-gradient(90deg,var(--rasta-red) 0%,var(--rasta-red) 33%,var(--gold) 33%,var(--gold) 66%,var(--rasta-green) 66%,var(--rasta-green) 100%);
+        }
+
+        /* Responsive */
+        @media(max-width:900px) {
+            .nft-section { grid-template-columns:1fr; }
+            .plant-grid { grid-template-columns:1fr; }
+            .ganjafy-example { grid-template-columns:1fr; }
+            .gf-arrow { transform:rotate(90deg); }
+        }
+        @media(max-width:640px) {
+            nav { gap:10px; }
+            nav a { font-size:11px; }
+            .gallery { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+            .styles-grid { grid-template-columns:1fr; }
+            .nft-thumbs { grid-template-columns:repeat(3,1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="rasta-stripe"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/"><img src="/assets/MON_official_logo.jpg" alt="GanjaMon"></a>
+            <h1>Art Studio</h1>
+            <span class="tag">7 STYLES</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/trading.html">Trading</a>
+            <a href="/social.html">Social</a>
+            <a href="/brain.html">Brain</a>
+            <a href="/a2a.html">A2A</a>
+            <a href="/art.html" class="active">Art</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-label">AI-GENERATED RASTA ART</div>
+        <h2>Art Studio</h2>
+        <p>Where <em>sacred herb</em> meets generative intelligence. Seven styles. Infinite irie vibrations channeled through AI.</p>
+    </section>
+
+    <!-- Art Gallery -->
+    <div class="wrap">
+        <div class="sec-label">GALLERY</div>
+        <h3 class="sec-title">Generated Works</h3>
+        <p class="sec-desc">Recent AI-generated artworks across all seven sacred styles.</p>
+        <div class="gallery" id="gallery"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 7 Art Styles -->
+    <div class="wrap">
+        <div class="sec-label">GENERATIVE PIPELINE</div>
+        <h3 class="sec-title">Seven Sacred Styles</h3>
+        <p class="sec-desc">Each style channels a different vibration of Rasta consciousness through the AI generative engine.</p>
+        <div class="styles-grid">
+            <div class="style-card" style="--accent:var(--rasta-red)">
+                <div class="style-swatch grad-roots-dub"></div>
+                <h4>Roots Dub</h4>
+                <p>Psychedelic rasta vibrations. Deep bass rendered visual: swirling red-gold-green fractals, echo chamber aesthetics, dub delay rendered as concentric waves of consciousness.</p>
+                <div class="style-tags"><span>PSYCHEDELIC</span><span>RASTA</span><span>DUB</span></div>
+            </div>
+            <div class="style-card" style="--accent:#ff69b4">
+                <div class="style-swatch grad-irie-milady"></div>
+                <h4>Irie Milady</h4>
+                <p>The NFT collection style. Milady Maker meets Rastafari: cute anime portraits with dreadlocks, rasta tams, and sacred herb. Network spirituality meets Nyabinghi.</p>
+                <div class="style-tags"><span>NFT</span><span>MILADY</span><span>420 PIECES</span></div>
+            </div>
+            <div class="style-card" style="--accent:#2a5a2a">
+                <div class="style-swatch grad-ganja-gothic"></div>
+                <h4>Ganja Gothic</h4>
+                <p>Dark botanical elegance. Cannabis leaves rendered in Victorian engraving style, moonlit gardens, thorned trichomes, absinthe-green shadows on obsidian backgrounds.</p>
+                <div class="style-tags"><span>DARK</span><span>BOTANICAL</span><span>GOTHIC</span></div>
+            </div>
+            <div class="style-card" style="--accent:#ff00ff">
+                <div class="style-swatch grad-zion-vapor"></div>
+                <h4>Zion Vapor</h4>
+                <p>Vaporwave aesthetics fused with rasta consciousness. Neon palm trees, retro grids, Ethiopian crosses in synthwave sunsets, lo-fi herb dreams in fluorescent pink and cyan.</p>
+                <div class="style-tags"><span>VAPORWAVE</span><span>RETRO</span><span>NEON</span></div>
+            </div>
+            <div class="style-card" style="--accent:#B8860B">
+                <div class="style-swatch grad-dub-nouveau"></div>
+                <h4>Dub Nouveau</h4>
+                <p>Art Nouveau meets sound system culture. Flowing organic lines framing speaker stacks, golden filigree cannabis motifs, Alphonse Mucha reimagined through roots reggae.</p>
+                <div class="style-tags"><span>ART NOUVEAU</span><span>SOUND SYSTEM</span><span>ORGANIC</span></div>
+            </div>
+            <div class="style-card" style="--accent:var(--rasta-red)">
+                <div class="style-swatch grad-fyah-pixel"></div>
+                <h4>Fyah Pixel</h4>
+                <p>8-bit fire. Pixel art renditions of rasta icons, burning herb bowls, retro game-style cultivation scenes. Low resolution, high vibration. Every pixel intentional.</p>
+                <div class="style-tags"><span>PIXEL ART</span><span>8-BIT</span><span>RETRO</span></div>
+            </div>
+            <div class="style-card" style="--accent:#8800ff">
+                <div class="style-swatch grad-sacred-geo"></div>
+                <h4>Sacred Geometry</h4>
+                <p>Mathematical meets spiritual. Flower of Life with cannabis leaf tessellations, Fibonacci spirals in trichome patterns, golden ratio compositions connecting herb to cosmos.</p>
+                <div class="style-tags"><span>GEOMETRY</span><span>FIBONACCI</span><span>SPIRITUAL</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Irie Milady NFT Section -->
+    <div class="wrap">
+        <div class="sec-label">NFT COLLECTION &middot; 420 TRANSMISSIONS</div>
+        <h3 class="sec-title">Irie Milady</h3>
+        <div class="nft-section">
+            <div class="nft-info">
+                <h3>Network Spirituality Meets Nyabinghi</h3>
+                <p>420 Irie Miladys on IPFS. Copyleft derivatives of Milady Maker, transformed through Gemini 3 Pro with Rasta consciousness overlay. Five manifestations: Poster, Echo, Wave, Smoke, and Static.</p>
+                <p>Each piece is a transmission from the network -- received, not created. The cute carries the sacred.</p>
+                <div class="nft-stats">
+                    <div>
+                        <span class="nft-stat-val">420</span>
+                        <span class="nft-stat-lbl">Total Supply</span>
+                    </div>
+                    <div>
+                        <span class="nft-stat-val">5</span>
+                        <span class="nft-stat-lbl">Manifestations</span>
+                    </div>
+                    <div>
+                        <span class="nft-stat-val">$4.20</span>
+                        <span class="nft-stat-lbl">Mint Price</span>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+                    <a href="/iriemilady.html" class="btn btn-gold">View Full Collection</a>
+                    <a href="https://www.scatter.art/collection/irie-milady-maker" class="btn btn-green" target="_blank" rel="noopener">Mint on Scatter</a>
+                </div>
+            </div>
+            <div class="nft-thumbs" id="nftGrid"></div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Ganjafy Tool -->
+    <div class="wrap">
+        <div class="sec-label">CONTENT TRANSFORMATION</div>
+        <h3 class="sec-title">The Ganjafy Engine</h3>
+        <p class="sec-desc">How the AI transforms any content into rasta-voiced social posts with the GanjaMon personality.</p>
+        <div class="ganjafy-box">
+            <h3>Ganjafy: AI Content Transformation</h3>
+            <p style="color:var(--text-sec);margin-bottom:6px">Every social post, market update, and plant report gets "ganjafried" -- run through the Rasta personality layer that gives GanjaMon its soul. Powered by Gemini 3 Pro for voice consistency.</p>
+            <div class="ganjafy-flow">
+                <div class="gf-step">
+                    <span class="num">01</span>
+                    <span class="icon">&#x1F4CA;</span>
+                    <h5>Raw Signal</h5>
+                    <p>Sensor data, market alpha, or news enters the pipeline as structured data.</p>
+                </div>
+                <div class="gf-step">
+                    <span class="num">02</span>
+                    <span class="icon">&#x1F9E0;</span>
+                    <h5>Context Build</h5>
+                    <p>Unified context aggregates grow state, trading position, and community mood.</p>
+                </div>
+                <div class="gf-step">
+                    <span class="num">03</span>
+                    <span class="icon">&#x1F3AD;</span>
+                    <h5>Ganjafy</h5>
+                    <p>Rasta personality prompt transforms content into Jamaican patois voice.</p>
+                </div>
+                <div class="gf-step">
+                    <span class="num">04</span>
+                    <span class="icon">&#x1F4E1;</span>
+                    <h5>Multi-Post</h5>
+                    <p>Adapted for Twitter, Telegram, Farcaster, Moltbook with platform-specific formatting.</p>
+                </div>
+            </div>
+            <div class="ganjafy-example">
+                <div class="gf-before">
+                    <div style="color:var(--text-sec);font-size:10px;margin-bottom:6px;letter-spacing:0.1em">INPUT</div>
+                    Temperature is 78F, humidity 62%. Plant is healthy. VPD 1.1 kPa. Watered 50ml this morning.
+                </div>
+                <div class="gf-arrow">&#x27A1;</div>
+                <div class="gf-after">
+                    <div style="color:var(--gold);font-size:10px;margin-bottom:6px;letter-spacing:0.1em">GANJAFRIED</div>
+                    Bredren! Di garden vibes IRIE today ya know! 78 degrees an' 62% humidity -- VPD sittin' sweet at 1.1 kPa. Gave she a likkle 50ml sip dis mornin'. She growin' strong under Jah light!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Live Plant Art -->
+    <div class="wrap">
+        <div class="sec-label">LIVE FEED</div>
+        <h3 class="sec-title">Live Plant Canvas</h3>
+        <p class="sec-desc">Real-time webcam captures transformed into living art. Every frame is a potential masterpiece.</p>
+        <div class="plant-grid">
+            <div class="plant-frame" id="plantFrame">
+                <div class="plant-placeholder" id="plantPlaceholder">
+                    <div class="ico">&#x1F4F7;</div>
+                    <div>CONNECTING TO PLANT CAMERA...</div>
+                </div>
+                <img id="plantImg" style="display:none" alt="Live plant view">
+                <div class="live-badge">LIVE</div>
+            </div>
+            <div class="plant-sidebar">
+                <div class="plant-info">
+                    <h5>Subject</h5>
+                    <p>Granddaddy Purple Runtz (GDP x Runtz). Vegetative stage under AI-controlled IoT cultivation.</p>
+                </div>
+                <div class="plant-info">
+                    <h5>Camera</h5>
+                    <p>Logitech C270, calibrated for grow LED spectrum. Auto white balance with low saturation to counter warm LED cast.</p>
+                </div>
+                <div class="plant-info">
+                    <h5>AI Vision</h5>
+                    <p>Every capture is analyzed by Grok for plant health, growth stage, and potential issues. The camera is the AI's eyes into the garden.</p>
+                </div>
+                <div class="plant-info">
+                    <h5>Artistic Transform</h5>
+                    <p>Raw captures can be processed through any of the 7 sacred styles to create unique art pieces from live plant state.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timelapse -->
+    <div class="wrap" style="padding-top:0">
+        <div class="sec-label" style="margin-top:20px">TIMELAPSE</div>
+        <h3 class="sec-title">Growth in Motion</h3>
+        <p class="sec-desc">Days compressed into seconds. Timelapse GIFs auto-generated from continuous webcam captures.</p>
+        <div style="max-width:700px">
+            <div class="plant-frame" id="timelapseFrame">
+                <div class="plant-placeholder" id="timelapsePlaceholder">
+                    <div class="ico">&#x1F39E;</div>
+                    <div>LOADING TIMELAPSE...</div>
+                </div>
+                <img id="timelapseImg" style="display:none" alt="Plant growth timelapse">
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-nav">
+            <a href="/">Home</a>
+            <a href="/trading.html">Trading</a>
+            <a href="/social.html">Social</a>
+            <a href="/brain.html">Brain</a>
+            <a href="/a2a.html">A2A</a>
+            <a href="/iriemilady.html">Irie Milady</a>
+            <a href="https://x.com/ganjamonai" target="_blank">Twitter</a>
+            <a href="https://t.me/ganjamonai" target="_blank">Telegram</a>
+        </div>
+        <p><em>Every pixel carries a prayer.</em> Art generated by AI, guided by Jah.</p>
+    </footer>
+
+    <script>
+    const API = location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://grokandmon.com';
+    const R2 = 'https://grokandmon.com/r2/irie';
+
+    // Gallery data — 7 cards, one per style
+    const galleryItems = [
+        { style:'Roots Dub', cls:'grad-roots-dub', icon:'\u{1F534}', date:'2026-02-14' },
+        { style:'Irie Milady', cls:'grad-irie-milady', icon:'\u{1F49A}', date:'2026-02-13' },
+        { style:'Ganja Gothic', cls:'grad-ganja-gothic', icon:'\u{1F3DA}', date:'2026-02-12' },
+        { style:'Zion Vapor', cls:'grad-zion-vapor', icon:'\u{1F30C}', date:'2026-02-11' },
+        { style:'Dub Nouveau', cls:'grad-dub-nouveau', icon:'\u{1F3B6}', date:'2026-02-10' },
+        { style:'Fyah Pixel', cls:'grad-fyah-pixel', icon:'\u{1F525}', date:'2026-02-09' },
+        { style:'Sacred Geometry', cls:'grad-sacred-geo', icon:'\u{2728}', date:'2026-02-08' },
+    ];
+
+    function buildGallery() {
+        const g = document.getElementById('gallery');
+        galleryItems.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'art-card';
+            card.innerHTML = `
+                <div class="art-img ${item.cls}">
+                    <div class="art-img-overlay">${item.icon}</div>
+                </div>
+                <div class="art-card-body">
+                    <h4>${item.style}</h4>
+                    <span class="date mono">${item.date}</span>
+                </div>`;
+            g.appendChild(card);
+        });
+    }
+
+    // NFT showcase
+    const nftNums = [1,42,69,100,159,200,222,314,350,369,402,404,411,419,420,246];
+    function buildNfts() {
+        const grid = document.getElementById('nftGrid');
+        nftNums.forEach(n => {
+            const img = document.createElement('img');
+            img.src = `${R2}/${n}.png`;
+            img.alt = `Irie ${n}`;
+            img.className = 'nft-thumb';
+            img.loading = 'lazy';
+            img.onerror = function() {
+                this.style.background = 'var(--card)';
+                this.style.border = '1px dashed rgba(255,215,0,0.15)';
+            };
+            grid.appendChild(img);
+        });
+    }
+
+    // Live plant image
+    async function loadPlant() {
+        try {
+            const r = await fetch(`${API}/api/webcam/latest`, { signal: AbortSignal.timeout(8000) });
+            if (!r.ok) throw new Error(r.status);
+            const url = URL.createObjectURL(await r.blob());
+            const img = document.getElementById('plantImg');
+            img.onload = () => {
+                document.getElementById('plantPlaceholder').style.display = 'none';
+                img.style.display = 'block';
+            };
+            img.src = url;
+        } catch(e) {
+            const p = document.getElementById('plantPlaceholder');
+            p.querySelector('.ico').textContent = '\u{1F331}';
+            p.querySelector('div:last-child').textContent = 'CAMERA OFFLINE';
+        }
+    }
+
+    // Timelapse
+    async function loadTimelapse() {
+        try {
+            const r = await fetch(`${API}/api/timelapse/latest`, { signal: AbortSignal.timeout(10000) });
+            if (!r.ok) throw new Error(r.status);
+            const url = URL.createObjectURL(await r.blob());
+            const img = document.getElementById('timelapseImg');
+            img.onload = () => {
+                document.getElementById('timelapsePlaceholder').style.display = 'none';
+                img.style.display = 'block';
+            };
+            img.src = url;
+        } catch(e) {
+            const p = document.getElementById('timelapsePlaceholder');
+            p.querySelector('.ico').textContent = '\u{1F3AC}';
+            p.querySelector('div:last-child').textContent = 'TIMELAPSE GENERATING...';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        buildGallery();
+        buildNfts();
+        loadPlant();
+        loadTimelapse();
+        setInterval(loadPlant, 30000);
+    });
+    </script>
+</body>
+</html><!-- deployed 20260216T044727Z -->

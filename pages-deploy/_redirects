@@ -1,0 +1,5 @@
+# Telegram redirect to the official group
+/telegram https://t.me/ganjamonai 301
+
+# A2A protocol now handled by Pages Function at functions/a2a/v1.js
+# /a2a/v1 and /a2a are served by the function, not redirects

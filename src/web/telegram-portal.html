@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Grok & Mon Community - Telegram Access</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0E091C 0%, #1a1730 100%);
+            color: #FAFAFA;
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .portal-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(18, 16, 31, 0.9);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #C8C8D8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .step {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            color: #FFD700;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        button {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .invite-link {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-family: monospace;
+            color: #4ADE80;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .warning {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #FCD34D;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <div class="logo">🌿</div>
+        <h1>Join Di Community</h1>
+        <p class="subtitle">
+            Wa gwaan! Ready fi join di Grok & Mon Telegram?
+            Solve di captcha and we give yuh secure invite link, mon.
+        </p>
+
+        <div id="step1" class="step">
+            <div class="step-number">Step 1: Prove You're Human</div>
+            <p style="margin-bottom: 1rem;">Di bots dem try fi spam we. Click below fi show yuh real.</p>
+
+            <!-- hCaptcha -->
+            <div class="h-captcha" data-sitekey="YOUR_HCAPTCHA_SITEKEY" data-callback="onCaptchaSuccess"></div>
+
+            <button id="verify-btn" onclick="requestInvite()" disabled>
+                Verify & Get Invite Link
+            </button>
+        </div>
+
+        <div id="success" class="success" style="display: none;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="color: #4ADE80; margin-bottom: 1rem;">Irie! Yuh Verified!</h2>
+            <p style="margin-bottom: 1rem;">Here's yuh private invite link:</p>
+            <div class="invite-link" id="invite-link">Loading...</div>
+            <button onclick="window.location.href=document.getElementById('invite-link').textContent">
+                🔗 Open Telegram
+            </button>
+            <div class="warning">
+                ⚠️ Link expires in 24 hours or after 1 use. Save it now!
+            </div>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.9rem; color: #8888A0;">
+            One love. No bots. Just irie vibes. 🙏
+        </p>
+    </div>
+
+    <script>
+        let captchaToken = null;
+
+        function onCaptchaSuccess(token) {
+            captchaToken = token;
+            document.getElementById('verify-btn').disabled = false;
+            document.getElementById('verify-btn').textContent = '✅ Verified - Get Invite Link';
+        }
+
+        async function requestInvite() {
+            if (!captchaToken) {
+                alert('Solve di captcha first, mon!');
+                return;
+            }
+
+            document.getElementById('verify-btn').disabled = true;
+            document.getElementById('verify-btn').textContent = 'Creating invite link...';
+
+            try {
+                // Call your API endpoint to generate Telegram invite
+                const response = await fetch('/api/telegram/invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        captcha_token: captchaToken,
+                        source: 'web_portal'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.invite_link) {
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('success').style.display = 'block';
+                    document.getElementById('invite-link').textContent = data.invite_link;
+                } else {
+                    alert('Failed fi generate link. Try again, mon.');
+                    document.getElementById('verify-btn').disabled = false;
+                    document.getElementById('verify-btn').textContent = 'Try Again';
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('verify-btn').disabled = false;
+                document.getElementById('verify-btn').textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+</html>

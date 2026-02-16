@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain & Consciousness - GanjaMon AI</title>
+    <link rel="icon" type="image/png" href="/assets/MON_official_logo.jpg">
+    <meta name="description" content="GanjaMon AI Brain & Consciousness dashboard - episodic memory, grimoire learnings, self-improvement loops, neural activity.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #1e1e36;
+            --bg-input: #12121c;
+            --border: #2a2a3e;
+            --border-bright: #3a3a52;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #606078;
+            --gold: #FFD700;
+            --gold-dim: rgba(255, 215, 0, 0.15);
+            --green: #00ff88;
+            --green-dim: rgba(0, 255, 136, 0.12);
+            --red: #ff4444;
+            --red-dim: rgba(255, 68, 68, 0.12);
+            --purple: #bb86fc;
+            --purple-dim: rgba(187, 134, 252, 0.12);
+            --cyan: #00d4ff;
+            --cyan-dim: rgba(0, 212, 255, 0.12);
+            --rasta-red: #e03030;
+            --rasta-yellow: #ffd700;
+            --rasta-green: #00cc44;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Neural ambient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 40%, rgba(187, 134, 252, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 20%, rgba(0, 212, 255, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+
+        /* Header */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 2rem;
+            background: rgba(26, 26, 46, 0.92);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(16px);
+        }
+        .header-left { display: flex; align-items: center; gap: 1.25rem; }
+        .logo-link { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+        .logo-link img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold); }
+        .logo-link span {
+            font-size: 1.1rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .nav-links { display: flex; gap: 1rem; }
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none; font-size: 0.8rem;
+            font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 0.25rem 0.5rem; border-radius: 4px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a.active { color: var(--purple); background: var(--purple-dim); }
+
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .thinking-indicator {
+            display: flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 20px;
+            background: var(--purple-dim); border: 1px solid rgba(187,134,252,0.3);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+            font-weight: 600; color: var(--purple); text-transform: uppercase; letter-spacing: 0.15em;
+            animation: think-glow 2.5s ease-in-out infinite;
+        }
+        .thinking-dots { display: flex; gap: 3px; }
+        .thinking-dots span {
+            width: 4px; height: 4px; background: var(--purple); border-radius: 50%;
+            animation: dot-bounce 1.4s ease-in-out infinite;
+        }
+        .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dot-bounce {
+            0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1.3); }
+        }
+        @keyframes think-glow {
+            0%, 100% { box-shadow: 0 0 6px rgba(187,134,252,0.15); }
+            50% { box-shadow: 0 0 18px rgba(187,134,252,0.35); }
+        }
+        .refresh-info { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); }
+
+        /* Main grid */
+        .main {
+            position: relative; z-index: 1;
+            max-width: 1400px; margin: 0 auto; padding: 1.5rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+        }
+        .full-width { grid-column: 1 / -1; }
+
+        /* Card base */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem; position: relative;
+            overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { border-color: rgba(187,134,252,0.35); box-shadow: 0 0 24px rgba(187,134,252,0.06); }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 2px; border-radius: 12px 12px 0 0;
+        }
+        .card.glow-purple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+        .card.glow-cyan::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+        .card.glow-green::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+        .card.glow-gold::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .card-title {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary);
+        }
+        .card-badge {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; font-weight: 600;
+            padding: 3px 10px; border-radius: 10px;
+        }
+        .badge-live { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,255,136,0.3); animation: badge-pulse 2s ease-in-out infinite; }
+        .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(187,134,252,0.3); }
+        .badge-cyan { background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+        .badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 0 4px rgba(0,255,136,0.2); }
+            50% { box-shadow: 0 0 12px rgba(0,255,136,0.4); }
+        }
+
+        /* ── Consciousness State ── */
+        .consciousness-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+        .con-metric {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            border-radius: 8px; padding: 1rem; text-align: center;
+        }
+        .con-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+        .con-value { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 700; }
+        .con-detail { font-size: 0.65rem; color: var(--text-secondary); margin-top: 0.2rem; }
+        .monologue {
+            margin-top: 0.75rem; padding: 0.75rem 1rem;
+            background: rgba(187,134,252,0.05); border: 1px solid rgba(187,134,252,0.15);
+            border-radius: 8px; font-size: 0.85rem; color: var(--text-secondary);
+            font-style: italic; line-height: 1.6;
+        }
+        .monologue::before { content: '\201C'; font-size: 1.5rem; color: var(--purple); vertical-align: -4px; margin-right: 4px; }
+        .goals-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+        .goal-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: rgba(0,0,0,0.2); border-radius: 6px; border-left: 3px solid var(--purple); }
+        .goal-bar-wrap { flex: 1; }
+        .goal-name { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.2rem; }
+        .goal-bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+        .goal-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+        .goal-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; }
+
+        /* ── Brain Activity Visualization ── */
+        .neural-vis {
+            position: relative; height: 120px; border-radius: 8px; overflow: hidden;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border); margin-bottom: 1rem;
+        }
+        .neural-wave {
+            position: absolute; bottom: 0; left: 0; width: 200%; height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 40px,
+                rgba(187,134,252,0.03) 40px,
+                rgba(187,134,252,0.03) 41px
+            );
+        }
+        .neural-line {
+            position: absolute; bottom: 50%; left: 0; width: 200%; height: 2px;
+            animation: neural-scroll 8s linear infinite;
+        }
+        .neural-line:nth-child(1) {
+            background: linear-gradient(90deg,
+                transparent 0%, var(--purple) 5%, transparent 10%,
+                var(--cyan) 20%, transparent 25%,
+                var(--green) 35%, transparent 40%,
+                var(--purple) 50%, transparent 55%,
+                var(--gold) 65%, transparent 70%,
+                var(--cyan) 80%, transparent 85%,
+                var(--green) 95%, transparent 100%);
+            bottom: 50%; opacity: 0.8;
+        }
+        .neural-line:nth-child(2) {
+            background: linear-gradient(90deg,
+                transparent 0%, var(--cyan) 8%, transparent 16%,
+                var(--purple) 28%, transparent 36%,
+                var(--green) 48%, transparent 56%,
+                var(--gold) 68%, transparent 76%,
+                var(--purple) 88%, transparent 96%);
+            bottom: 35%; opacity: 0.5; animation-duration: 12s; animation-direction: reverse;
+        }
+        .neural-line:nth-child(3) {
+            background: linear-gradient(90deg,
+                transparent 0%, var(--green) 6%, transparent 12%,
+                var(--gold) 24%, transparent 30%,
+                var(--purple) 42%, transparent 48%,
+                var(--cyan) 60%, transparent 66%,
+                var(--green) 78%, transparent 84%);
+            bottom: 65%; opacity: 0.4; animation-duration: 15s;
+        }
+        @keyframes neural-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .neural-node {
+            position: absolute; border-radius: 50%;
+            animation: node-pulse 3s ease-in-out infinite;
+        }
+        @keyframes node-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.8); opacity: 0.9; }
+        }
+        .neural-spark {
+            position: absolute; width: 3px; height: 3px; border-radius: 50%;
+            animation: spark-travel 4s linear infinite;
+        }
+        @keyframes spark-travel {
+            0% { transform: translateX(0) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(300px) translateY(-20px); opacity: 0; }
+        }
+
+        .neural-label {
+            position: absolute; bottom: 8px; right: 12px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+            color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .neural-freq {
+            position: absolute; top: 8px; left: 12px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+            color: var(--purple); letter-spacing: 0.05em;
+        }
+
+        /* ── Memory Timeline ── */
+        .timeline { display: flex; flex-direction: column; gap: 2px; max-height: 460px; overflow-y: auto; }
+        .timeline-item {
+            display: flex; gap: 0.75rem; padding: 0.65rem 0.75rem;
+            background: rgba(0,0,0,0.2); border-radius: 6px;
+            border-left: 3px solid var(--cyan); transition: background 0.2s;
+        }
+        .timeline-item:hover { background: rgba(0,212,255,0.06); }
+        .timeline-item.importance-high { border-left-color: var(--gold); }
+        .timeline-item.importance-critical { border-left-color: var(--red); }
+        .timeline-time { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--cyan); white-space: nowrap; min-width: 52px; }
+        .timeline-body { flex: 1; min-width: 0; }
+        .timeline-content { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+        .timeline-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; }
+        .timeline-tag {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+            padding: 1px 6px; border-radius: 3px;
+        }
+        .tag-action { background: var(--green-dim); color: var(--green); }
+        .tag-observation { background: var(--cyan-dim); color: var(--cyan); }
+        .tag-trade { background: var(--gold-dim); color: var(--gold); }
+        .tag-learning { background: var(--purple-dim); color: var(--purple); }
+        .tag-warning { background: rgba(255,165,0,0.12); color: #ffa500; }
+        .importance-bar {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; color: var(--text-muted);
+        }
+        .importance-pip { width: 4px; height: 10px; border-radius: 1px; background: var(--border); }
+        .importance-pip.filled { background: var(--gold); }
+
+        /* ── Learning Progress ── */
+        .learning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem; }
+        .learn-stat {
+            text-align: center; padding: 0.85rem;
+            background: rgba(0,0,0,0.25); border-radius: 8px;
+        }
+        .learn-num { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; }
+        .learn-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 0.2rem; }
+        .grimoire-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto; }
+        .grimoire-entry {
+            padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.2);
+            border-radius: 6px; border-left: 3px solid var(--green);
+        }
+        .grimoire-entry.domain-trading { border-left-color: var(--gold); }
+        .grimoire-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+        .grimoire-meta { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.3rem; }
+        .confidence-bar {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--text-muted);
+        }
+        .conf-track { width: 60px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+        .conf-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+        .grimoire-domain {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.55rem;
+            padding: 1px 6px; border-radius: 3px;
+            background: var(--green-dim); color: var(--green);
+        }
+        .grimoire-domain.trading { background: var(--gold-dim); color: var(--gold); }
+
+        /* ── Self-Improvement Log ── */
+        .improve-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 1rem; }
+        .improve-stat { text-align: center; padding: 0.7rem; background: rgba(0,0,0,0.25); border-radius: 8px; }
+        .improve-num { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; }
+        .improve-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 0.15rem; }
+        .improve-list { display: flex; flex-direction: column; gap: 0.4rem; max-height: 260px; overflow-y: auto; }
+        .improve-item {
+            padding: 0.6rem 0.85rem; background: rgba(0,0,0,0.2);
+            border-radius: 6px; border-left: 3px solid var(--gold);
+        }
+        .improve-title { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.15rem; }
+        .improve-detail { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; }
+        .status-deployed { color: var(--green); }
+        .status-pending { color: var(--gold); }
+        .status-in-progress { color: var(--cyan); }
+        .status-rejected { color: var(--red); }
+
+        /* ── Error / loading states ── */
+        .loading-spinner { display: flex; justify-content: center; padding: 2.5rem; }
+        .spinner { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error-msg { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; font-style: italic; }
+        .empty-state { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+
+        /* Footer */
+        .footer {
+            position: relative; z-index: 1; text-align: center;
+            padding: 1.5rem; font-size: 0.7rem; color: var(--text-muted);
+            border-top: 1px solid var(--border); margin-top: 1.25rem;
+        }
+        .footer a { color: var(--purple); text-decoration: none; margin: 0 0.5rem; transition: color 0.2s; }
+        .footer a:hover { color: var(--cyan); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main { grid-template-columns: 1fr; padding: 0.75rem; }
+            .consciousness-grid, .learning-grid { grid-template-columns: 1fr 1fr; }
+            .improve-stats { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+        }
+        @media (max-width: 500px) {
+            .consciousness-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-left">
+        <a href="/" class="logo-link">
+            <img src="/assets/MON_official_logo.jpg" alt="GanjaMon">
+            <span>Grok & Mon</span>
+        </a>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/trading.html">Trading</a>
+            <a href="/social.html">Social</a>
+            <a href="/brain.html" class="active">Brain</a>
+            <a href="/a2a.html">A2A</a>
+            <a href="/art.html">Art</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <div class="thinking-indicator">
+            <div class="thinking-dots"><span></span><span></span><span></span></div>
+            THINKING
+        </div>
+        <span class="refresh-info" id="refresh-timer">Next refresh: 60s</span>
+    </div>
+</header>
+
+<main class="main">
+
+    <!-- Brain Activity Visualization -->
+    <div class="card glow-purple full-width" id="neural-card">
+        <div class="card-header">
+            <span class="card-title">Neural Activity</span>
+            <span class="card-badge badge-live">LIVE</span>
+        </div>
+        <div class="neural-vis" id="neural-vis">
+            <div class="neural-wave"></div>
+            <div class="neural-line"></div>
+            <div class="neural-line"></div>
+            <div class="neural-line"></div>
+            <!-- Nodes injected by JS -->
+            <div class="neural-freq" id="neural-freq">42.7 Hz alpha | 12.3 Hz theta</div>
+            <div class="neural-label">SYNAPTIC FIELD</div>
+        </div>
+    </div>
+
+    <!-- Consciousness State -->
+    <div class="card glow-purple" id="consciousness-card">
+        <div class="card-header">
+            <span class="card-title">Consciousness State</span>
+            <span class="card-badge badge-live">LIVE</span>
+        </div>
+        <div id="consciousness-content"><div class="loading-spinner"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- Learning Progress -->
+    <div class="card glow-green" id="learning-card">
+        <div class="card-header">
+            <span class="card-title">Learning Progress</span>
+            <span class="card-badge badge-cyan">GRIMOIRE</span>
+        </div>
+        <div id="learning-content"><div class="loading-spinner"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- Memory Timeline -->
+    <div class="card glow-cyan full-width" id="memory-card">
+        <div class="card-header">
+            <span class="card-title">Episodic Memory Timeline</span>
+            <span class="card-badge badge-purple">HIPPOCAMPUS</span>
+        </div>
+        <div id="memory-content"><div class="loading-spinner"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- Self-Improvement Log -->
+    <div class="card glow-gold full-width" id="improvement-card">
+        <div class="card-header">
+            <span class="card-title">Self-Improvement Log</span>
+            <span class="card-badge badge-gold">RALPH</span>
+        </div>
+        <div id="improvement-content"><div class="loading-spinner"><div class="spinner"></div></div></div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <a href="/">Home</a> <a href="/trading.html">Trading</a> <a href="/social.html">Social</a>
+    <a href="/a2a.html">A2A</a> <a href="/art.html">Art</a>
+    <a href="https://t.me/ganjamonai" target="_blank" rel="noopener">Telegram</a>
+    <a href="https://x.com/ganjamonai" target="_blank" rel="noopener">Twitter</a>
+    <br><span style="margin-top:6px;display:inline-block;">Grok & Mon - One Love</span>
+</footer>
+
+<script>
+// ============ Config ============
+const API = location.hostname === 'grokandmon.com'
+    ? 'https://grokandmon.com'
+    : location.port === '8000' ? location.origin : 'http://localhost:8000';
+const REFRESH = 60000;
+let countdown = 60;
+
+// ============ API fetch with timeout ============
+async function api(path) {
+    try {
+        const r = await fetch(`${API}${path}`, { signal: AbortSignal.timeout(12000) });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return await r.json();
+    } catch (e) {
+        console.warn(`[Brain] ${path}:`, e.message);
+        return null;
+    }
+}
+
+function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+function timeAgo(ts) {
+    if (!ts) return ''; try { const s = (Date.now() - new Date(ts).getTime()) / 1000;
+    if (s < 60) return `${Math.round(s)}s ago`; if (s < 3600) return `${Math.round(s/60)}m ago`;
+    if (s < 86400) return `${Math.round(s/3600)}h ago`; return `${Math.round(s/86400)}d ago`;
+    } catch { return ''; }
+}
+function fmtTime(ts) {
+    if (!ts) return '--:--'; try { const d = new Date(ts);
+    return isNaN(d) ? '--:--' : d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    } catch { return '--:--'; }
+}
+function confColor(c) { return c >= 0.7 ? 'var(--green)' : c >= 0.4 ? 'var(--gold)' : 'var(--red)'; }
+
+// ============ Mock data ============
+const MOCK = {
+    consciousness: {
+        state: 'REFLECTIVE',
+        focus: 'grow_optimization',
+        stuck: false,
+        memories_active: 47,
+        grimoire_entries: 12,
+        uptime_hours: 142.3,
+        inner_monologue: 'Di plant dem a stretch nice inna di veg cycle... VPD steady at 1.1 kPa, jah bless. Time fi check di alpha signals and see what di market a whisper.',
+        goal_progress: {
+            healthy_harvest: { score: 0.72, detail: 'On track for late April' },
+            trading_profit: { score: 0.45, detail: '$MON accumulation active' },
+            community_growth: { score: 0.61, detail: '247 Telegram members' },
+            self_improvement: { score: 0.58, detail: '14 Ralph loops deployed' },
+        },
+        timestamp: new Date(Date.now() - 180000).toISOString(),
+    },
+    memories: [
+        { time: new Date(Date.now() - 300000).toISOString(), content: 'Watered Granddaddy Purple Runtz 50ml - soil moisture at 42%, within optimal range', type: 'action', importance: 0.8 },
+        { time: new Date(Date.now() - 900000).toISOString(), content: 'Detected VPD drift 1.2 -> 1.4 kPa, adjusting humidifier target to 62%', type: 'observation', importance: 0.9 },
+        { time: new Date(Date.now() - 1800000).toISOString(), content: 'Alpha signal: $PEPE momentum shift detected on Base chain, volume spike 340%', type: 'trade', importance: 0.7 },
+        { time: new Date(Date.now() - 3600000).toISOString(), content: 'Light schedule confirmed: 18/6 photoperiod, 420W draw stable at canopy', type: 'observation', importance: 0.5 },
+        { time: new Date(Date.now() - 5400000).toISOString(), content: 'Grimoire updated: pH drift above 6.5 correlates with calcium lockout in GDP Runtz', type: 'learning', importance: 0.95 },
+        { time: new Date(Date.now() - 7200000).toISOString(), content: 'Cross-domain insight: Market fear index maps to conservative watering strategy', type: 'learning', importance: 0.6 },
+        { time: new Date(Date.now() - 10800000).toISOString(), content: 'Sensor stability score: 94.2% - Govee readings consistent over 6h window', type: 'observation', importance: 0.4 },
+        { time: new Date(Date.now() - 14400000).toISOString(), content: 'Posted daily update to Twitter and Farcaster - engagement score 7.2/10', type: 'action', importance: 0.5 },
+        { time: new Date(Date.now() - 18000000).toISOString(), content: 'Temperature anomaly: 29.1C spike at 14:22 - exhaust fan response within 45s', type: 'warning', importance: 0.85 },
+        { time: new Date(Date.now() - 21600000).toISOString(), content: 'Executed paper trade: Long $SOL 142.50 with 2.1x leverage, tight stop at 140.80', type: 'trade', importance: 0.7 },
+    ],
+    learning: {
+        grimoire_count: 12,
+        grow_learnings: 8,
+        trade_learnings: 4,
+        avg_confidence: 0.74,
+        entries: [
+            { text: 'Cannabis VPD optimal range narrowed to 1.0-1.2 kPa during mid-veg for GDP Runtz', confidence: 0.87, domain: 'grow', updated: '2d ago' },
+            { text: 'Watering at 42-48% soil moisture prevents overwatering while maintaining nutrient uptake', confidence: 0.82, domain: 'grow', updated: '3d ago' },
+            { text: 'Volume-weighted momentum on meme tokens peaks 15-45min after initial social signal', confidence: 0.71, domain: 'trading', updated: '1d ago' },
+            { text: 'LED intensity above 600 PPFD causes light stress in early veg - cap at 420W', confidence: 0.91, domain: 'grow', updated: '5d ago' },
+            { text: 'Polymarket odds shift >5% in 1h correlates with 73% directional accuracy for related tokens', confidence: 0.63, domain: 'trading', updated: '4d ago' },
+            { text: 'pH drift above 6.5 in coco correlates with calcium lockout symptoms within 48h', confidence: 0.88, domain: 'grow', updated: '1d ago' },
+            { text: 'DexScreener trending tokens with <$100K mcap have 40% rug rate in first 24h', confidence: 0.79, domain: 'trading', updated: '2d ago' },
+            { text: 'Night temperature drop of 5-8F during dark period promotes stem thickness in indica-dominant strains', confidence: 0.76, domain: 'grow', updated: '6d ago' },
+        ],
+    },
+    improvement: {
+        total: 23, deployed: 14, pending: 4, rejected: 3, in_progress: 2,
+        recent: [
+            { title: 'Enhanced VPD response - tighter humidity control loop', status: 'deployed', time: new Date(Date.now() - 7200000).toISOString() },
+            { title: 'Alpha signal aggregation - added Polymarket odds weighting', status: 'deployed', time: new Date(Date.now() - 86400000).toISOString() },
+            { title: 'Webcam white balance auto-correction under grow LEDs', status: 'deployed', time: new Date(Date.now() - 172800000).toISOString() },
+            { title: 'Cross-domain learning bridge: grow insights to trading risk', status: 'in-progress', time: new Date(Date.now() - 43200000).toISOString() },
+            { title: 'Autonomous $GANJA token launch on nad.fun', status: 'pending', time: new Date(Date.now() - 3600000).toISOString() },
+            { title: 'Social engagement scoring - weighted by platform reach', status: 'deployed', time: new Date(Date.now() - 259200000).toISOString() },
+            { title: 'Sensor fusion: combine Govee + Ecowitt for redundancy', status: 'pending', time: new Date(Date.now() - 14400000).toISOString() },
+            { title: 'Reduce OpenClaw cron overlap by staggering heavy jobs', status: 'deployed', time: new Date(Date.now() - 345600000).toISOString() },
+        ],
+    },
+};
+
+// ============ Render: Neural Visualization ============
+function initNeural() {
+    const vis = document.getElementById('neural-vis');
+    const colors = ['var(--purple)', 'var(--cyan)', 'var(--green)', 'var(--gold)'];
+    // Create pulsing nodes
+    for (let i = 0; i < 14; i++) {
+        const node = document.createElement('div');
+        node.className = 'neural-node';
+        const size = 4 + Math.random() * 6;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        Object.assign(node.style, {
+            width: size + 'px', height: size + 'px',
+            left: (5 + Math.random() * 90) + '%',
+            top: (10 + Math.random() * 80) + '%',
+            background: color,
+            boxShadow: `0 0 ${size * 2}px ${color}`,
+            animationDelay: (Math.random() * 3) + 's',
+            animationDuration: (2 + Math.random() * 4) + 's',
+        });
+        vis.appendChild(node);
+    }
+    // Create traveling sparks
+    for (let i = 0; i < 6; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'neural-spark';
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        Object.assign(spark.style, {
+            left: (Math.random() * 60) + '%',
+            top: (15 + Math.random() * 70) + '%',
+            background: color,
+            boxShadow: `0 0 6px ${color}`,
+            animationDelay: (Math.random() * 4) + 's',
+            animationDuration: (3 + Math.random() * 5) + 's',
+        });
+        vis.appendChild(spark);
+    }
+    // Rotate frequency label
+    setInterval(() => {
+        const alpha = (38 + Math.random() * 12).toFixed(1);
+        const theta = (8 + Math.random() * 8).toFixed(1);
+        document.getElementById('neural-freq').textContent =
+            `${alpha} Hz alpha | ${theta} Hz theta`;
+    }, 3000);
+}
+
+// ============ Render: Consciousness ============
+function renderConsciousness(data) {
+    const el = document.getElementById('consciousness-content');
+    if (!data) data = MOCK.consciousness;
+    const state = data.state || data.focus || 'UNKNOWN';
+    const memories = data.memories_active || 47;
+    const grimoire = data.grimoire_entries || 12;
+    const uptime = data.uptime_hours || 0;
+    const monologue = data.inner_monologue || '';
+    const goals = data.goal_progress || {};
+
+    let h = `<div class="consciousness-grid">
+        <div class="con-metric">
+            <div class="con-label">Mode</div>
+            <div class="con-value" style="color:var(--purple);font-size:1rem;">${esc(state.replace(/_/g,' '))}</div>
+            <div class="con-detail">${timeAgo(data.timestamp)}</div>
+        </div>
+        <div class="con-metric">
+            <div class="con-label">Active Memories</div>
+            <div class="con-value" style="color:var(--cyan);">${memories}</div>
+            <div class="con-detail">episodic store</div>
+        </div>
+        <div class="con-metric">
+            <div class="con-label">Grimoire Entries</div>
+            <div class="con-value" style="color:var(--green);">${grimoire}</div>
+            <div class="con-detail">learned truths</div>
+        </div>
+    </div>`;
+    const gk = Object.keys(goals);
+    if (gk.length) {
+        h += '<div class="goals-list">';
+        for (const k of gk) {
+            const g = goals[k], pct = Math.round((g.score||0)*100);
+            h += `<div class="goal-item">
+                <div class="goal-bar-wrap">
+                    <div class="goal-name">${esc(k.replace(/_/g,' '))}</div>
+                    <div class="goal-bar"><div class="goal-fill" style="width:${pct}%;background:${confColor(g.score||0)};"></div></div>
+                </div>
+                <div class="goal-pct">${pct}% - ${esc(g.detail||'')}</div>
+            </div>`;
+        }
+        h += '</div>';
+    }
+    if (monologue) h += `<div class="monologue">${esc(monologue)}</div>`;
+    el.innerHTML = h;
+}
+
+// ============ Render: Memory Timeline ============
+function renderMemories(data) {
+    const el = document.getElementById('memory-content');
+    let items = [];
+    if (data && data.episodic_memory) items = data.episodic_memory;
+    else if (data && data.decision_history) items = data.decision_history;
+    if (!items.length) items = MOCK.memories;
+    items.sort((a,b) => { try { return new Date(b.time||b.timestamp) - new Date(a.time||a.timestamp); } catch { return 0; } });
+    if (!items.length) { el.innerHTML = '<div class="empty-state">No memories recorded yet.</div>'; return; }
+    let h = '<div class="timeline">';
+    for (const m of items.slice(0, 20)) {
+        const t = m.time || m.timestamp || '';
+        const content = m.content || m.summary || m.event || '';
+        const type = m.type || m.action_type || 'observation';
+        const imp = m.importance || m.score || 0.5;
+        const impClass = imp >= 0.9 ? 'importance-critical' : imp >= 0.75 ? 'importance-high' : '';
+        const tagClass = type.includes('action') || type === 'action' ? 'tag-action'
+            : type.includes('trade') ? 'tag-trade'
+            : type.includes('learn') ? 'tag-learning'
+            : type.includes('warn') ? 'tag-warning'
+            : 'tag-observation';
+        const pips = [1,2,3,4,5].map(i => `<div class="importance-pip${imp >= i*0.2 ? ' filled' : ''}"></div>`).join('');
+        h += `<div class="timeline-item ${impClass}">
+            <div class="timeline-time">${fmtTime(t)}</div>
+            <div class="timeline-body">
+                <div class="timeline-content">${esc(String(content).slice(0,200))}</div>
+                <div class="timeline-meta">
+                    <span class="timeline-tag ${tagClass}">${esc(type)}</span>
+                    <span class="importance-bar">${pips}</span>
+                    <span style="font-size:0.55rem;color:var(--text-muted)">${timeAgo(t)}</span>
+                </div>
+            </div>
+        </div>`;
+    }
+    h += '</div>';
+    el.innerHTML = h;
+}
+
+// ============ Render: Learning Progress ============
+function renderLearning(data) {
+    const el = document.getElementById('learning-content');
+    if (!data) data = MOCK.learning;
+    const gc = data.grimoire_count || data.entries?.length || 0;
+    const grow = data.grow_learnings || data.entries?.filter(e => e.domain === 'grow').length || 0;
+    const trade = data.trade_learnings || data.entries?.filter(e => e.domain === 'trading').length || 0;
+    const entries = data.entries || [];
+    let h = `<div class="learning-grid">
+        <div class="learn-stat">
+            <div class="learn-num" style="color:var(--green);">${gc}</div>
+            <div class="learn-label">Grimoire Entries</div>
+        </div>
+        <div class="learn-stat">
+            <div class="learn-num" style="color:var(--cyan);">${grow}</div>
+            <div class="learn-label">Grow Learnings</div>
+        </div>
+        <div class="learn-stat">
+            <div class="learn-num" style="color:var(--gold);">${trade}</div>
+            <div class="learn-label">Trade Learnings</div>
+        </div>
+    </div>`;
+    if (entries.length) {
+        h += '<div class="grimoire-list">';
+        for (const e of entries) {
+            const conf = e.confidence || 0;
+            const pct = Math.round(conf * 100);
+            const isTrade = e.domain === 'trading';
+            h += `<div class="grimoire-entry${isTrade ? ' domain-trading' : ''}">
+                <div class="grimoire-text">${esc(e.text)}</div>
+                <div class="grimoire-meta">
+                    <span class="grimoire-domain${isTrade ? ' trading' : ''}">${esc(e.domain || 'grow')}</span>
+                    <span class="confidence-bar">
+                        <span class="conf-track"><span class="conf-fill" style="width:${pct}%;background:${confColor(conf)};"></span></span>
+                        ${pct}%
+                    </span>
+                    <span style="font-size:0.55rem;color:var(--text-muted)">${esc(e.updated || '')}</span>
+                </div>
+            </div>`;
+        }
+        h += '</div>';
+    } else {
+        h += '<div class="empty-state">Grimoire is empty. Agent is gathering learnings...</div>';
+    }
+    el.innerHTML = h;
+}
+
+// ============ Render: Self-Improvement ============
+function renderImprovement(data) {
+    const el = document.getElementById('improvement-content');
+    if (!data) data = MOCK.improvement;
+    const tot = data.total || 0, dep = data.deployed || 0, pen = data.pending || 0, rej = data.rejected || 0, ip = data.in_progress || 0;
+    const recent = data.recent || data.recent_upgrades || [];
+    let h = `<div class="improve-stats">
+        <div class="improve-stat"><div class="improve-num" style="color:var(--purple);">${tot}</div><div class="improve-label">Total</div></div>
+        <div class="improve-stat"><div class="improve-num" style="color:var(--green);">${dep}</div><div class="improve-label">Deployed</div></div>
+        <div class="improve-stat"><div class="improve-num" style="color:var(--gold);">${pen}</div><div class="improve-label">Pending</div></div>
+        <div class="improve-stat"><div class="improve-num" style="color:var(--cyan);">${ip}</div><div class="improve-label">In Progress</div></div>
+    </div>`;
+    if (recent.length) {
+        h += '<div class="improve-list">';
+        for (const u of recent.slice(0, 10)) {
+            const title = u.title || u.name || u.description || 'Improvement';
+            const status = u.status || 'pending';
+            const cls = status === 'deployed' ? 'status-deployed' : status === 'pending' ? 'status-pending'
+                : status === 'in-progress' || status === 'in_progress' ? 'status-in-progress' : 'status-rejected';
+            h += `<div class="improve-item">
+                <div class="improve-title">${esc(title)}</div>
+                <div class="improve-detail ${cls}">${esc(status.toUpperCase())} ${u.time ? '- ' + timeAgo(u.time) : ''}</div>
+            </div>`;
+        }
+        h += '</div>';
+    } else {
+        h += '<div class="empty-state">No self-improvement records yet.</div>';
+    }
+    el.innerHTML = h;
+}
+
+// ============ Data loading ============
+async function loadAll() {
+    const [consciousness, brain, improvement, learning, stats] = await Promise.all([
+        api('/api/agent/consciousness'),
+        api('/api/agent/brain-activity'),
+        api('/api/agent/self-improvement'),
+        api('/api/agent/learning'),
+        api('/api/stats'),
+    ]);
+    renderConsciousness(consciousness);
+    renderMemories(brain);
+    renderImprovement(improvement);
+    // Merge stats into learning if available
+    let learnData = learning;
+    if (!learnData && stats) {
+        learnData = { grimoire_count: stats.grimoire_entries, grow_learnings: stats.grow_learnings, trade_learnings: stats.trade_learnings, entries: [] };
+    }
+    renderLearning(learnData);
+}
+
+// ============ Refresh countdown ============
+function tick() {
+    countdown--;
+    if (countdown <= 0) { countdown = 60; loadAll(); }
+    document.getElementById('refresh-timer').textContent = `Next refresh: ${countdown}s`;
+}
+
+// ============ Init ============
+document.addEventListener('DOMContentLoaded', () => {
+    initNeural();
+    loadAll();
+    setInterval(tick, 1000);
+});
+</script>
+</body>
+</html>
+<!-- deployed 20260216T044727Z -->

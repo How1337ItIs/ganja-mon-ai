@@ -1,0 +1,809 @@
+/**
+ * Grok & Mon Mobile & Accessibility Enhancements
+ * Responsive design, touch interactions, keyboard navigation, ARIA support
+ */
+
+/* ============================================
+   GLOBAL TOUCH IMPROVEMENTS
+   ============================================ */
+
+/* Ensure minimum touch target size (44x44px per WCAG) */
+button,
+.btn,
+a.btn,
+input[type="submit"],
+input[type="button"],
+.clickable,
+[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+}
+
+/* Prevent double-tap zoom on interactive elements */
+a,
+button,
+input,
+select,
+textarea {
+    touch-action: manipulation;
+}
+
+/* Improve tap highlight */
+* {
+    -webkit-tap-highlight-color: rgba(255, 215, 0, 0.3);
+}
+
+/* ============================================
+   FOCUS STATES (Accessibility)
+   ============================================ */
+
+/* Remove default outline and add custom focus */
+:focus {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 3px solid var(--rasta-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Better focus for buttons */
+button:focus-visible,
+.btn:focus-visible,
+a:focus-visible {
+    outline: 3px solid var(--rasta-gold);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.2);
+}
+
+/* Focus for form inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    border-color: var(--rasta-gold);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+    position: fixed;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--rasta-gold);
+    color: #000;
+    padding: 12px 24px;
+    font-weight: bold;
+    z-index: 100000;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* ============================================
+   SCREEN READER UTILITIES
+   ============================================ */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* Announce to screen readers */
+[aria-live] {
+    position: absolute;
+    left: -9999px;
+}
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+    position: static;
+}
+
+/* ============================================
+   COLOR CONTRAST FIXES
+   ============================================ */
+
+/* Ensure sufficient contrast for text */
+.text-muted,
+.text-secondary {
+    color: #b0b0c0 !important; /* Increased from #8888A0 for better contrast */
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --text-primary: #ffffff;
+        --text-secondary: #e0e0e0;
+        --text-muted: #c0c0c0;
+        --border: rgba(255, 255, 255, 0.4);
+    }
+
+    .section-card,
+    .sensor-card,
+    .device-card {
+        border-width: 2px;
+    }
+}
+
+/* ============================================
+   LARGE BREAKPOINT (Tablets Landscape)
+   ============================================ */
+@media (max-width: 1200px) {
+    .main-container {
+        max-width: 100%;
+        padding: 1rem;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .growth-timeline {
+        grid-column: span 2;
+    }
+}
+
+/* ============================================
+   MEDIUM BREAKPOINT (Tablets Portrait)
+   ============================================ */
+@media (max-width: 900px) {
+    .header {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .logo-text {
+        font-size: 1.4rem;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .health-score-card,
+    .vpd-gauge-card {
+        order: -1;
+    }
+
+    .cannabis-info-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .sensors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .devices-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Stack webcam and output vertically */
+    .webcam-section,
+    .output-section {
+        max-height: none;
+    }
+}
+
+/* ============================================
+   SMALL BREAKPOINT (Mobile Landscape)
+   ============================================ */
+@media (max-width: 768px) {
+    .header {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.75rem;
+    }
+
+    .main-container {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    /* Timeline stages - horizontal scroll on mobile */
+    .timeline-stages {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .stage {
+        scroll-snap-align: center;
+        flex-shrink: 0;
+        min-width: 70px;
+    }
+
+    .stage-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .stage-label {
+        font-size: 0.6rem;
+    }
+
+    /* Sensors as 2 columns */
+    .sensors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sensor-value {
+        font-size: 1.2rem;
+    }
+
+    .sensor-label {
+        font-size: 0.6rem;
+    }
+
+    /* Devices grid */
+    .devices-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .device-card {
+        padding: 0.6rem;
+    }
+
+    /* Photoperiod responsive */
+    .photoperiod-display {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .light-period,
+    .dark-period {
+        padding: 0.5rem 1rem;
+    }
+
+    .period-hours {
+        font-size: 1.2rem;
+    }
+
+    /* About section */
+    .about-features {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .about-feature {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================
+   EXTRA SMALL BREAKPOINT (Mobile Portrait)
+   ============================================ */
+@media (max-width: 480px) {
+    .logo {
+        gap: 0.5rem;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .logo-text {
+        font-size: 1.2rem;
+    }
+
+    .logo-sub {
+        font-size: 0.7rem;
+    }
+
+    /* Reduce section padding */
+    .section-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .section-title {
+        font-size: 0.8rem;
+    }
+
+    /* Health score ring smaller */
+    .health-ring {
+        width: 100px;
+        height: 100px;
+    }
+
+    .health-value {
+        font-size: 1.5rem;
+    }
+
+    /* Sensors as single column on very small screens */
+    .sensors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* VPD gauge */
+    .vpd-labels {
+        font-size: 0.55rem;
+    }
+
+    .vpd-current {
+        font-size: 1.2rem;
+    }
+
+    /* Chat widget adjustments */
+    .chat-widget {
+        width: calc(100% - 20px);
+        left: 10px;
+        right: 10px;
+        max-height: 350px;
+    }
+
+    .chat-widget.collapsed {
+        width: 160px;
+    }
+
+    /* Winamp player adjustments */
+    .winamp-player {
+        width: 240px;
+        right: 5px;
+        bottom: 65px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 0.75rem 1rem;
+        font-size: 0.7rem;
+    }
+
+    /* Token metrics */
+    .token-metrics {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .metric-value {
+        font-size: 1rem;
+    }
+
+    /* Strain stats */
+    .strain-stats {
+        grid-template-columns: 1fr;
+    }
+
+    /* Mobile music bar bottom spacing */
+    .chat-widget {
+        bottom: 56px !important;
+    }
+
+    .chat-widget.collapsed {
+        bottom: 56px !important;
+    }
+
+    #visualizer-toggle {
+        bottom: 56px !important;
+    }
+}
+
+/* ============================================
+   MOBILE-FIRST LAYOUT FIX (< 768px)
+   Prioritize webcam + key info, compact cards
+   ============================================ */
+@media (max-width: 768px) {
+    /* Tighter main container on mobile */
+    .main-container {
+        padding: 0.75rem !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Webcam first on mobile */
+    .main-container > .webcam-section {
+        order: -10 !important;
+    }
+
+    /* Stats row compact */
+    .stats-row {
+        gap: 0.75rem !important;
+    }
+
+    /* Compact health score card */
+    .health-score-card {
+        padding: 1rem !important;
+    }
+
+    .health-ring {
+        width: 90px !important;
+        height: 90px !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Compact photoperiod card */
+    .photoperiod-card {
+        padding: 1rem !important;
+    }
+
+    .photoperiod-card .section-title {
+        font-size: 0.85rem;
+    }
+
+    /* Compact strain card */
+    .strain-card {
+        padding: 1rem !important;
+    }
+
+    /* Reduce section card padding globally */
+    .section-card {
+        padding: 0.75rem !important;
+        border-radius: 0.75rem !important;
+    }
+
+    .section-card .section-header {
+        padding: 0.5rem 0 !important;
+    }
+
+    /* Compact sensor cards */
+    .sensor-card {
+        padding: 0.5rem !important;
+    }
+
+    /* Device cards compact */
+    .device-card {
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    /* Webcam container max height */
+    .webcam-container {
+        max-height: 250px;
+        overflow: hidden;
+    }
+
+    .webcam-img {
+        max-height: 250px;
+        object-fit: cover;
+    }
+
+    /* Compact Grok wisdom section */
+    .output-section {
+        max-height: 200px !important;
+        overflow-y: auto;
+    }
+
+    /* Token section compact */
+    .token-section {
+        padding: 1rem !important;
+    }
+
+    .token-warning {
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .token-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
+    }
+
+    .token-actions .btn {
+        flex: 1 1 calc(50% - 0.25rem);
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    /* ERC-8004 Agent section compact */
+    .agent-section {
+        padding: 1rem !important;
+    }
+
+    .agent-skills-list,
+    .agent-features-list {
+        font-size: 0.8rem;
+    }
+
+    .agent-platforms-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+
+    /* About section compact */
+    #about-section {
+        padding: 1rem !important;
+    }
+
+    /* Grow archive compact */
+    #grow-archive {
+        padding: 1rem !important;
+    }
+
+    /* Signup section compact */
+    #signup-section {
+        padding: 1rem !important;
+    }
+
+    /* Timeline stages smaller */
+    .stage {
+        min-width: 55px !important;
+    }
+
+    .stage-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .stage-label {
+        font-size: 0.55rem !important;
+    }
+
+    /* Collapse chat widget by default on mobile */
+    .chat-widget {
+        max-height: 44px !important;
+        width: 140px !important;
+        left: auto !important;
+        right: 10px !important;
+        bottom: 56px !important;
+        border-radius: 8px !important;
+        opacity: 0.9;
+    }
+
+    .chat-widget .chat-messages,
+    .chat-widget .chat-input-area {
+        display: none;
+    }
+
+    .chat-widget.expanded {
+        max-height: 350px !important;
+        width: calc(100% - 20px) !important;
+        left: 10px !important;
+        right: 10px !important;
+        opacity: 1;
+    }
+
+    .chat-widget.expanded .chat-messages,
+    .chat-widget.expanded .chat-input-area {
+        display: flex;
+    }
+
+    /* Hide visualizer toggle on mobile (no full Webamp, no point) */
+    #visualizer-toggle {
+        display: none !important;
+    }
+
+    /* Hide milkdrop canvas on mobile */
+    #milkdrop-container,
+    [id*="butterchurn"] {
+        display: none !important;
+    }
+
+    /* Bottom padding for mobile music bar */
+    .footer {
+        padding-bottom: 56px !important;
+    }
+
+    main.main-container {
+        padding-bottom: 60px !important;
+    }
+}
+
+/* ============================================
+   SAFE AREA INSETS (iPhone X+)
+   ============================================ */
+@supports (padding: max(0px)) {
+    .header {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .main-container {
+        padding-left: max(0.75rem, env(safe-area-inset-left));
+        padding-right: max(0.75rem, env(safe-area-inset-right));
+    }
+
+    .chat-widget {
+        left: max(10px, env(safe-area-inset-left));
+        bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    .footer {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* ============================================
+   LANDSCAPE MOBILE
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .main-container {
+        padding-top: 0.5rem;
+    }
+
+    .webcam-container {
+        min-height: 200px;
+    }
+
+    .chat-widget {
+        max-height: 200px;
+    }
+
+    .winamp-player {
+        bottom: 10px;
+    }
+}
+
+/* ============================================
+   DARK MODE ENHANCEMENT
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+    /* Already dark, but ensure good contrast */
+    ::selection {
+        background: var(--rasta-gold);
+        color: #000;
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    .chat-widget,
+    .winamp-player,
+    #vinyl-record,
+    #smoke-canvas,
+    #trichome-sparkles,
+    #crt-overlay,
+    #effects-settings-panel,
+    .webcam-fullscreen {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .section-card {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+    }
+}
+
+/* ============================================
+   MOTION PREFERENCES
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .haze-blob {
+        animation: none !important;
+    }
+}
+
+/* ============================================
+   SWIPE GESTURES SUPPORT
+   ============================================ */
+.swipeable {
+    touch-action: pan-x;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.swipeable > * {
+    scroll-snap-align: start;
+}
+
+/* Hide scrollbar for swipeable elements */
+.swipeable::-webkit-scrollbar {
+    display: none;
+}
+
+.swipeable {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+.loading-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bg-card) 25%,
+        var(--bg-card-hover) 50%,
+        var(--bg-card) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ============================================
+   ERROR STATES
+   ============================================ */
+.error-message {
+    background: rgba(200, 16, 46, 0.1);
+    border: 1px solid var(--rasta-red);
+    color: var(--rasta-red);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.error-message::before {
+    content: '\26A0';
+    font-size: 1.2em;
+}
+
+/* ============================================
+   SUCCESS STATES
+   ============================================ */
+.success-message {
+    background: rgba(0, 155, 58, 0.1);
+    border: 1px solid var(--rasta-green);
+    color: var(--rasta-green);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.success-message::before {
+    content: '\2714';
+    font-size: 1.2em;
+}

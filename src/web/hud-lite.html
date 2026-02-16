@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GanjaMon Kiosk</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: monospace;
+            background: #000;
+            color: #0f0;
+            height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+        .title { font-size: 28px; color: #ffc700; font-weight: bold; }
+        .clock { font-size: 22px; color: #888; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            height: calc(100vh - 80px);
+        }
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 16px;
+            overflow: hidden;
+        }
+        .card-title {
+            font-size: 12px;
+            color: #ffc700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 6px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .metric-label { color: #888; font-size: 14px; }
+        .metric-value { color: #0f0; font-size: 14px; font-weight: bold; }
+        .metric-value.warn { color: #ffc700; }
+        .metric-value.alert { color: #f33; }
+        .big-value { font-size: 48px; text-align: center; padding: 20px 0; }
+        .webcam-area { text-align: center; }
+        .webcam-area img {
+            max-width: 100%;
+            max-height: calc(100% - 30px);
+            border: 1px solid #333;
+        }
+        .ai-text {
+            font-size: 13px;
+            color: #ccc;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: calc(100% - 30px);
+        }
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #111;
+            border-top: 1px solid #333;
+            padding: 4px 20px;
+            font-size: 11px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+        .online { color: #0f0; }
+        .offline { color: #f33; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">GANJAMON AI</div>
+        <div class="clock" id="clock">--:--:--</div>
+    </div>
+
+    <div class="grid">
+        <!-- Environment -->
+        <div class="card">
+            <div class="card-title">Environment</div>
+            <div class="metric">
+                <span class="metric-label">Temperature</span>
+                <span class="metric-value" id="temp">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Humidity</span>
+                <span class="metric-value" id="humidity">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">VPD</span>
+                <span class="metric-value" id="vpd">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">CO2</span>
+                <span class="metric-value" id="co2">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Grow Day</span>
+                <span class="metric-value" id="day">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Stage</span>
+                <span class="metric-value" id="stage">--</span>
+            </div>
+        </div>
+
+        <!-- Webcam -->
+        <div class="card webcam-area">
+            <div class="card-title">Live View</div>
+            <img id="webcam" src="/api/webcam/latest" alt="Plant cam">
+        </div>
+
+        <!-- AI Brain -->
+        <div class="card">
+            <div class="card-title">AI Decision</div>
+            <div class="ai-text" id="ai-text">Waiting for data...</div>
+        </div>
+
+        <!-- Devices -->
+        <div class="card">
+            <div class="card-title">Devices</div>
+            <div id="devices">Loading...</div>
+        </div>
+
+        <!-- Token -->
+        <div class="card">
+            <div class="card-title">$MON Token</div>
+            <div class="metric">
+                <span class="metric-label">Price</span>
+                <span class="metric-value" id="token-price">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Market Cap</span>
+                <span class="metric-value" id="token-mcap">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Holders</span>
+                <span class="metric-value" id="token-holders">--</span>
+            </div>
+        </div>
+
+        <!-- System -->
+        <div class="card">
+            <div class="card-title">System</div>
+            <div class="metric">
+                <span class="metric-label">Status</span>
+                <span class="metric-value online" id="sys-status">ONLINE</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Last Update</span>
+                <span class="metric-value" id="sys-update">--</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Uptime</span>
+                <span class="metric-value" id="sys-uptime">--</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="status-left">GanjaMon AI Kiosk v2 (lite)</span>
+        <span id="status-right">Refresh: 60s</span>
+    </div>
+
+    <script>
+        const API = '';
+        let startTime = Date.now();
+
+        function updateClock() {
+            document.getElementById('clock').textContent =
+                new Date().toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        async function fetchData() {
+            try {
+                const [sensors, devices, ai, stage, token] = await Promise.all([
+                    fetch(API + '/api/sensors/live').then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(API + '/api/devices/latest').then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(API + '/api/ai/latest').then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(API + '/api/grow/stage').then(r => r.ok ? r.json() : null).catch(() => null),
+                    fetch(API + '/api/token/metrics').then(r => r.ok ? r.json() : null).catch(() => null),
+                ]);
+
+                if (sensors) {
+                    const t = sensors.temperature_f || sensors.air_temp;
+                    const h = sensors.humidity_percent || sensors.humidity;
+                    const v = sensors.vpd_kpa || sensors.vpd;
+                    const c = sensors.co2_ppm || sensors.co2;
+                    if (t) document.getElementById('temp').textContent = Number(t).toFixed(1) + 'F';
+                    if (h) document.getElementById('humidity').textContent = Number(h).toFixed(1) + '%';
+                    if (v) document.getElementById('vpd').textContent = Number(v).toFixed(2) + ' kPa';
+                    if (c) document.getElementById('co2').textContent = c + ' ppm';
+                }
+
+                if (stage) {
+                    document.getElementById('day').textContent = stage.day || '--';
+                    document.getElementById('stage').textContent = stage.stage || '--';
+                }
+
+                if (ai && ai.output_text) {
+                    document.getElementById('ai-text').textContent = ai.output_text.substring(0, 500);
+                }
+
+                if (devices) {
+                    let html = '';
+                    const devList = Array.isArray(devices) ? devices : (devices.devices || []);
+                    devList.forEach(d => {
+                        const name = d.name || d.device_name || 'Unknown';
+                        const state = d.state || d.power_state || '?';
+                        const color = state === 'on' ? '#0f0' : '#f33';
+                        html += `<div class="metric"><span class="metric-label">${name}</span><span class="metric-value" style="color:${color}">${state.toUpperCase()}</span></div>`;
+                    });
+                    document.getElementById('devices').innerHTML = html || '<div style="color:#666">No devices</div>';
+                }
+
+                if (token) {
+                    const p = token.price || token.price_usd;
+                    if (p) document.getElementById('token-price').textContent = '$' + Number(p).toFixed(6);
+                    if (token.market_cap) document.getElementById('token-mcap').textContent = '$' + Number(token.market_cap).toFixed(0);
+                    if (token.holders) document.getElementById('token-holders').textContent = token.holders;
+                }
+
+                // Update webcam
+                document.getElementById('webcam').src = '/api/webcam/latest?t=' + Date.now();
+
+                // System info
+                document.getElementById('sys-status').textContent = 'ONLINE';
+                document.getElementById('sys-status').className = 'metric-value online';
+                document.getElementById('sys-update').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+                const mins = Math.floor((Date.now() - startTime) / 60000);
+                document.getElementById('sys-uptime').textContent = mins + ' min';
+
+            } catch (e) {
+                document.getElementById('sys-status').textContent = 'ERROR';
+                document.getElementById('sys-status').className = 'metric-value alert';
+            }
+        }
+
+        // Init
+        updateClock();
+        fetchData();
+        setInterval(updateClock, 10000);
+        setInterval(fetchData, 60000);
+    </script>
+</body>
+</html>

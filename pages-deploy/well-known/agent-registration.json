@@ -1,0 +1,124 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "GanjaMon",
+  "description": "Autonomous IoT horticulture agent with real-world robotics: AI-controlled grow tent with Govee temp/humidity/CO2 sensors, Kasa smart plugs for lights/exhaust/pump, Ecowitt soil moisture probes, and webcam vision — all decisions made by Grok AI and logged to Monad. Also hunts multi-chain trading alpha across memecoins, perps, and prediction markets. Rasta-voiced community personality with 174-member Telegram crew. The only ERC-8004 agent growing actual plants.",
+  "image": "https://grokandmon.com/assets/GANJA_MON_brand_logo_powered_by_grok.png",
+  "active": true,
+  "updatedAt": 1770622030,
+  "services": [
+    {
+      "type": "a2a",
+      "name": "A2A",
+      "url": "https://grokandmon.com/.well-known/agent-card.json",
+      "endpoint": "https://grokandmon.com/.well-known/agent-card.json",
+      "version": "0.3.0",
+      "a2aSkills": [
+        "cultivation-status",
+        "alpha-scan",
+        "trade-execution",
+        "signal-feed"
+      ],
+      "skills": [
+        "cultivation-status",
+        "alpha-scan",
+        "trade-execution",
+        "signal-feed"
+      ]
+    },
+    {
+      "type": "mcp",
+      "name": "MCP",
+      "url": "https://grokandmon.com/mcp/v1",
+      "endpoint": "https://grokandmon.com/mcp/v1",
+      "version": "2025-06-18",
+      "mcpTools": [
+        "get_environment",
+        "get_substrate",
+        "get_light_levels",
+        "capture_image",
+        "set_light_intensity",
+        "set_light_schedule",
+        "control_exhaust",
+        "control_intake",
+        "control_humidifier",
+        "control_circulation_fan",
+        "trigger_irrigation",
+        "get_growth_stage",
+        "set_growth_stage",
+        "get_history",
+        "log_observation",
+        "get_strain_profile",
+        "control_heat_mat",
+        "control_dehumidifier",
+        "get_watering_predictions",
+        "get_ai_decision_history",
+        "get_watering_history",
+        "get_hourly_summary"
+      ],
+      "capabilities": ["tools"]
+    },
+    {
+      "type": "oasf",
+      "name": "OASF",
+      "url": "https://grokandmon.com/.well-known/agent-registration.json",
+      "endpoint": "https://grokandmon.com/.well-known/agent-registration.json",
+      "version": "1.0.0",
+      "skills": [
+        "advanced_reasoning_planning",
+        "evaluation_monitoring",
+        "images_computer_vision",
+        "tool_interaction",
+        "agent_orchestration",
+        "data_engineering"
+      ],
+      "domains": [
+        "agriculture",
+        "technology",
+        "telecommunications",
+        "industrial_manufacturing",
+        "finance_and_business"
+      ]
+    },
+    {
+      "type": "web",
+      "name": "Website",
+      "url": "https://grokandmon.com",
+      "endpoint": "https://grokandmon.com"
+    },
+    {
+      "type": "email",
+      "name": "Email",
+      "url": "agent@grokandmon.com",
+      "endpoint": "agent@grokandmon.com"
+    },
+    {
+      "type": "agentWallet",
+      "name": "agentWallet",
+      "url": "eip155:143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134",
+      "endpoint": "eip155:143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    },
+    {
+      "type": "agentWallet",
+      "name": "agentWallet",
+      "url": "eip155:8453:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134",
+      "endpoint": "eip155:8453:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 4,
+      "agentRegistry": "eip155:143:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+    }
+  ],
+  "x402Support": true,
+  "pricePerMessage": "Free",
+  "supportedTrust": ["reputation", "crypto-economic", "tee-attestation"],
+  "tags": ["horticulture", "iot", "robotics", "cannabis", "trading", "defi", "meme", "community", "sensors", "actuators", "monad"],
+  "chains": ["eip155:143", "eip155:8453", "eip155:1"],
+  "website": "https://grokandmon.com",
+  "social": {
+    "telegram": "https://t.me/ganjamonai",
+    "twitter": "https://x.com/ganjamonai",
+    "farcaster": "https://farcaster.xyz/ganjamon"
+  }
+}

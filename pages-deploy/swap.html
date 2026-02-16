@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$MON Swap - Grok & Mon</title>
+    <link rel="icon" type="image/png" href="assets/MON_official_logo.jpg">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-input: #1a1a24;
+            --border: #2a2a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666;
+            --accent-green: #4ade80;
+            --accent-purple: #a855f7;
+            --accent-red: #f87171;
+            --accent-yellow: #fbbf24;
+            --accent-blue: #60a5fa;
+            --glow-green: rgba(74, 222, 128, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Main Container */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Warning Banner */
+        .warning-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(248, 113, 113, 0.15));
+            border: 1px solid var(--accent-yellow);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .warning-banner h2 {
+            color: var(--accent-yellow);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .warning-banner p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .warning-banner ul {
+            text-align: left;
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .warning-banner li {
+            margin: 0.5rem 0;
+        }
+
+        /* Vibe-Coded Disclaimer Banner */
+        .vibe-coded-banner {
+            background: linear-gradient(135deg, #8B0000 0%, #4a0000 100%);
+            border: 2px solid #ff4444;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            animation: pulse-warning 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(255, 68, 68, 0.6); }
+        }
+
+        .vibe-coded-banner h2 {
+            color: #ff6666;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .vibe-coded-banner p {
+            color: #ffaaaa;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+        }
+
+        .vibe-coded-banner .highlight {
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        /* Swap Card */
+        .swap-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px var(--glow-green);
+        }
+
+        .swap-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .swap-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .settings-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* Step Indicator */
+        .steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .step.active {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--accent-green);
+        }
+
+        .step.completed {
+            color: var(--accent-green);
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .step.active .step-number,
+        .step.completed .step-number {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+        }
+
+        .step-arrow {
+            color: var(--border);
+            font-size: 1rem;
+        }
+
+        /* Token Input */
+        .token-input-group {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .token-input-group:focus-within {
+            border-color: var(--accent-green);
+        }
+
+        .token-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .token-input-label span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .balance {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .balance:hover {
+            color: var(--accent-green);
+        }
+
+        .amount-usd {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+            padding-left: 0.25rem;
+        }
+
+        .price-impact-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .price-impact-display.low { color: var(--accent-green); }
+        .price-impact-display.medium { color: var(--accent-yellow); }
+        .price-impact-display.high { color: var(--accent-red); background: rgba(248, 113, 113, 0.1); }
+
+        .token-input-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .amount-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .amount-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .token-select {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .token-select:hover {
+            border-color: var(--accent-green);
+        }
+
+        .token-select img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+        }
+
+        .token-select .symbol {
+            font-weight: 600;
+        }
+
+        .token-select .chain {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Swap Arrow */
+        .swap-arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -0.5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .swap-arrow {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        /* Output Preview */
+        .output-preview {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid var(--accent-green);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .output-preview .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .output-preview .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .output-preview .usd {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Quote Details */
+        .quote-details {
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+
+        .quote-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .quote-row:last-child {
+            border-bottom: none;
+        }
+
+        .quote-row .label {
+            color: var(--text-muted);
+        }
+
+        .quote-row .value {
+            color: var(--text-secondary);
+        }
+
+        .quote-row .value.warning {
+            color: var(--accent-yellow);
+        }
+
+        .quote-row .value.danger {
+            color: var(--accent-red);
+        }
+
+        /* Slippage Setting */
+        .slippage-section {
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .slippage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .slippage-header .label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .slippage-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .slippage-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .slippage-btn:hover {
+            border-color: var(--accent-green);
+        }
+
+        .slippage-btn.active {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            border-color: var(--accent-green);
+        }
+
+        .slippage-btn.degen {
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-purple));
+            border: none;
+        }
+
+        .slippage-warning {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--accent-yellow);
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--accent-yellow);
+        }
+
+        /* Risk Checkbox */
+        .risk-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 0.75rem;
+        }
+
+        .risk-checkbox input {
+            margin-top: 0.25rem;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-green);
+        }
+
+        .risk-checkbox label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .connect-btn, .swap-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .connect-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .swap-btn {
+            background: linear-gradient(135deg, var(--accent-green), #22c55e);
+            color: var(--bg-dark);
+        }
+
+        .swap-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--glow-green);
+        }
+
+        .swap-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Wallet Display */
+        .wallet-connected {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .wallet-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer a {
+            color: var(--accent-green);
+        }
+
+        /* Token Selector Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .chain-list, .token-list, .wallet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--bg-input);
+        }
+
+        .wallet-option:hover {
+            border-color: var(--accent-green);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .wallet-option.detected {
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+
+        .wallet-option .wallet-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 0.5rem;
+            object-fit: contain;
+        }
+
+        .wallet-option .wallet-info {
+            flex: 1;
+        }
+
+        .wallet-option .wallet-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .wallet-option .wallet-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .wallet-option .wallet-status.installed {
+            color: var(--accent-green);
+        }
+
+        .wallet-section-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0 0.25rem;
+        }
+
+        .chain-item, .token-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chain-item:hover, .token-item:hover {
+            border-color: var(--accent-green);
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .chain-item img, .token-item img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .chain-item .name, .token-item .name {
+            font-weight: 600;
+        }
+
+        .chain-item .id, .token-item .balance {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .main {
+                padding: 1rem;
+            }
+
+            .swap-card {
+                padding: 1rem;
+            }
+
+            .amount-input {
+                font-size: 1.5rem;
+            }
+
+            .steps {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* TEST MODE banner */
+        .test-mode-banner {
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-purple));
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Direction Toggle */
+        .direction-toggle {
+            display: flex;
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .direction-btn.active {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+        }
+
+        .direction-btn.sell.active {
+            background: var(--accent-red);
+        }
+
+        .direction-btn:hover:not(.active) {
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- TEST MODE WARNING -->
+    <div class="test-mode-banner" id="network-banner">
+        TESTNET MODE - DO NOT USE WITH REAL FUNDS - FOR DEVELOPMENT ONLY
+    </div>
+
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="assets/MON_official_logo.jpg" alt="$MON">
+            <span class="logo-text">Grok & Mon</span>
+        </a>
+        <div class="header-right">
+            <div id="wallet-status"></div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Vibe-Coded Disclaimer -->
+        <div class="vibe-coded-banner">
+            <h2>UNAUDITED CODE WARNING</h2>
+            <p>This swap interface was <span class="highlight">VIBE CODED</span> by a dude LARPing as a Jamaican rasta.</p>
+            <p>No professional security audit has been performed. Claude (AI) helped write and review this code, but that doesn't change the fact that this is <span class="highlight">LIVE FINANCIAL SOFTWARE</span> built by someone who thinks "YOLO" is valid error handling.</p>
+            <p style="color: #ff4444; font-weight: bold; margin-top: 1rem;">PROCEED AT YOUR OWN RISK. SERIOUSLY.</p>
+        </div>
+
+        <!-- Warning Banner -->
+        <div class="warning-banner">
+            <h2>Meme Token Warning</h2>
+            <p>$MON is a meme token with <strong>no utility</strong> and <strong>limited liquidity</strong>.</p>
+            <ul>
+                <li>High slippage expected (5-15%+)</li>
+                <li>Price impact may be significant</li>
+                <li><strong>Two-step process:</strong> 1) Bridge to native MON 2) Swap on LFJ DEX</li>
+                <li>Only swap what you can afford to lose</li>
+            </ul>
+            <p style="color: var(--accent-yellow);">ONE LOVE - but also ONE BRAIN. Think before you ape.</p>
+        </div>
+
+        <!-- Swap Card -->
+        <div class="swap-card">
+            <div class="swap-header">
+                <span class="swap-title" id="swap-title">Buy $MON</span>
+                <button class="settings-btn" onclick="toggleSettings()">Settings</button>
+            </div>
+
+            <!-- Direction Toggle -->
+            <div class="direction-toggle">
+                <button class="direction-btn buy active" onclick="setDirection('buy')">Buy $MON</button>
+                <button class="direction-btn sell" onclick="setDirection('sell')">Sell $MON</button>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="steps">
+                <div class="step active" id="step-1">
+                    <span class="step-number">1</span>
+                    <span>Bridge to Monad</span>
+                </div>
+                <span class="step-arrow"></span>
+                <div class="step" id="step-2">
+                    <span class="step-number">2</span>
+                    <span>Swap to $MON</span>
+                </div>
+            </div>
+
+            <!-- From Token -->
+            <div class="token-input-group">
+                <div class="token-input-label">
+                    <span>From</span>
+                    <span class="balance" id="from-balance">Balance: --</span>
+                </div>
+                <div class="token-input-row">
+                    <input type="number" class="amount-input" id="from-amount" placeholder="0.0" oninput="updateQuote()">
+                    <div class="token-select" id="from-token-select" onclick="openTokenSelector('from')">
+                        <img src="https://static.debank.com/image/monad_token/logo_url/monad/9df1611d238781f78045fba9101359a3.png" alt="MON" id="from-token-img">
+                        <div>
+                            <div class="symbol" id="from-token-symbol">MON</div>
+                            <div class="chain" id="from-token-chain">Monad</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="amount-usd" id="from-usd"></div>
+            </div>
+
+            <!-- Swap Arrow -->
+            <div class="swap-arrow-container">
+                <div class="swap-arrow"></div>
+            </div>
+
+            <!-- To Token (Dynamic based on direction) -->
+            <div class="token-input-group" id="to-token-group" style="border-color: var(--accent-green);">
+                <div class="token-input-label">
+                    <span id="to-label">To (on Monad)</span>
+                    <span class="balance" id="to-balance">Balance: --</span>
+                </div>
+                <div class="token-input-row">
+                    <input type="number" class="amount-input" id="to-amount" placeholder="0.0" readonly>
+                    <div class="token-select" id="to-token-select" style="cursor: default; border-color: var(--accent-green);">
+                        <img src="assets/MON_official_logo.jpg" alt="$MON" id="to-token-img">
+                        <div>
+                            <div class="symbol" id="to-token-symbol" style="color: var(--accent-green);">$MON</div>
+                            <div class="chain" id="to-token-chain">Monad</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="amount-usd" id="to-usd"></div>
+            </div>
+
+            <!-- Output Preview -->
+            <div class="output-preview" id="quote-preview" style="display: none;">
+                <div class="label">You'll receive approximately:</div>
+                <div class="amount" id="preview-amount">-- $MON</div>
+                <div class="usd" id="preview-usd">--</div>
+            </div>
+
+            <!-- Quote Details -->
+            <div class="quote-details" id="quote-details" style="display: none;">
+                <div class="quote-row">
+                    <span class="label">Bridge Fee</span>
+                    <span class="value" id="bridge-fee">--</span>
+                </div>
+                <div class="quote-row">
+                    <span class="label">Swap Fee</span>
+                    <span class="value" id="swap-fee">--</span>
+                </div>
+                <div class="quote-row">
+                    <span class="label">Price Impact</span>
+                    <span class="value" id="price-impact">--</span>
+                </div>
+                <div class="quote-row">
+                    <span class="label">Slippage Tolerance</span>
+                    <span class="value" id="slippage-display">5%</span>
+                </div>
+                <div class="quote-row">
+                    <span class="label">Estimated Time</span>
+                    <span class="value" id="est-time">~2-5 min</span>
+                </div>
+            </div>
+
+            <!-- Slippage Setting (hidden by default) -->
+            <div class="slippage-section" id="slippage-section" style="display: none;">
+                <div class="slippage-header">
+                    <span class="label">Slippage Tolerance</span>
+                </div>
+                <div class="slippage-buttons">
+                    <button class="slippage-btn" onclick="setSlippage(1)">1%</button>
+                    <button class="slippage-btn" onclick="setSlippage(3)">3%</button>
+                    <button class="slippage-btn active" onclick="setSlippage(5)">5%</button>
+                    <button class="slippage-btn" onclick="setSlippage(10)">10%</button>
+                    <button class="slippage-btn degen" onclick="setSlippage(20)">20% DEGEN</button>
+                </div>
+                <div class="slippage-warning" id="slippage-warning" style="display: none;">
+                    High slippage increases risk of front-running and unfavorable execution.
+                </div>
+            </div>
+
+            <!-- Risk Acknowledgment -->
+            <div class="risk-checkbox" id="risk-checkbox" style="display: none;">
+                <input type="checkbox" id="risk-accept" onchange="updateSwapButton()">
+                <label for="risk-accept">
+                    I understand this is a <strong>meme token</strong> with <strong>no utility</strong>.
+                    I accept the high slippage, price impact, and potential loss.
+                    I am only using funds I can afford to lose completely.
+                </label>
+            </div>
+
+            <!-- Action Buttons -->
+            <div id="action-buttons">
+                <button class="connect-btn" id="connect-btn" onclick="connectWallet()">
+                    Connect Wallet
+                </button>
+                <button class="swap-btn" id="swap-btn" style="display: none;" disabled onclick="executeSwap()">
+                    Swap to $MON
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Powered by <a href="https://lfj.gg" target="_blank">Token Mill</a> (Direct) | <a href="https://relay.link" target="_blank">Relay</a> | <a href="https://debridge.finance" target="_blank">deBridge</a> | <a href="https://li.fi" target="_blank">LI.FI</a></p>
+        <p style="margin-top: 0.5rem;">This is experimental software. Use at your own risk.</p>
+    </footer>
+
+    <!-- Token Selector Modal -->
+    <div class="modal-overlay" id="token-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Select Chain & Token</h3>
+                <button class="modal-close" onclick="closeTokenSelector()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chain-list" id="chain-list">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="token-list" id="token-list" style="display: none;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallet Selector Modal -->
+    <div class="modal-overlay" id="wallet-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Connect Wallet</h3>
+                <button class="modal-close" onclick="closeWalletModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="wallet-list" id="wallet-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================
+        // CONFIGURATION - TESTNET/MAINNET TOGGLE
+        // =====================================================
+
+        // Toggle this to switch networks
+        const USE_TESTNET = false; // Token Mill only works on mainnet
+
+        const NETWORKS = {
+            TESTNET: {
+                name: 'Monad Testnet',
+                chainId: 10143,
+                rpc: 'https://monad-testnet.drpc.org',
+                explorer: 'https://testnet.monadexplorer.com',
+                currency: 'MON',
+                // Deploy a test $MON token on testnet via Token Mill for testing
+                // For now, use native MON for testing the swap flow
+                MON_TOKEN: '0x0000000000000000000000000000000000000000', // Native MON for testing
+                // LFJ contracts on testnet
+                LFJ_ROUTER: '0x18556DA13313f3532c54711497A8FedAC273220E',
+                LFJ_FACTORY: '0xb43120c4745967fa9b93E79C149E66B0f2D6Fe0c',
+                LFJ_AGGREGATOR: '0x45A62B090DF48243F12A21897e7ed91863E2c86b',
+                TM_MARKET: null, // No Token Mill market on testnet
+            },
+            MAINNET: {
+                name: 'Monad',
+                chainId: 143,
+                rpc: 'https://monad.drpc.org',
+                explorer: 'https://monadexplorer.com',
+                currency: 'MON',
+                // Real $MON token on mainnet (Ganja Mon meme token via Token Mill)
+                MON_TOKEN: '0x0eb75e7168af6ab90d7415fe6fb74e10a70b5c0b',
+                // LFJ contracts on Monad mainnet (verified from docs)
+                LFJ_ROUTER: '0x18556DA13313f3532c54711497A8FedAC273220E',
+                LFJ_FACTORY: '0xb43120c4745967fa9b93E79C149E66B0f2D6Fe0c',
+                LFJ_AGGREGATOR: '0x45A62B090DF48243F12A21897e7ed91863E2c86b',
+                TM_FACTORY: '0xe70d21aD211DB6DCD3f54B9804A1b64BB21b17B1', // Token Mill factory
+                TM_MARKET: '0xfB72c999dcf2BE21C5503c7e282300e28972AB1B', // $MON Token Mill market
+                WMON: '0x3bd359C1119dA7Da1D913D1C4D2B7c461115433A', // Wrapped MON
+            }
+        };
+
+        // Select active network
+        const NETWORK = USE_TESTNET ? NETWORKS.TESTNET : NETWORKS.MAINNET;
+
+        // LI.FI chain IDs - most match standard EVM chain IDs
+        // Full list: https://li.quest/v1/chains
+
+        const CONFIG = {
+            // API Endpoints
+            LIFI_API: 'https://li.quest/v1',  // For EVM chains (FALLBACK - 0.25% fee)
+            DEBRIDGE_API: 'https://api.dln.trade/v1.0', // For Solana bridging
+            ODOS_API: 'https://api.odos.xyz/sor/quote/v2', // Odos - free, 600 req/5min
+            RELAY_API: 'https://api.relay.link', // Relay - cheapest bridges (~0.5%)
+
+            // LI.FI chain IDs (different from standard EVM chain IDs for some chains)
+            LIFI_MONAD_CHAIN_ID: 143, // LI.FI uses 143 for Monad
+
+            // deBridge chain IDs
+            DEBRIDGE_MONAD_CHAIN_ID: 100000030,
+            DEBRIDGE_SOLANA_CHAIN_ID: 7565164,
+            SOLANA_CHAIN_ID: 7565164,
+
+            // Solana native token address
+            SOLANA_NATIVE: '11111111111111111111111111111111',
+
+            // Active network config
+            MONAD_CHAIN_ID: NETWORK.chainId,
+            MONAD_RPC: NETWORK.rpc,
+            MONAD_EXPLORER: NETWORK.explorer,
+
+            // $MON Token on Monad (Token Mill token)
+            MON_TOKEN: NETWORK.MON_TOKEN,
+
+            // LFJ DEX contracts (for reference)
+            LFJ_ROUTER: NETWORK.LFJ_ROUTER,
+            LFJ_AGGREGATOR: NETWORK.LFJ_AGGREGATOR,
+            TM_MARKET: NETWORK.TM_MARKET, // Token Mill market for $MON
+
+            // Default slippage (basis points)
+            DEFAULT_SLIPPAGE_BPS: 500, // 5%
+
+            // Supported source chains (LI.FI chain IDs)
+            CHAINS: [
+                { id: 143, name: 'Monad', symbol: 'MON', logo: 'https://static.debank.com/image/monad_token/logo_url/monad/9df1611d238781f78045fba9101359a3.png' },
+                { id: 8453, name: 'Base', symbol: 'ETH', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/info/logo.png' },
+                { id: 1, name: 'Ethereum', symbol: 'ETH', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' },
+                { id: 42161, name: 'Arbitrum', symbol: 'ETH', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/arbitrum/info/logo.png' },
+                { id: 137, name: 'Polygon', symbol: 'MATIC', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png' },
+                { id: 56, name: 'BNB Chain', symbol: 'BNB', logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png' },
+                { id: 7565164, name: 'Solana', symbol: 'SOL', logo: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png' },
+            ],
+
+            // Common tokens per chain (simplified)
+            TOKENS: {
+                143: [ // Monad
+                    { symbol: 'MON', name: 'Monad', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://static.debank.com/image/monad_token/logo_url/monad/9df1611d238781f78045fba9101359a3.png' },
+                ],
+                8453: [ // Base
+                    { symbol: 'ETH', name: 'Ethereum', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', decimals: 6, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png' },
+                ],
+                7565164: [ // Solana
+                    { symbol: 'SOL', name: 'Solana', address: 'So11111111111111111111111111111111111111112', decimals: 9, logo: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', decimals: 6, logo: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png' },
+                ],
+                1: [ // Ethereum
+                    { symbol: 'ETH', name: 'Ethereum', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png' },
+                    { symbol: 'USDT', name: 'Tether', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png' },
+                ],
+                42161: [ // Arbitrum
+                    { symbol: 'ETH', name: 'Ethereum', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', decimals: 6, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png' },
+                ],
+                137: [ // Polygon
+                    { symbol: 'MATIC', name: 'Polygon', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', decimals: 6, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png' },
+                ],
+                56: [ // BNB Chain
+                    { symbol: 'BNB', name: 'BNB', address: '0x0000000000000000000000000000000000000000', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png' },
+                    { symbol: 'USDC', name: 'USD Coin', address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', decimals: 18, logo: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png' },
+                ],
+            }
+        };
+
+        // =====================================================
+        // CHAIN RPC URLS (for balance lookups)
+        // =====================================================
+        const CHAIN_RPCS = {
+            143: 'https://monad.drpc.org',
+            8453: 'https://mainnet.base.org',
+            1: 'https://cloudflare-eth.com',
+            42161: 'https://arb1.arbitrum.io/rpc',
+            137: 'https://polygon-rpc.com',
+            56: 'https://bsc-dataseed.binance.org',
+        };
+
+        // =====================================================
+        // STATE
+        // =====================================================
+        let state = {
+            connected: false,
+            walletAddress: null,
+            walletType: null, // wallet name string
+            provider: null, // EIP-1193 provider or Solana adapter
+            direction: 'buy', // 'buy' (any → $MON) or 'sell' ($MON → any)
+            sourceChain: CONFIG.CHAINS[1], // Start with Base for buying
+            sourceToken: CONFIG.TOKENS[8453][0], // ETH on Base
+            destChain: CONFIG.CHAINS[1], // For sell mode destination
+            destToken: CONFIG.TOKENS[8453][0], // For sell mode destination token
+            slippageBps: CONFIG.DEFAULT_SLIPPAGE_BPS,
+            quote: null,
+            loading: false,
+        };
+
+        // Direction toggle
+        function setDirection(dir) {
+            state.direction = dir;
+
+            // Update UI
+            document.querySelectorAll('.direction-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.direction-btn.${dir}`).classList.add('active');
+
+            // Update title
+            document.getElementById('swap-title').textContent = dir === 'buy' ? 'Buy $MON' : 'Sell $MON';
+            document.getElementById('swap-title').style.color = dir === 'buy' ? 'var(--accent-green)' : 'var(--accent-red)';
+
+            // Update step indicators
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            if (dir === 'buy') {
+                step1.querySelector('span:last-child').textContent = 'Bridge to Monad';
+                step2.querySelector('span:last-child').textContent = 'Swap to $MON';
+            } else {
+                step1.querySelector('span:last-child').textContent = 'Sell $MON';
+                step2.querySelector('span:last-child').textContent = 'Bridge Out';
+            }
+
+            // Swap input/output display based on direction
+            updateDirectionUI();
+
+            // Clear quote
+            hideQuote();
+            document.getElementById('from-amount').value = '';
+            document.getElementById('from-usd').textContent = '';
+            document.getElementById('to-usd').textContent = '';
+
+            // Re-fetch balances for new direction
+            fetchBalances();
+        }
+
+        function updateDirectionUI() {
+            const fromLabel = document.querySelector('#from-token-select').closest('.token-input-group').querySelector('.token-input-label span:first-child');
+            const toGroup = document.getElementById('to-token-group');
+            const toSelect = document.getElementById('to-token-select');
+            const swapBtn = document.getElementById('swap-btn');
+
+            if (state.direction === 'buy') {
+                // Buy mode: From = any chain, To = $MON (fixed)
+                fromLabel.textContent = 'From';
+                document.getElementById('to-label').textContent = 'To (on Monad)';
+                document.getElementById('from-token-select').style.cursor = 'pointer';
+                document.getElementById('from-token-select').onclick = () => openTokenSelector('from');
+
+                // To is fixed to $MON
+                toSelect.style.cursor = 'default';
+                toSelect.onclick = null;
+                toGroup.style.borderColor = 'var(--accent-green)';
+                document.getElementById('to-token-img').src = 'assets/MON_official_logo.jpg';
+                document.getElementById('to-token-symbol').textContent = '$MON';
+                document.getElementById('to-token-symbol').style.color = 'var(--accent-green)';
+                document.getElementById('to-token-chain').textContent = 'Monad';
+
+                // Restore from token to selected source
+                updateFromTokenUI();
+
+                // Update button
+                swapBtn.textContent = 'Buy $MON';
+                swapBtn.style.background = 'linear-gradient(135deg, var(--accent-green), #22c55e)';
+            } else {
+                // Sell mode: From = $MON (fixed), To = any chain (selectable)
+                fromLabel.textContent = 'From (on Monad)';
+                document.getElementById('to-label').textContent = 'To (select destination)';
+
+                // From is fixed to $MON - no selector needed
+                document.getElementById('from-token-select').style.cursor = 'default';
+                document.getElementById('from-token-select').onclick = null;
+                document.getElementById('from-token-img').src = 'assets/MON_official_logo.jpg';
+                document.getElementById('from-token-symbol').textContent = '$MON';
+                document.getElementById('from-token-chain').textContent = 'Monad';
+
+                // To is selectable - user picks destination chain
+                toSelect.style.cursor = 'pointer';
+                toSelect.onclick = () => openTokenSelector('dest');
+                toGroup.style.borderColor = 'var(--accent-red)';
+
+                // Set default destination to Solana (best for selling)
+                if (!state.destChain) {
+                    state.destChain = CONFIG.CHAINS.find(c => c.id === 7565164) || CONFIG.CHAINS[1];
+                    state.destToken = CONFIG.TOKENS[state.destChain.id]?.[0] || { symbol: state.destChain.symbol };
+                }
+
+                // Update To section with destination
+                document.getElementById('to-token-img').src = state.destChain.logo;
+                document.getElementById('to-token-symbol').textContent = state.destToken?.symbol || state.destChain.symbol;
+                document.getElementById('to-token-symbol').style.color = 'var(--accent-red)';
+                document.getElementById('to-token-chain').textContent = state.destChain.name;
+
+                // Update button
+                swapBtn.textContent = 'Sell $MON';
+                swapBtn.style.background = 'linear-gradient(135deg, var(--accent-red), #dc2626)';
+            }
+        }
+
+        function updateDestTokenUI() {
+            if (state.direction !== 'sell' || !state.destChain) return;
+
+            document.getElementById('to-token-img').src = state.destChain.logo;
+            document.getElementById('to-token-symbol').textContent = state.destToken?.symbol || state.destChain.symbol;
+            document.getElementById('to-token-chain').textContent = state.destChain.name;
+        }
+
+        // =====================================================
+        // WALLET CONNECTION (Multi-Wallet Support)
+        // =====================================================
+
+        // Wallet registry: EVM wallets (EIP-1193) and Solana wallets
+        const WALLET_REGISTRY = {
+            evm: [
+                {
+                    id: 'metamask',
+                    name: 'MetaMask',
+                    icon: 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
+                    detect: () => window.ethereum?.isMetaMask && !window.ethereum?.isRabby && !window.ethereum?.isBraveWallet,
+                    getProvider: () => {
+                        // Handle multiple injected wallets (EIP-5749 / EIP-6963)
+                        if (window.ethereum?.providers) {
+                            return window.ethereum.providers.find(p => p.isMetaMask && !p.isRabby);
+                        }
+                        return window.ethereum;
+                    },
+                    url: 'https://metamask.io/'
+                },
+                {
+                    id: 'coinbase',
+                    name: 'Coinbase Wallet',
+                    icon: 'https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo-300x300.webp',
+                    detect: () => !!window.coinbaseWalletExtension || window.ethereum?.isCoinbaseWallet,
+                    getProvider: () => {
+                        if (window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
+                        if (window.ethereum?.providers) {
+                            return window.ethereum.providers.find(p => p.isCoinbaseWallet);
+                        }
+                        return window.ethereum;
+                    },
+                    url: 'https://www.coinbase.com/wallet'
+                },
+                {
+                    id: 'rabby',
+                    name: 'Rabby Wallet',
+                    icon: 'https://avatars.githubusercontent.com/u/79552567?s=200',
+                    detect: () => window.ethereum?.isRabby,
+                    getProvider: () => {
+                        if (window.ethereum?.providers) {
+                            return window.ethereum.providers.find(p => p.isRabby);
+                        }
+                        return window.ethereum;
+                    },
+                    url: 'https://rabby.io/'
+                },
+                {
+                    id: 'trust',
+                    name: 'Trust Wallet',
+                    icon: 'https://trustwallet.com/favicon.ico',
+                    detect: () => !!window.trustwallet || window.ethereum?.isTrust,
+                    getProvider: () => window.trustwallet || window.ethereum,
+                    url: 'https://trustwallet.com/'
+                },
+                {
+                    id: 'okx',
+                    name: 'OKX Wallet',
+                    icon: 'https://avatars.githubusercontent.com/u/43828199?s=200',
+                    detect: () => !!window.okxwallet,
+                    getProvider: () => window.okxwallet,
+                    url: 'https://www.okx.com/web3'
+                },
+                {
+                    id: 'brave',
+                    name: 'Brave Wallet',
+                    icon: 'https://brave.com/static-assets/images/brave-logo-sans-text.svg',
+                    detect: () => window.ethereum?.isBraveWallet,
+                    getProvider: () => window.ethereum,
+                    url: 'https://brave.com/wallet/'
+                },
+                {
+                    id: 'zerion',
+                    name: 'Zerion',
+                    icon: 'https://avatars.githubusercontent.com/u/36780937?s=200',
+                    detect: () => window.ethereum?.isZerion,
+                    getProvider: () => {
+                        if (window.ethereum?.providers) {
+                            return window.ethereum.providers.find(p => p.isZerion);
+                        }
+                        return window.ethereum;
+                    },
+                    url: 'https://zerion.io/'
+                },
+                {
+                    id: 'rainbow',
+                    name: 'Rainbow',
+                    icon: 'https://avatars.githubusercontent.com/u/48327834?s=200',
+                    detect: () => window.ethereum?.isRainbow,
+                    getProvider: () => {
+                        if (window.ethereum?.providers) {
+                            return window.ethereum.providers.find(p => p.isRainbow);
+                        }
+                        return window.ethereum;
+                    },
+                    url: 'https://rainbow.me/'
+                },
+                {
+                    id: 'evm-generic',
+                    name: 'Browser Wallet',
+                    icon: '',
+                    detect: () => !!window.ethereum,
+                    getProvider: () => window.ethereum,
+                    url: null
+                }
+            ],
+            solana: [
+                {
+                    id: 'phantom',
+                    name: 'Phantom',
+                    icon: 'https://phantom.app/img/phantom-logo.svg',
+                    detect: () => !!window.phantom?.solana?.isPhantom,
+                    getProvider: () => window.phantom?.solana,
+                    url: 'https://phantom.app/'
+                },
+                {
+                    id: 'solflare',
+                    name: 'Solflare',
+                    icon: 'https://solflare.com/favicon.ico',
+                    detect: () => !!window.solflare?.isSolflare,
+                    getProvider: () => window.solflare,
+                    url: 'https://solflare.com/'
+                },
+                {
+                    id: 'backpack',
+                    name: 'Backpack',
+                    icon: 'https://backpack.app/favicon.ico',
+                    detect: () => !!window.backpack,
+                    getProvider: () => window.backpack,
+                    url: 'https://backpack.app/'
+                },
+                {
+                    id: 'coinbase-sol',
+                    name: 'Coinbase Wallet',
+                    icon: 'https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo-300x300.webp',
+                    detect: () => !!window.coinbaseSolana,
+                    getProvider: () => window.coinbaseSolana,
+                    url: 'https://www.coinbase.com/wallet'
+                }
+            ]
+        };
+
+        function getDetectedWallets() {
+            const isSolana = state.sourceChain.id === 7565164 || (state.direction === 'sell' && state.destChain?.id === 7565164);
+            const registry = isSolana ? WALLET_REGISTRY.solana : WALLET_REGISTRY.evm;
+
+            const detected = [];
+            const notDetected = [];
+
+            for (const wallet of registry) {
+                // Skip generic browser wallet if we found specific ones
+                if (wallet.id === 'evm-generic' && detected.length > 0) continue;
+                try {
+                    if (wallet.detect()) {
+                        detected.push({ ...wallet, installed: true });
+                    } else if (wallet.url) {
+                        notDetected.push({ ...wallet, installed: false });
+                    }
+                } catch (e) {
+                    if (wallet.url) notDetected.push({ ...wallet, installed: false });
+                }
+            }
+
+            return { detected, notDetected, isSolana };
+        }
+
+        function connectWallet() {
+            showWalletModal();
+        }
+
+        function showWalletModal() {
+            const { detected, notDetected, isSolana } = getDetectedWallets();
+            const walletList = document.getElementById('wallet-list');
+
+            let html = '';
+
+            if (detected.length > 0) {
+                html += '<div class="wallet-section-label">Detected Wallets</div>';
+                for (const w of detected) {
+                    html += `
+                        <div class="wallet-option detected" onclick="connectWithWallet('${w.id}', '${isSolana ? 'solana' : 'evm'}')">
+                            ${w.icon ? `<img class="wallet-icon" src="${w.icon}" alt="${w.name}" onerror="this.style.display='none'">` : `<div class="wallet-icon" style="background:var(--border);border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">W</div>`}
+                            <div class="wallet-info">
+                                <div class="wallet-name">${w.name}</div>
+                                <div class="wallet-status installed">Installed</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            if (notDetected.length > 0) {
+                html += '<div class="wallet-section-label" style="margin-top:0.5rem;">Other Wallets</div>';
+                for (const w of notDetected) {
+                    html += `
+                        <div class="wallet-option" onclick="window.open('${w.url}', '_blank')">
+                            ${w.icon ? `<img class="wallet-icon" src="${w.icon}" alt="${w.name}" onerror="this.style.display='none'">` : ''}
+                            <div class="wallet-info">
+                                <div class="wallet-name">${w.name}</div>
+                                <div class="wallet-status">Install</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            if (detected.length === 0 && notDetected.length === 0) {
+                html = '<p style="color:var(--text-muted);text-align:center;padding:1rem;">No compatible wallets detected. Please install a wallet extension.</p>';
+            }
+
+            walletList.innerHTML = html;
+            document.getElementById('wallet-modal').classList.add('active');
+        }
+
+        function closeWalletModal() {
+            document.getElementById('wallet-modal').classList.remove('active');
+        }
+
+        async function connectWithWallet(walletId, type) {
+            closeWalletModal();
+            const btn = document.getElementById('connect-btn');
+            btn.innerHTML = '<span class="loading"></span> Connecting...';
+            btn.disabled = true;
+
+            try {
+                if (type === 'solana') {
+                    await connectSolanaWallet(walletId);
+                } else {
+                    await connectEvmWallet(walletId);
+                }
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                alert('Failed to connect wallet: ' + error.message);
+            }
+
+            btn.innerHTML = 'Connect Wallet';
+            btn.disabled = false;
+        }
+
+        async function connectSolanaWallet(walletId) {
+            const walletDef = WALLET_REGISTRY.solana.find(w => w.id === walletId);
+            if (!walletDef) throw new Error('Unknown Solana wallet');
+
+            const provider = walletDef.getProvider();
+            if (!provider) {
+                if (walletDef.url) window.open(walletDef.url, '_blank');
+                throw new Error(`${walletDef.name} not installed`);
+            }
+
+            const response = await provider.connect();
+            state.walletAddress = response.publicKey.toString();
+            state.walletType = walletDef.name;
+            state.provider = provider;
+            state.connected = true;
+            updateWalletUI();
+        }
+
+        async function connectEvmWallet(walletId) {
+            const walletDef = WALLET_REGISTRY.evm.find(w => w.id === walletId);
+            if (!walletDef) throw new Error('Unknown EVM wallet');
+
+            const provider = walletDef.getProvider();
+            if (!provider) {
+                if (walletDef.url) window.open(walletDef.url, '_blank');
+                throw new Error(`${walletDef.name} not installed`);
+            }
+
+            const accounts = await provider.request({ method: 'eth_requestAccounts' });
+            state.walletAddress = accounts[0];
+            state.walletType = walletDef.name;
+            state.provider = provider;
+            state.connected = true;
+
+            // Switch to correct network
+            try {
+                await provider.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x' + state.sourceChain.id.toString(16) }],
+                });
+            } catch (switchError) {
+                console.warn('Could not switch chain:', switchError);
+            }
+
+            updateWalletUI();
+        }
+
+        function updateWalletUI() {
+            const walletStatus = document.getElementById('wallet-status');
+            const connectBtn = document.getElementById('connect-btn');
+            const swapBtn = document.getElementById('swap-btn');
+            const riskCheckbox = document.getElementById('risk-checkbox');
+
+            if (state.connected) {
+                const shortAddr = state.walletAddress.slice(0, 6) + '...' + state.walletAddress.slice(-4);
+                walletStatus.innerHTML = `
+                    <div class="wallet-connected">
+                        <span class="wallet-dot"></span>
+                        <span>${shortAddr}</span>
+                        <span style="color: var(--text-muted);">(${state.walletType})</span>
+                    </div>
+                `;
+                connectBtn.style.display = 'none';
+                swapBtn.style.display = 'flex';
+                riskCheckbox.style.display = 'flex';
+                updateSwapButton();
+                // Fetch balances on connection
+                fetchBalances();
+            } else {
+                walletStatus.innerHTML = '';
+                connectBtn.style.display = 'flex';
+                swapBtn.style.display = 'none';
+                riskCheckbox.style.display = 'none';
+            }
+        }
+
+        // =====================================================
+        // BALANCE FETCHING
+        // =====================================================
+        async function fetchBalances() {
+            if (!state.connected || !state.walletAddress) return;
+
+            try {
+                // Fetch source token balance
+                if (state.direction === 'buy') {
+                    const srcChainId = state.sourceChain.id;
+                    if (srcChainId !== 7565164) { // Skip Solana for EVM balance
+                        const srcBal = await getEvmBalance(srcChainId, state.walletAddress, state.sourceToken.address, state.sourceToken.decimals);
+                        document.getElementById('from-balance').textContent = `Balance: ${srcBal} ${state.sourceToken.symbol}`;
+                        document.getElementById('from-balance').onclick = () => {
+                            document.getElementById('from-amount').value = srcBal;
+                            updateQuote();
+                        };
+                    } else {
+                        // Solana balance via Phantom
+                        try {
+                            const solBal = await window.solana.request({ method: 'getBalance' });
+                            const formatted = (solBal / 1e9).toFixed(4);
+                            document.getElementById('from-balance').textContent = `Balance: ${formatted} SOL`;
+                            document.getElementById('from-balance').onclick = () => {
+                                document.getElementById('from-amount').value = formatted;
+                                updateQuote();
+                            };
+                        } catch (e) {
+                            console.warn('Solana balance fetch failed:', e);
+                        }
+                    }
+
+                    // Fetch $MON balance on Monad for "To" field
+                    const monBal = await getEvmBalance(143, state.walletAddress, CONFIG.MON_TOKEN, 18);
+                    document.getElementById('to-balance').textContent = `Balance: ${monBal} $MON`;
+                } else {
+                    // Sell mode: from is $MON on Monad
+                    const monBal = await getEvmBalance(143, state.walletAddress, CONFIG.MON_TOKEN, 18);
+                    document.getElementById('from-balance').textContent = `Balance: ${monBal} $MON`;
+                    document.getElementById('from-balance').onclick = () => {
+                        document.getElementById('from-amount').value = monBal.replace(/,/g, '');
+                        updateQuote();
+                    };
+
+                    // Fetch destination balance
+                    const destChainId = state.destChain?.id;
+                    if (destChainId && destChainId !== 7565164) {
+                        const destAddr = state.destToken?.address || '0x0000000000000000000000000000000000000000';
+                        const destDec = state.destToken?.decimals || 18;
+                        const destBal = await getEvmBalance(destChainId, state.walletAddress, destAddr, destDec);
+                        document.getElementById('to-balance').textContent = `Balance: ${destBal} ${state.destToken?.symbol || state.destChain.symbol}`;
+                    }
+                }
+            } catch (e) {
+                console.error('Balance fetch error:', e);
+            }
+        }
+
+        async function getEvmBalance(chainId, address, tokenAddress, decimals) {
+            const rpc = CHAIN_RPCS[chainId];
+            if (!rpc) return '--';
+
+            try {
+                const isNative = !tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000';
+
+                let hexResult;
+                if (isNative) {
+                    const response = await fetch(rpc, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_getBalance', params: [address, 'latest'], id: 1 })
+                    });
+                    const data = await response.json();
+                    hexResult = data.result || '0x0';
+                } else {
+                    // ERC-20 balanceOf(address)
+                    const paddedAddr = address.slice(2).toLowerCase().padStart(64, '0');
+                    const callData = '0x70a08231' + paddedAddr;
+                    const response = await fetch(rpc, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_call', params: [{ to: tokenAddress, data: callData }, 'latest'], id: 1 })
+                    });
+                    const data = await response.json();
+                    hexResult = data.result || '0x0';
+                }
+
+                return formatHexBalance(hexResult, decimals);
+            } catch (e) {
+                console.error(`Balance error for chain ${chainId}:`, e);
+                return '--';
+            }
+        }
+
+        function formatHexBalance(hexValue, decimals) {
+            try {
+                const wei = BigInt(hexValue);
+                if (wei === 0n) return '0';
+                const divisor = BigInt(10 ** decimals);
+                const intPart = wei / divisor;
+                const fracPart = wei % divisor;
+                const fracStr = fracPart.toString().padStart(decimals, '0').slice(0, 4);
+                // Remove trailing zeros from fracStr
+                const cleanFrac = fracStr.replace(/0+$/, '');
+                if (cleanFrac === '') return numberWithCommas(intPart.toString());
+                return numberWithCommas(intPart.toString()) + '.' + cleanFrac;
+            } catch {
+                return '--';
+            }
+        }
+
+        // =====================================================
+        // TOKEN SELECTOR
+        // =====================================================
+        let selectorTarget = 'from'; // 'from' for buy, 'dest' for sell
+
+        function openTokenSelector(target) {
+            selectorTarget = target;
+            const modal = document.getElementById('token-modal');
+            const chainList = document.getElementById('chain-list');
+            const tokenList = document.getElementById('token-list');
+
+            // Show chain selection first
+            const titleText = state.direction === 'sell' ? 'Select Destination Chain' : 'Select Source Chain';
+            document.getElementById('modal-title').textContent = titleText;
+            chainList.style.display = 'flex';
+            tokenList.style.display = 'none';
+
+            // Filter chains - in sell mode, don't show Monad as destination
+            const availableChains = state.direction === 'sell'
+                ? CONFIG.CHAINS.filter(c => c.id !== 143)
+                : CONFIG.CHAINS;
+
+            // Populate chains
+            chainList.innerHTML = availableChains.map(chain => `
+                <div class="chain-item" onclick="selectChain(${chain.id})">
+                    <img src="${chain.logo}" alt="${chain.name}">
+                    <div>
+                        <div class="name">${chain.name}</div>
+                        <div class="id">${chain.id === 7565164 ? 'deBridge' : 'LI.FI'}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            modal.classList.add('active');
+        }
+
+        function selectChain(chainId) {
+            const chain = CONFIG.CHAINS.find(c => c.id === chainId);
+
+            if (state.direction === 'sell') {
+                // Sell mode - set destination chain
+                state.destChain = chain;
+                state.destToken = CONFIG.TOKENS[chainId]?.[0] || { symbol: chain.symbol, decimals: 18 };
+                updateDestTokenUI();
+                closeTokenSelector();
+                updateQuote(); // Re-fetch quote with new destination
+                return;
+            }
+
+            // Buy mode - continue to token selection
+            state.sourceChain = chain;
+
+            // Show token selection
+            const tokenList = document.getElementById('token-list');
+            const chainList = document.getElementById('chain-list');
+            document.getElementById('modal-title').textContent = `Select Token on ${chain.name}`;
+            chainList.style.display = 'none';
+            tokenList.style.display = 'flex';
+
+            const tokens = CONFIG.TOKENS[chainId] || [];
+            tokenList.innerHTML = tokens.map(token => `
+                <div class="token-item" onclick="selectToken('${token.address}')">
+                    <img src="${token.logo}" alt="${token.symbol}">
+                    <div>
+                        <div class="name">${token.symbol}</div>
+                        <div class="balance">${token.name}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (tokens.length === 0) {
+                tokenList.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No tokens configured for this chain yet.</p>';
+            }
+        }
+
+        function selectToken(address) {
+            const tokens = CONFIG.TOKENS[state.sourceChain.id] || [];
+            const token = tokens.find(t => t.address === address);
+            if (token) {
+                state.sourceToken = token;
+                updateFromTokenUI();
+            }
+            closeTokenSelector();
+            // Refresh quote and balances when token changes
+            updateQuote();
+            fetchBalances();
+        }
+
+        function closeTokenSelector() {
+            document.getElementById('token-modal').classList.remove('active');
+        }
+
+        function updateFromTokenUI() {
+            document.getElementById('from-token-img').src = state.sourceToken.logo;
+            document.getElementById('from-token-symbol').textContent = state.sourceToken.symbol;
+            document.getElementById('from-token-chain').textContent = state.sourceChain.name;
+        }
+
+        // =====================================================
+        // QUOTE & SWAP
+        // =====================================================
+        let quoteTimeout;
+
+        function updateQuote() {
+            clearTimeout(quoteTimeout);
+            const amount = document.getElementById('from-amount').value;
+
+            if (!amount || parseFloat(amount) <= 0) {
+                hideQuote();
+                return;
+            }
+
+            quoteTimeout = setTimeout(() => getQuote(amount), 500);
+        }
+
+        async function getQuote(amount) {
+            console.log('Getting quote for', amount, state.sourceToken.symbol);
+
+            // Show loading state
+            document.getElementById('quote-preview').style.display = 'block';
+            document.getElementById('quote-details').style.display = 'block';
+            document.getElementById('preview-amount').textContent = 'Loading...';
+
+            try {
+                // LI.FI handles BOTH bridging AND swapping in one quote
+                // Two steps: 1) Bridge to Monad (native MON), 2) Swap native MON to $MON token
+                const lifiQuote = await getLifiQuote(amount);
+                console.log('LI.FI quote:', lifiQuote);
+
+                state.quote = lifiQuote;
+                displayQuote();
+            } catch (error) {
+                console.error('Quote error:', error);
+                document.getElementById('preview-amount').textContent = 'Quote unavailable';
+                document.getElementById('preview-usd').textContent = error.message;
+            }
+        }
+
+        async function getLifiQuote(amount) {
+            // Handle direction
+            if (state.direction === 'sell') {
+                return await getSellQuote(amount);
+            }
+
+            // BUY direction: Convert amount to base units
+            const amountInBaseUnits = Math.floor(parseFloat(amount) * Math.pow(10, state.sourceToken.decimals)).toString();
+
+            // Determine source chain
+            const srcChainId = state.sourceChain.id;
+            const isOnMonad = srcChainId === 143 || srcChainId === CONFIG.MONAD_CHAIN_ID;
+            const isSolana = srcChainId === CONFIG.SOLANA_CHAIN_ID;
+
+            console.log('BUY Quote params:', {
+                srcChainId: srcChainId,
+                srcToken: state.sourceToken.address,
+                amount: amountInBaseUnits,
+                isOnMonad: isOnMonad,
+                isSolana: isSolana,
+            });
+
+            if (isOnMonad) {
+                // Already on Monad - just swap native MON to $MON token
+                return await getLifiSwapQuote(amountInBaseUnits);
+            } else if (isSolana) {
+                // Solana -> $MON: deBridge handles the ENTIRE flow in one call!
+                // SOL → USDC (Solana) → Bridge → USDC (Monad) → $MON (via DEX)
+                const debridgeQuote = await getDebridgeDirectQuote(amountInBaseUnits);
+
+                return {
+                    type: 'debridge-direct',
+                    totalOutput: debridgeQuote.estimatedOutput,
+                    totalOutputFormatted: (parseFloat(debridgeQuote.estimatedOutput) / 1e18).toFixed(2),
+                    estimatedTime: debridgeQuote.estimatedTime,
+                    priceImpact: debridgeQuote.priceImpact,
+                    bridgeFee: debridgeQuote.fee,
+                    bridgeProvider: 'deBridge',
+                    inputUsd: debridgeQuote.inputUsd,
+                    outputUsd: debridgeQuote.outputUsdValue,
+                    fullQuote: debridgeQuote.fullQuote,
+                };
+            } else {
+                // EVM Chain: Use LI.FI for both bridge and swap
+                // Step 1: Get bridge quote (source chain -> Monad native)
+                const bridgeQuote = await getLifiBridgeQuote(amountInBaseUnits);
+
+                // Step 2: Get swap quote (Monad native -> $MON token)
+                const swapQuote = await getLifiSwapQuote(bridgeQuote.estimatedOutput);
+
+                return {
+                    type: 'bridge+swap',
+                    bridge: bridgeQuote,
+                    swap: swapQuote,
+                    totalOutput: swapQuote.estimatedOutput,
+                    totalOutputFormatted: (parseFloat(swapQuote.estimatedOutput) / 1e18).toFixed(2),
+                    estimatedTime: bridgeQuote.estimatedTime + 30, // Bridge time + swap time
+                    priceImpact: swapQuote.priceImpact || '< 1%',
+                    bridgeFee: bridgeQuote.fee || '~$0',
+                    swapFee: '0.3%',
+                    bridgeProvider: 'LI.FI',
+                    inputUsd: bridgeQuote.inputUsd,
+                    outputUsd: swapQuote.outputUsd || bridgeQuote.outputUsd,
+                };
+            }
+        }
+
+        // SELL $MON quote
+        async function getSellQuote(amount) {
+            // Convert $MON amount to base units (18 decimals)
+            // Use BigInt to avoid scientific notation
+            const amountFloat = parseFloat(amount);
+            const amountInBaseUnits = BigInt(Math.floor(amountFloat)) * BigInt(10 ** 18);
+            const amountStr = amountInBaseUnits.toString();
+
+            // Determine destination
+            const destChainId = state.destChain?.id || state.sourceChain.id;
+            const isSolana = destChainId === CONFIG.SOLANA_CHAIN_ID;
+
+            console.log('SELL Quote params:', {
+                amount: amountStr,
+                destChainId: destChainId,
+                isSolana: isSolana,
+            });
+
+            if (isSolana) {
+                // $MON -> SOL: deBridge handles directly
+                const debridgeQuote = await getDebridgeSellQuote(amountStr);
+
+                return {
+                    type: 'debridge-sell',
+                    totalOutput: debridgeQuote.estimatedOutput,
+                    totalOutputFormatted: (parseFloat(debridgeQuote.estimatedOutput) / 1e9).toFixed(4), // SOL has 9 decimals
+                    outputSymbol: 'SOL',
+                    estimatedTime: debridgeQuote.estimatedTime,
+                    priceImpact: debridgeQuote.priceImpact,
+                    bridgeFee: debridgeQuote.fee,
+                    bridgeProvider: 'deBridge',
+                    inputUsd: debridgeQuote.inputUsd,
+                    outputUsd: debridgeQuote.outputUsdValue,
+                    fullQuote: debridgeQuote.fullQuote,
+                    minAmount: debridgeQuote.minAmount,
+                };
+            } else {
+                // $MON -> EVM: Multi-step (sell on Token Mill -> bridge native MON out)
+                // This requires: 1) Sell $MON for WMON on Token Mill, 2) Unwrap WMON, 3) Bridge MON out
+
+                // For now, get LI.FI quote for native MON -> destination
+                const bridgeQuote = await getLifiSellBridgeQuote(amountStr, destChainId);
+
+                // Calculate real price impact from USD values or on-chain reserves
+                let priceImpact = '~2-5%';
+                const inUsd = parseFloat(bridgeQuote.inputUsd);
+                const outUsd = parseFloat(bridgeQuote.outputUsd);
+                if (inUsd > 0 && outUsd > 0) {
+                    priceImpact = ((1 - outUsd / inUsd) * 100).toFixed(2) + '%';
+                } else if (bridgeQuote.reservesPriceImpact != null) {
+                    // Use on-chain reserves price impact (pool-only, excludes bridge fees)
+                    priceImpact = bridgeQuote.reservesPriceImpact.toFixed(2) + '%';
+                }
+
+                return {
+                    type: 'sell+bridge',
+                    totalOutput: bridgeQuote.estimatedOutput,
+                    totalOutputFormatted: (parseFloat(bridgeQuote.estimatedOutput) / 1e18).toFixed(6),
+                    outputSymbol: state.destToken?.symbol || 'ETH',
+                    estimatedTime: bridgeQuote.estimatedTime,
+                    priceImpact: priceImpact,
+                    bridgeFee: bridgeQuote.fee || '~$0.20',
+                    swapFee: '0.3%',
+                    bridgeProvider: bridgeQuote.usedReserves ? 'Token Mill + LI.FI' : 'LI.FI',
+                    inputUsd: bridgeQuote.inputUsd,
+                    outputUsd: bridgeQuote.outputUsd,
+                    fullQuote: bridgeQuote.fullQuote,
+                    swapQuote: bridgeQuote.swapQuote,
+                    bridgeQuote: bridgeQuote.bridgeQuote,
+                    nativeMonAmount: bridgeQuote.nativeMonAmount,
+                    note: 'Requires Token Mill sell + bridge (multi-step)',
+                };
+            }
+        }
+
+        // deBridge sell quote ($MON -> SOL)
+        async function getDebridgeSellQuote(amountInBaseUnits) {
+            const url = new URL(`${CONFIG.DEBRIDGE_API}/dln/order/quote`);
+            url.searchParams.append('srcChainId', CONFIG.DEBRIDGE_MONAD_CHAIN_ID);
+            url.searchParams.append('srcChainTokenIn', CONFIG.MON_TOKEN); // $MON token
+            url.searchParams.append('srcChainTokenInAmount', amountInBaseUnits);
+            url.searchParams.append('dstChainId', CONFIG.DEBRIDGE_SOLANA_CHAIN_ID);
+            url.searchParams.append('dstChainTokenOut', CONFIG.SOLANA_NATIVE); // Native SOL
+            url.searchParams.append('prependOperatingExpenses', 'true');
+
+            console.log('deBridge SELL quote URL:', url.toString());
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log('deBridge SELL quote response:', data);
+
+            if (data.errorCode || data.errorMessage) {
+                // Check for minimum amount error
+                if (data.errorId === 'ERROR_LOW_GIVE_AMOUNT') {
+                    throw new Error('Amount too low for deBridge. Minimum ~500,000 $MON (~$20) required.');
+                }
+                throw new Error(data.errorMessage || 'deBridge quote failed');
+            }
+
+            // deBridge output is in SOL units (9 decimals)
+            const outputAmount = data.estimation?.dstChainTokenOut?.amount || '0';
+            const outputUsd = data.estimation?.dstChainTokenOut?.approximateUsdValue || 0;
+
+            const inputUsdSell = data.estimation?.srcChainTokenIn?.approximateUsdValue || 0;
+
+            return {
+                estimatedOutput: outputAmount,
+                estimatedOutputFormatted: (parseFloat(outputAmount) / 1e9).toFixed(4),
+                estimatedTime: data.order?.approximateFulfillmentDelay || 30,
+                fee: '$' + (data.protocolFeeApproximateUsdValue || 0).toFixed(2),
+                inputUsd: inputUsdSell,
+                outputUsdValue: outputUsd,
+                outputUsd: '$' + outputUsd.toFixed(2),
+                priceImpact: (data.usdPriceImpact || 0).toFixed(2) + '%',
+                fullQuote: data,
+                minAmount: '~500,000 $MON (~$20)',
+            };
+        }
+
+        // Query Token Mill market reserves via RPC (no library needed)
+        async function getTokenMillReserves() {
+            const response = await fetch(CONFIG.MONAD_RPC, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    method: 'eth_call',
+                    params: [{ to: CONFIG.TM_MARKET, data: '0x0902f1ac' }, 'latest'],
+                    id: 1
+                })
+            });
+            const result = await response.json();
+            if (!result.result || result.result === '0x') throw new Error('Failed to read Token Mill reserves');
+            // Decode two uint256 values: baseReserve ($MON), quoteReserve (WMON)
+            const hex = result.result.slice(2);
+            const baseReserve = BigInt('0x' + hex.slice(0, 64));
+            const quoteReserve = BigInt('0x' + hex.slice(64, 128));
+            return { baseReserve, quoteReserve };
+        }
+
+        // Calculate sell output using on-chain reserves (constant product + fee)
+        // Matches LFJ Token Mill pool behavior
+        function calculateSellFromReserves(sellAmountWei, baseReserve, quoteReserve) {
+            const FEE_BPS = 425n; // 4.25% fee matches LFJ pool (creator + protocol fees)
+            const BPS_BASE = 10000n;
+            // Constant product: k = base * quote
+            const k = baseReserve * quoteReserve;
+            const newBase = baseReserve + sellAmountWei;
+            const newQuote = k / newBase;
+            const rawOutput = quoteReserve - newQuote;
+            // Apply fee
+            const netOutput = rawOutput * (BPS_BASE - FEE_BPS) / BPS_BASE;
+            // Calculate price impact
+            const spotPrice = Number(quoteReserve) / Number(baseReserve);
+            const effectivePrice = Number(rawOutput) / Number(sellAmountWei);
+            const priceImpact = ((spotPrice - effectivePrice) / spotPrice * 100);
+            return {
+                outputWei: netOutput,
+                rawOutputWei: rawOutput,
+                feeWei: rawOutput - netOutput,
+                priceImpact: priceImpact,
+                spotRate: Number(baseReserve) / Number(quoteReserve), // $MON per WMON
+            };
+        }
+
+        // Calculate buy output using on-chain reserves (constant product + fee)
+        // Buy $MON tokens with native MON (WMON)
+        function calculateBuyFromReserves(buyAmountWei, baseReserve, quoteReserve) {
+            const FEE_BPS = 425n; // 4.25% fee matches LFJ pool (creator + protocol fees)
+            const BPS_BASE = 10000n;
+            // Constant product: k = base * quote
+            // Adding quoteReserve (MON) to buy baseReserve ($MON)
+            const k = baseReserve * quoteReserve;
+            const newQuote = quoteReserve + buyAmountWei;
+            const newBase = k / newQuote;
+            const rawOutput = baseReserve - newBase;
+            // Apply fee
+            const netOutput = rawOutput * (BPS_BASE - FEE_BPS) / BPS_BASE;
+            // Calculate price impact
+            const spotPrice = Number(baseReserve) / Number(quoteReserve); // $MON per MON
+            const effectivePrice = Number(rawOutput) / Number(buyAmountWei);
+            const priceImpact = ((spotPrice - effectivePrice) / spotPrice * 100);
+            return {
+                outputWei: netOutput,
+                rawOutputWei: rawOutput,
+                feeWei: rawOutput - netOutput,
+                priceImpact: priceImpact,
+                spotRate: spotPrice, // $MON per MON
+            };
+        }
+
+        // Get direct Token Mill quote (no API, no rate limits, no fees!)
+        // This is the PRIMARY method for same-chain swaps
+        async function getTokenMillDirectQuote(amountInBaseUnits, isBuy = true) {
+            console.log('Getting Token Mill direct quote (no API fees)...');
+            const reserves = await getTokenMillReserves();
+            console.log('Token Mill reserves - $MON:', (Number(reserves.baseReserve) / 1e18).toFixed(2), 'MON:', (Number(reserves.quoteReserve) / 1e18).toFixed(2));
+
+            let result;
+            if (isBuy) {
+                // Buying $MON with native MON
+                result = calculateBuyFromReserves(BigInt(amountInBaseUnits), reserves.baseReserve, reserves.quoteReserve);
+            } else {
+                // Selling $MON for native MON
+                result = calculateSellFromReserves(BigInt(amountInBaseUnits), reserves.baseReserve, reserves.quoteReserve);
+            }
+
+            const outputFormatted = (Number(result.outputWei) / 1e18).toFixed(2);
+            console.log('Token Mill direct quote:', amountInBaseUnits, '->', result.outputWei.toString(), '(', outputFormatted, ')');
+            console.log('Price impact:', result.priceImpact.toFixed(2) + '%', '| Pool fee: 4.25%');
+
+            return {
+                type: 'direct',
+                provider: 'Token Mill',
+                estimatedOutput: result.outputWei.toString(),
+                totalOutput: result.outputWei.toString(),
+                totalOutputFormatted: outputFormatted,
+                estimatedTime: 5,
+                priceImpact: result.priceImpact.toFixed(2) + '%',
+                bridgeFee: '$0',
+                swapFee: '4.25%', // Pool fee only, no API fee
+                reserves: reserves,
+                spotRate: result.spotRate,
+            };
+        }
+
+        // LI.FI sell bridge quote: $MON token -> swap to native MON -> bridge to destination
+        // Uses LI.FI when available, falls back to on-chain Token Mill reserves for large amounts
+        async function getLifiSellBridgeQuote(monTokenAmount, destChainId) {
+            let nativeMonAmount;
+            let inputUsd = null;
+            let swapOutputUsd = null;
+            let swapData = null;
+            let usedReserves = false;
+            let reservesPriceImpact = null;
+
+            // Step 1: Get $MON → native MON swap amount
+            // Try LI.FI first (works for smaller amounts via KyberSwap)
+            try {
+                const swapParams = new URLSearchParams({
+                    fromChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                    toChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                    fromToken: CONFIG.MON_TOKEN,
+                    toToken: '0x0000000000000000000000000000000000000000',
+                    fromAmount: monTokenAmount,
+                    fromAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+                    toAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+                });
+
+                const swapResponse = await fetch(`${CONFIG.LIFI_API}/quote?${swapParams}`);
+                swapData = await swapResponse.json();
+                console.log('LI.FI sell swap quote ($MON → native MON):', swapData);
+
+                if (swapData.message || swapData.code) {
+                    throw new Error(swapData.message || 'LI.FI quote unavailable');
+                }
+
+                nativeMonAmount = swapData.estimate?.toAmount || '0';
+                inputUsd = swapData.estimate?.fromAmountUSD || null;
+                swapOutputUsd = swapData.estimate?.toAmountUSD || null;
+                console.log('LI.FI $MON → native MON:', monTokenAmount, '→', nativeMonAmount);
+            } catch (lifiErr) {
+                // Fallback: Calculate from on-chain Token Mill pool reserves
+                console.log('LI.FI swap quote failed, using on-chain reserves:', lifiErr.message);
+                usedReserves = true;
+
+                const reserves = await getTokenMillReserves();
+                console.log('Token Mill reserves - Base:', reserves.baseReserve.toString(), 'Quote:', reserves.quoteReserve.toString());
+
+                const sellResult = calculateSellFromReserves(
+                    BigInt(monTokenAmount),
+                    reserves.baseReserve,
+                    reserves.quoteReserve
+                );
+
+                nativeMonAmount = sellResult.outputWei.toString();
+                reservesPriceImpact = sellResult.priceImpact;
+                const nativeMonFormatted = Number(nativeMonAmount) / 1e18;
+                console.log('On-chain calc: $MON → native MON:', monTokenAmount, '→', nativeMonFormatted.toFixed(4), 'MON');
+                console.log('Price impact:', sellResult.priceImpact.toFixed(2) + '%');
+                console.log('Rate: 1 MON =', sellResult.spotRate.toFixed(2), '$MON');
+            }
+
+            // Step 2: Get bridge quote (native MON -> destination chain native token)
+            let bridgeData = null;
+            try {
+                const bridgeParams = new URLSearchParams({
+                    fromChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                    toChain: destChainId.toString(),
+                    fromToken: '0x0000000000000000000000000000000000000000',
+                    toToken: '0x0000000000000000000000000000000000000000',
+                    fromAmount: nativeMonAmount,
+                    fromAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+                });
+
+                const bridgeResponse = await fetch(`${CONFIG.LIFI_API}/quote?${bridgeParams}`);
+                bridgeData = await bridgeResponse.json();
+                console.log('LI.FI sell bridge quote (native MON → dest):', bridgeData);
+
+                if (bridgeData.message || bridgeData.code) {
+                    throw new Error(bridgeData.message || 'Bridge quote failed');
+                }
+            } catch (bridgeErr) {
+                // If bridge fails for large MON amounts, estimate using MON/ETH rate from a small test
+                console.log('Bridge quote failed, estimating from rate:', bridgeErr.message);
+                const testMonAmount = BigInt(10) * BigInt(10 ** 18); // 10 MON
+                const testParams = new URLSearchParams({
+                    fromChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                    toChain: destChainId.toString(),
+                    fromToken: '0x0000000000000000000000000000000000000000',
+                    toToken: '0x0000000000000000000000000000000000000000',
+                    fromAmount: testMonAmount.toString(),
+                    fromAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+                });
+                const testRes = await fetch(`${CONFIG.LIFI_API}/quote?${testParams}`);
+                const testData = await testRes.json();
+                if (testData.estimate?.toAmount) {
+                    const ratePerMon = Number(testData.estimate.toAmount) / Number(testMonAmount);
+                    const estimatedOutput = BigInt(Math.floor(ratePerMon * Number(nativeMonAmount)));
+                    const monUsdRate = Number(testData.estimate.fromAmountUSD || 0) / 10;
+                    const nativeMonFloat = Number(nativeMonAmount) / 1e18;
+                    bridgeData = {
+                        estimate: {
+                            toAmount: estimatedOutput.toString(),
+                            toAmountUSD: (nativeMonFloat * monUsdRate).toFixed(2),
+                            executionDuration: 120,
+                        }
+                    };
+                    if (!inputUsd && monUsdRate > 0) {
+                        // Estimate input USD from the native MON value
+                        inputUsd = (nativeMonFloat * monUsdRate * 1.04).toFixed(2); // Add back ~4% fee
+                    }
+                    console.log('Estimated bridge output from rate:', estimatedOutput.toString());
+                } else {
+                    throw new Error('Cannot get bridge rate - ' + (testData.message || 'unknown error'));
+                }
+            }
+
+            return {
+                estimatedOutput: bridgeData.estimate?.toAmount || '0',
+                estimatedTime: ((swapData?.estimate?.executionDuration || 30) + (bridgeData.estimate?.executionDuration || 120)),
+                fee: bridgeData.estimate?.feeCosts?.[0]?.amountUSD || '~$0',
+                inputUsd: inputUsd,
+                outputUsd: bridgeData.estimate?.toAmountUSD || swapOutputUsd,
+                swapQuote: swapData,
+                bridgeQuote: bridgeData,
+                transactionRequest: swapData?.transactionRequest || null,
+                bridgeTransactionRequest: bridgeData?.transactionRequest || null,
+                fullQuote: bridgeData,
+                nativeMonAmount: nativeMonAmount,
+                usedReserves: usedReserves,
+                reservesPriceImpact: reservesPriceImpact,
+            };
+        }
+
+        // deBridge direct quote (Solana -> $MON token in ONE call!)
+        async function getDebridgeDirectQuote(amountInBaseUnits) {
+            const srcToken = state.sourceToken.address === '0x0000000000000000000000000000000000000000'
+                ? CONFIG.SOLANA_NATIVE
+                : state.sourceToken.address;
+
+            const url = new URL(`${CONFIG.DEBRIDGE_API}/dln/order/quote`);
+            url.searchParams.append('srcChainId', CONFIG.DEBRIDGE_SOLANA_CHAIN_ID);
+            url.searchParams.append('srcChainTokenIn', srcToken);
+            url.searchParams.append('srcChainTokenInAmount', amountInBaseUnits);
+            url.searchParams.append('dstChainId', CONFIG.DEBRIDGE_MONAD_CHAIN_ID);
+            url.searchParams.append('dstChainTokenOut', CONFIG.MON_TOKEN); // Direct to $MON token!
+            url.searchParams.append('prependOperatingExpenses', 'true');
+
+            console.log('deBridge direct quote URL:', url.toString());
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log('deBridge direct quote response:', data);
+
+            if (data.errorCode || data.errorMessage) {
+                throw new Error(data.errorMessage || 'deBridge quote failed');
+            }
+
+            // deBridge output is in $MON token units (18 decimals)
+            const outputAmount = data.estimation?.dstChainTokenOut?.amount || '0';
+            const outputUsd = data.estimation?.dstChainTokenOut?.approximateUsdValue || 0;
+
+            const inputUsd = data.estimation?.srcChainTokenIn?.approximateUsdValue || 0;
+
+            return {
+                estimatedOutput: outputAmount,
+                estimatedOutputFormatted: (parseFloat(outputAmount) / 1e18).toFixed(2),
+                estimatedTime: data.order?.approximateFulfillmentDelay || 30,
+                fee: '$' + (data.protocolFeeApproximateUsdValue || 0).toFixed(2),
+                inputUsd: inputUsd,
+                outputUsdValue: outputUsd,
+                outputUsd: '$' + outputUsd.toFixed(2),
+                srcAmount: data.estimation?.srcChainTokenIn?.amount,
+                priceImpact: (data.usdPriceImpact || 0).toFixed(2) + '%',
+                fullQuote: data,
+            };
+        }
+
+        async function getLifiBridgeQuote(amountInBaseUnits) {
+            // Bridge from source chain to Monad native MON
+            const srcChainId = state.sourceChain.id;
+
+            const params = new URLSearchParams({
+                fromChain: srcChainId.toString(),
+                toChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                fromToken: state.sourceToken.address,
+                toToken: '0x0000000000000000000000000000000000000000', // Native MON
+                fromAmount: amountInBaseUnits,
+                fromAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b', // Placeholder for quotes
+                toAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+            });
+
+            const response = await fetch(`${CONFIG.LIFI_API}/quote?${params}`);
+            const data = await response.json();
+
+            console.log('LI.FI bridge quote response:', data);
+
+            if (data.message || data.code) {
+                throw new Error(data.message || 'Bridge quote failed');
+            }
+
+            return {
+                estimatedOutput: data.estimate?.toAmount || '0',
+                estimatedTime: data.estimate?.executionDuration || 120,
+                fee: data.estimate?.feeCosts?.[0]?.amountUSD || '~$0',
+                inputUsd: data.estimate?.fromAmountUSD || null,
+                outputUsd: data.estimate?.toAmountUSD || null,
+                transactionRequest: data.transactionRequest,
+                fullQuote: data,
+            };
+        }
+
+        async function getLifiSwapQuote(amountInBaseUnits) {
+            // OPTIMIZED: Try Token Mill direct first (no API, no rate limits, no 0.25% fee!)
+            // Only fall back to LI.FI if direct quote fails
+            try {
+                console.log('Trying Token Mill direct quote first (saves 0.25% LI.FI fee)...');
+                const directQuote = await getTokenMillDirectQuote(amountInBaseUnits, true);
+                directQuote.type = 'swap';
+                directQuote.bridgeProvider = 'Token Mill (Direct)';
+                return directQuote;
+            } catch (directErr) {
+                console.log('Token Mill direct quote failed, falling back to LI.FI:', directErr.message);
+            }
+
+            // FALLBACK: Use LI.FI (has 0.25% fee + rate limits)
+            console.log('Using LI.FI fallback (note: 0.25% API fee applies)...');
+            const params = new URLSearchParams({
+                fromChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                toChain: CONFIG.LIFI_MONAD_CHAIN_ID.toString(),
+                fromToken: '0x0000000000000000000000000000000000000000', // Native MON
+                toToken: CONFIG.MON_TOKEN,
+                fromAmount: amountInBaseUnits,
+                fromAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+                toAddress: state.walletAddress || '0xF909fF1806DbdffEfB7687754eA7a28085d4a80b',
+            });
+
+            const response = await fetch(`${CONFIG.LIFI_API}/quote?${params}`);
+            const data = await response.json();
+
+            console.log('LI.FI swap quote response:', data);
+
+            if (data.message || data.code) {
+                throw new Error(data.message || 'Swap quote failed');
+            }
+
+            const outputFormatted = (parseFloat(data.estimate?.toAmount || '0') / 1e18).toFixed(2);
+
+            return {
+                type: 'swap',
+                estimatedOutput: data.estimate?.toAmount || '0',
+                totalOutput: data.estimate?.toAmount || '0',
+                totalOutputFormatted: outputFormatted,
+                estimatedTime: 30,
+                priceImpact: '< 1%',
+                bridgeFee: '$0',
+                swapFee: '0.3% + 0.25% LI.FI fee',
+                bridgeProvider: 'LI.FI (fallback)',
+                inputUsd: data.estimate?.fromAmountUSD || null,
+                outputUsd: data.estimate?.toAmountUSD || null,
+                transactionRequest: data.transactionRequest,
+                fullQuote: data,
+            };
+        }
+
+        function displayQuote() {
+            if (!state.quote) return;
+
+            const outputFormatted = state.quote.totalOutputFormatted ||
+                (parseFloat(state.quote.totalOutput) / 1e18).toFixed(2);
+
+            // Handle both buy and sell modes
+            const outputSymbol = state.quote.outputSymbol || '$MON';
+            document.getElementById('preview-amount').textContent = `~${numberWithCommas(outputFormatted)} ${outputSymbol}`;
+
+            // Show USD values
+            const inputUsd = state.quote.inputUsd;
+            const outputUsd = state.quote.outputUsd;
+
+            // Input USD display
+            if (inputUsd && parseFloat(inputUsd) > 0) {
+                document.getElementById('from-usd').textContent = `~$${parseFloat(inputUsd).toFixed(2)}`;
+            } else {
+                document.getElementById('from-usd').textContent = '';
+            }
+
+            // Output USD display
+            if (outputUsd && parseFloat(outputUsd) > 0) {
+                document.getElementById('to-usd').textContent = `~$${parseFloat(outputUsd).toFixed(2)}`;
+                document.getElementById('preview-usd').textContent = `~$${parseFloat(outputUsd).toFixed(2)}`;
+            } else {
+                document.getElementById('to-usd').textContent = '';
+                const provider = state.quote.bridgeProvider || (state.quote.type?.includes('debridge') ? 'deBridge' : 'LI.FI');
+                let subtext = `Powered by ${provider}`;
+                if (state.quote.minAmount) subtext += ` | Min: ${state.quote.minAmount}`;
+                if (state.quote.note) subtext = state.quote.note;
+                document.getElementById('preview-usd').textContent = subtext;
+            }
+
+            // Calculate price impact from USD values if available
+            let priceImpactText = state.quote.priceImpact || '< 1%';
+            if (inputUsd && outputUsd && parseFloat(inputUsd) > 0 && parseFloat(outputUsd) > 0) {
+                const impactPct = ((parseFloat(inputUsd) - parseFloat(outputUsd)) / parseFloat(inputUsd) * 100);
+                if (impactPct > 0) {
+                    priceImpactText = impactPct.toFixed(2) + '%';
+                }
+            }
+
+            document.getElementById('bridge-fee').textContent = state.quote.bridgeFee || '$0';
+            document.getElementById('swap-fee').textContent = state.quote.swapFee || '0.3%';
+            document.getElementById('price-impact').textContent = priceImpactText;
+
+            const priceImpactNum = parseFloat(priceImpactText) || 0;
+            const impactClass = priceImpactNum > 10 ? 'danger' : priceImpactNum > 3 ? 'warning' : '';
+            document.getElementById('price-impact').className = 'value ' + impactClass;
+
+            document.getElementById('slippage-display').textContent = (state.slippageBps / 100) + '%';
+            document.getElementById('est-time').textContent = `~${Math.ceil((state.quote.estimatedTime || 60) / 60)} min`;
+
+            // Update to-amount display
+            document.getElementById('to-amount').value = outputFormatted;
+
+            // Show quote sections
+            document.getElementById('quote-preview').style.display = 'block';
+            document.getElementById('quote-details').style.display = 'block';
+        }
+
+        function hideQuote() {
+            document.getElementById('quote-preview').style.display = 'none';
+            document.getElementById('quote-details').style.display = 'none';
+            document.getElementById('from-usd').textContent = '';
+            document.getElementById('to-usd').textContent = '';
+            document.getElementById('to-amount').value = '';
+        }
+
+        function numberWithCommas(x) {
+            // Split by decimal, add commas only to integer part
+            const parts = x.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join('.');
+        }
+
+        // =====================================================
+        // SLIPPAGE SETTINGS
+        // =====================================================
+        function toggleSettings() {
+            const section = document.getElementById('slippage-section');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function setSlippage(percent) {
+            state.slippageBps = percent * 100;
+
+            // Update button states
+            document.querySelectorAll('.slippage-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show warning for high slippage
+            const warning = document.getElementById('slippage-warning');
+            warning.style.display = percent >= 10 ? 'block' : 'none';
+
+            // Update quote display
+            document.getElementById('slippage-display').textContent = percent + '%';
+        }
+
+        // =====================================================
+        // SWAP EXECUTION
+        // =====================================================
+        function updateSwapButton() {
+            const swapBtn = document.getElementById('swap-btn');
+            const riskAccepted = document.getElementById('risk-accept').checked;
+            const amount = document.getElementById('from-amount').value;
+
+            swapBtn.disabled = !riskAccepted || !amount || parseFloat(amount) <= 0;
+        }
+
+        async function executeSwap() {
+            if (!state.quote) {
+                alert('Please get a quote first');
+                return;
+            }
+
+            const outputFormatted = state.quote.totalOutputFormatted ||
+                (parseFloat(state.quote.totalOutput) / 1e18).toFixed(2);
+
+            const confirmed = confirm(
+                `You are about to swap:\n\n` +
+                `${document.getElementById('from-amount').value} ${state.sourceToken.symbol}\n` +
+                `↓\n` +
+                `~${numberWithCommas(outputFormatted)} $MON\n\n` +
+                `Slippage: ${state.slippageBps / 100}%\n` +
+                `Estimated time: ${Math.ceil((state.quote.estimatedTime || 60) / 60)} min\n\n` +
+                `This is a meme token with limited liquidity.\n` +
+                `Continue?`
+            );
+
+            if (!confirmed) return;
+
+            const swapBtn = document.getElementById('swap-btn');
+            swapBtn.innerHTML = '<span class="loading"></span> Processing...';
+            swapBtn.disabled = true;
+
+            try {
+                if (state.quote.type === 'bridge+swap') {
+                    // Two-step process: Bridge then Swap
+                    await executeBridgeThenSwap();
+                } else {
+                    // Single swap on Monad
+                    await executeDirectSwap();
+                }
+            } catch (error) {
+                console.error('Swap error:', error);
+                alert('Swap failed: ' + error.message);
+            }
+
+            swapBtn.innerHTML = 'Swap to $MON';
+            swapBtn.disabled = false;
+            updateSwapButton();
+        }
+
+        async function executeDirectSwap() {
+            // Direct swap on Monad using LI.FI transaction
+            const tx = state.quote.transactionRequest;
+            if (!tx) {
+                throw new Error('No transaction data available');
+            }
+
+            console.log('Executing swap tx:', tx);
+
+            // Request signature from connected wallet
+            const provider = state.provider || window.ethereum;
+            const txHash = await provider.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                    from: state.walletAddress,
+                    to: tx.to,
+                    value: tx.value,
+                    data: tx.data,
+                    gas: tx.gasLimit,
+                }],
+            });
+
+            console.log('Swap tx submitted:', txHash);
+
+            // Show success
+            alert(
+                `Swap submitted!\n\n` +
+                `Transaction: ${txHash}\n\n` +
+                `View on explorer:\n${CONFIG.MONAD_EXPLORER}/tx/${txHash}`
+            );
+        }
+
+        async function executeBridgeThenSwap() {
+            // Step 1: Execute bridge
+            const bridgeTx = state.quote.bridge?.transactionRequest;
+            if (!bridgeTx) {
+                throw new Error('No bridge transaction data');
+            }
+
+            console.log('Step 1: Executing bridge tx:', bridgeTx);
+
+            const bridgeProvider = state.provider || window.ethereum;
+            const bridgeTxHash = await bridgeProvider.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                    from: state.walletAddress,
+                    to: bridgeTx.to,
+                    value: bridgeTx.value,
+                    data: bridgeTx.data,
+                    gas: bridgeTx.gasLimit,
+                }],
+            });
+
+            console.log('Bridge tx submitted:', bridgeTxHash);
+
+            alert(
+                `Bridge submitted!\n\n` +
+                `Transaction: ${bridgeTxHash}\n\n` +
+                `Please wait for the bridge to complete (2-5 min),\n` +
+                `then refresh this page and swap your MON to $MON.\n\n` +
+                `View tx: ${CONFIG.MONAD_EXPLORER}/tx/${bridgeTxHash}`
+            );
+
+            // Note: In a production app, you'd poll for bridge completion
+            // and then automatically execute the swap. For now, we tell the
+            // user to refresh and swap manually.
+        }
+
+        // =====================================================
+        // INITIALIZATION
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update network banner
+            const banner = document.getElementById('network-banner');
+            if (USE_TESTNET) {
+                banner.textContent = `TESTNET MODE (${NETWORK.name}) - DO NOT USE WITH REAL FUNDS`;
+                banner.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)'; // Orange for testnet
+            } else {
+                banner.textContent = `MAINNET MODE - REAL FUNDS - USE WITH CAUTION`;
+                banner.style.background = 'linear-gradient(90deg, #dc2626, #b91c1c)'; // Red for mainnet
+            }
+
+            console.log(`Swap page initialized - ${USE_TESTNET ? 'TESTNET' : 'MAINNET'} MODE`);
+            console.log('Network:', NETWORK.name, '| Chain ID:', NETWORK.chainId);
+            console.log('RPC:', NETWORK.rpc);
+            console.log('Explorer:', NETWORK.explorer);
+            console.log('MON Token:', CONFIG.MON_TOKEN);
+            console.log('LFJ Router:', CONFIG.LFJ_ROUTER);
+
+            // Initialize direction UI
+            updateFromTokenUI();
+
+            // Close modals on overlay click
+            document.getElementById('token-modal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeTokenSelector();
+                }
+            });
+            document.getElementById('wallet-modal').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    closeWalletModal();
+                }
+            });
+
+            // Close modals on Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeTokenSelector();
+                    closeWalletModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

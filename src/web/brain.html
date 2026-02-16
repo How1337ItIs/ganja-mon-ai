@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GanjaMon AI | Agent Brain Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   RESET & VARIABLES
+   ======================================================================== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a0e07;--bg-mid:#221309;--surface:#2a1a0f;--card:#2f1e12;--card-hover:#3a2818;
+  --border:rgba(255,199,0,.08);--border-warm:rgba(255,199,0,.18);
+  --gold:#ffc700;--green:#2ecc40;--purple:#836EF9;--red:#e74c3c;--amber:#f39c12;
+  --blue:#1da1f2;--teal:#00b894;
+  --text:#e8d5b7;--text-sec:#b09a7c;--muted:#6a5a48;
+  --font-h:'Righteous',cursive;--font:'Nunito',sans-serif;
+  --sidebar:56px;--topbar:50px;--r:12px;--r-sm:8px;
+}
+html{font-size:14px;background:var(--bg)}
+body{font-family:var(--font);color:var(--text);background:var(--bg);min-height:100vh;overflow:hidden}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ========================================================================
+   LAYOUT GRID
+   ======================================================================== */
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--topbar) 1fr;height:100vh}
+
+/* ========================================================================
+   TOP BAR
+   ======================================================================== */
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:0 16px;
+  background:linear-gradient(90deg,var(--bg-mid),var(--surface));
+  border-bottom:1px solid var(--border-warm);z-index:20;position:relative;overflow:hidden}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--purple),var(--green),transparent);opacity:.4}
+
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand-dot{width:10px;height:10px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:breathe 3s ease-in-out infinite}
+.brand-name{font-family:var(--font-h);font-size:1.1rem;letter-spacing:.5px}
+.brand-name b{color:var(--gold)}
+.brand-tag{font-size:.65rem;color:var(--muted);font-weight:300}
+.chain-badge{padding:2px 8px;border-radius:10px;font-size:.6rem;font-weight:700;
+  background:rgba(131,110,249,.15);color:var(--purple);border:1px solid rgba(131,110,249,.3);letter-spacing:.5px}
+
+.tb-stat{display:flex;align-items:center;gap:4px;padding:3px 10px;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  font-size:.65rem;color:var(--muted);white-space:nowrap}
+.tb-stat b{color:var(--gold);font-weight:600}
+.tb-stat.err{border-color:rgba(231,76,60,.3)}
+.tb-stat.err b{color:var(--red)}
+
+#tb-time{font-size:.58rem;color:var(--muted)}
+
+@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+/* ========================================================================
+   SIDEBAR
+   ======================================================================== */
+.sidebar{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;
+  background:var(--bg-mid);border-right:1px solid var(--border)}
+.nav-btn{width:40px;height:40px;border:none;background:transparent;border-radius:var(--r-sm);
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .15s;position:relative}
+.nav-btn:hover{background:var(--card);color:var(--text)}
+.nav-btn.active{color:var(--gold);background:rgba(255,199,0,.08)}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;
+  background:var(--gold);border-radius:0 2px 2px 0}
+.nav-btn span{font-size:13px}
+.nav-btn .label{display:none}
+
+/* ========================================================================
+   MAIN CONTENT
+   ======================================================================== */
+.main{overflow-y:auto;padding:16px;background:var(--bg)}
+.tab{display:none;animation:fadeIn .25s ease}
+.tab.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ========================================================================
+   SHARED COMPONENTS
+   ======================================================================== */
+.section-title{font-family:var(--font-h);font-size:1rem;color:var(--gold);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:1.1em}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;
+  position:relative;transition:border-color .2s}
+.card:hover{border-color:var(--border-warm)}
+.card-title{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.card-value{font-family:var(--font-h);font-size:1.6rem;color:var(--text)}
+.card-sub{font-size:.7rem;color:var(--text-sec);margin-top:4px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.62rem;font-weight:700;letter-spacing:.3px}
+.badge-green{background:rgba(46,204,64,.12);color:var(--green);border:1px solid rgba(46,204,64,.25)}
+.badge-red{background:rgba(231,76,60,.12);color:var(--red);border:1px solid rgba(231,76,60,.25)}
+.badge-amber{background:rgba(243,156,18,.12);color:var(--amber);border:1px solid rgba(243,156,18,.25)}
+.badge-purple{background:rgba(131,110,249,.12);color:var(--purple);border:1px solid rgba(131,110,249,.25)}
+.badge-gold{background:rgba(255,199,0,.12);color:var(--gold);border:1px solid rgba(255,199,0,.25)}
+.badge-muted{background:rgba(106,90,72,.15);color:var(--muted);border:1px solid rgba(106,90,72,.3)}
+
+.progress-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;position:relative}
+.progress-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:.85rem}
+.loading{color:var(--muted);font-size:.8rem;padding:20px;text-align:center}
+
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{text-align:left;color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;
+  padding:8px;border-bottom:1px solid var(--border)}
+td{padding:8px;border-bottom:1px solid rgba(255,199,0,.04);color:var(--text-sec)}
+tr:hover td{background:rgba(255,199,0,.03)}
+
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ========================================================================
+   TAB 1: DASHBOARD
+   ======================================================================== */
+.consciousness-ring{width:120px;height:120px;border-radius:50%;position:relative;margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center}
+.consciousness-ring::before{content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:2px solid var(--gold);opacity:.3;animation:ringPulse 3s ease-in-out infinite}
+.consciousness-ring::after{content:'';position:absolute;inset:0;border-radius:50%;
+  border:2px solid var(--gold);animation:ringPulse 3s ease-in-out infinite .5s}
+.consciousness-ring .state{font-family:var(--font-h);font-size:.85rem;z-index:1}
+.consciousness-ring .state.active{color:var(--green)}
+.consciousness-ring .state.idle{color:var(--amber)}
+.consciousness-ring .state.stuck{color:var(--red)}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.2}50%{transform:scale(1.12);opacity:.6}}
+
+.thought-bubble{background:var(--card);border:1px solid var(--border-warm);border-radius:var(--r);
+  padding:16px;font-style:italic;color:var(--text-sec);line-height:1.6;position:relative;
+  min-height:60px;font-size:.85rem}
+.thought-bubble::before{content:'"';position:absolute;top:-4px;left:10px;font-size:2.5rem;
+  color:var(--gold);opacity:.3;font-family:var(--font-h)}
+
+.goal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.goal-label{font-size:.7rem;color:var(--muted);width:100px;text-transform:uppercase;letter-spacing:.5px}
+.goal-bar{flex:1}
+.goal-pct{font-size:.7rem;color:var(--gold);width:35px;text-align:right;font-weight:700}
+
+.regime-badge-lg{text-align:center;padding:16px;border-radius:var(--r);font-family:var(--font-h);font-size:1.2rem}
+.regime-bull{background:rgba(46,204,64,.1);color:var(--green);border:1px solid rgba(46,204,64,.25)}
+.regime-bear{background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.25)}
+.regime-crab,.regime-chop,.regime-unknown{background:rgba(243,156,18,.1);color:var(--amber);border:1px solid rgba(243,156,18,.25)}
+
+/* ========================================================================
+   TAB 2: TRADING
+   ======================================================================== */
+.pnl-positive{color:var(--green)}
+.pnl-negative{color:var(--red)}
+
+/* ========================================================================
+   TAB 3: ALPHA HUNTS
+   ======================================================================== */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0}
+.funnel-level{height:32px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;letter-spacing:.3px;transition:width .5s}
+
+.obs-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-bottom:1px solid rgba(255,199,0,.04);
+  font-size:.78rem}
+.obs-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.obs-acted{background:var(--green)}
+.obs-noticed{background:var(--amber)}
+.obs-ignored{background:var(--muted)}
+
+/* ========================================================================
+   TAB 4: BRAIN
+   ======================================================================== */
+.agentic-banner{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(255,199,0,.06),rgba(131,110,249,.06));
+  border:1px solid var(--border-warm);margin-bottom:16px;flex-wrap:wrap}
+.agentic-banner .big{font-family:var(--font-h);font-size:1.1rem;color:var(--gold)}
+.agentic-banner .detail{font-size:.75rem;color:var(--text-sec)}
+.trigger-badge{padding:3px 10px;border-radius:10px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.trigger-scheduled{background:rgba(106,90,72,.2);color:var(--muted);border:1px solid rgba(106,90,72,.3)}
+.trigger-anomaly{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.3)}
+.trigger-telegram{background:rgba(29,161,242,.15);color:var(--blue);border:1px solid rgba(29,161,242,.3)}
+.trigger-api,.trigger-interactive{background:rgba(131,110,249,.15);color:var(--purple);border:1px solid rgba(131,110,249,.3)}
+
+.tool-chain{display:flex;gap:4px;overflow-x:auto;padding:8px 0;align-items:center}
+.tool-pill{padding:4px 10px;border-radius:14px;font-size:.65rem;font-weight:600;white-space:nowrap;
+  border:1px solid var(--border)}
+.tool-pill.ok{background:rgba(46,204,64,.08);color:var(--green);border-color:rgba(46,204,64,.2)}
+.tool-pill.fail{background:rgba(231,76,60,.08);color:var(--red);border-color:rgba(231,76,60,.2)}
+.tool-arrow{color:var(--muted);font-size:.7rem}
+
+.think-block{background:rgba(255,199,0,.04);border-left:3px solid var(--gold);padding:10px 14px;
+  border-radius:0 var(--r-sm) var(--r-sm) 0;margin:8px 0;font-size:.8rem;color:var(--text-sec);
+  line-height:1.5}
+
+.decision-text{white-space:pre-wrap;font-size:.82rem;line-height:1.6;color:var(--text-sec)}
+
+.timeline-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,199,0,.04)}
+.timeline-time{font-size:.65rem;color:var(--muted);width:60px;flex-shrink:0;font-weight:600}
+.timeline-content{font-size:.78rem;color:var(--text-sec);flex:1}
+
+/* ========================================================================
+   TAB 5: RESEARCH
+   ======================================================================== */
+.accordion{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:8px}
+.accordion-header{padding:10px 14px;background:var(--card);cursor:pointer;display:flex;
+  align-items:center;justify-content:space-between;font-size:.8rem;color:var(--text);
+  transition:background .2s}
+.accordion-header:hover{background:var(--card-hover)}
+.accordion-header .arrow{transition:transform .2s;color:var(--muted)}
+.accordion-header.open .arrow{transform:rotate(90deg)}
+.accordion-body{padding:0 14px;max-height:0;overflow:hidden;transition:all .3s ease;
+  font-size:.78rem;color:var(--text-sec);line-height:1.5}
+.accordion-body.open{padding:10px 14px;max-height:2000px}
+
+.confidence-bar{display:flex;align-items:center;gap:8px;margin:4px 0}
+.confidence-bar .label{font-size:.72rem;color:var(--text-sec);width:120px}
+.confidence-bar .bar{flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.confidence-bar .fill{height:100%;background:var(--green);border-radius:3px}
+
+/* ========================================================================
+   TAB 6: SOCIAL
+   ======================================================================== */
+.platform-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pill{padding:4px 12px;border-radius:14px;font-size:.7rem;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);color:var(--muted);background:transparent;transition:all .15s}
+.pill:hover,.pill.active{background:rgba(255,199,0,.1);color:var(--gold);border-color:var(--gold)}
+
+.post-card{padding:12px;border-bottom:1px solid rgba(255,199,0,.04)}
+.post-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.post-platform{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.post-time{font-size:.62rem;color:var(--muted);margin-left:auto}
+.post-body{font-size:.8rem;color:var(--text-sec);line-height:1.5;word-break:break-word}
+.post-link{font-size:.68rem;margin-top:4px}
+
+/* ========================================================================
+   TAB 7: A2A NETWORK
+   ======================================================================== */
+.chat-feed{max-height:500px;overflow-y:auto;padding:8px}
+.chat-msg{max-width:80%;margin-bottom:10px;padding:10px 14px;border-radius:var(--r);font-size:.8rem;line-height:1.5}
+.chat-ours{margin-left:auto;background:rgba(46,204,64,.08);border:1px solid rgba(46,204,64,.15);color:var(--text)}
+.chat-theirs{background:var(--card);border:1px solid var(--border);color:var(--text-sec)}
+.chat-agent{font-size:.65rem;font-weight:700;color:var(--purple);margin-bottom:4px}
+.chat-meta{font-size:.6rem;color:var(--muted);margin-top:4px}
+
+/* ========================================================================
+   TAB 8: GROW
+   ======================================================================== */
+.gauge{width:100px;height:100px;border-radius:50%;position:relative;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;
+  border:3px solid var(--border);margin:0 auto 8px}
+.gauge .val{font-family:var(--font-h);font-size:1.2rem}
+.gauge .unit{font-size:.6rem;color:var(--muted)}
+.gauge.ok{border-color:rgba(46,204,64,.4)}
+.gauge.warn{border-color:rgba(243,156,18,.4)}
+.gauge.crit{border-color:rgba(231,76,60,.4)}
+
+.target-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,199,0,.04);font-size:.78rem}
+.target-label{width:100px;color:var(--muted)}
+.target-range{width:80px;color:var(--text-sec);text-align:center}
+.target-actual{width:60px;text-align:center;font-weight:600}
+.target-status{width:24px;text-align:center}
+
+/* ========================================================================
+   TAB 9: TASKS & SELF-IMPROVEMENT
+   ======================================================================== */
+.task-item{padding:10px 12px;border-bottom:1px solid rgba(255,199,0,.04);cursor:pointer;transition:background .15s}
+.task-item:hover{background:rgba(255,199,0,.03)}
+.task-header{display:flex;align-items:center;gap:8px}
+.task-priority{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.priority-critical{background:var(--red)}
+.priority-high{background:var(--amber)}
+.priority-medium{background:var(--gold)}
+.priority-low{background:var(--muted)}
+.task-title{font-size:.8rem;flex:1}
+.task-status{font-size:.62rem;color:var(--muted)}
+.task-desc{font-size:.72rem;color:var(--text-sec);padding:6px 0 0 18px;display:none;line-height:1.5}
+.task-item.expanded .task-desc{display:block}
+
+.cap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.cap-tile{padding:8px;border-radius:var(--r-sm);font-size:.65rem;text-align:center;font-weight:600;
+  border:1px solid var(--border)}
+.cap-working{background:rgba(46,204,64,.08);color:var(--green);border-color:rgba(46,204,64,.2)}
+.cap-broken{background:rgba(231,76,60,.08);color:var(--red);border-color:rgba(231,76,60,.2)}
+.cap-not_implemented{background:rgba(106,90,72,.1);color:var(--muted);border-color:rgba(106,90,72,.2)}
+
+/* ========================================================================
+   TAB 10: EMAIL
+   ======================================================================== */
+.email-layout{display:grid;grid-template-columns:300px 1fr;gap:12px;min-height:400px}
+.email-list{border:1px solid var(--border);border-radius:var(--r);overflow-y:auto;max-height:600px}
+.email-item{padding:10px 12px;border-bottom:1px solid rgba(255,199,0,.04);cursor:pointer;transition:background .15s}
+.email-item:hover,.email-item.selected{background:rgba(255,199,0,.04)}
+.email-from{font-size:.75rem;font-weight:600;color:var(--text)}
+.email-subject{font-size:.72rem;color:var(--text-sec);margin-top:2px}
+.email-time{font-size:.6rem;color:var(--muted);margin-top:2px}
+.email-dir{font-size:.55rem;font-weight:700;letter-spacing:.5px;padding:1px 6px;border-radius:8px}
+.email-dir.in{background:rgba(46,204,64,.12);color:var(--green)}
+.email-dir.out{background:rgba(131,110,249,.12);color:var(--purple)}
+.email-detail{border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.email-detail h3{font-size:.9rem;margin-bottom:8px}
+.email-detail .body{font-size:.8rem;color:var(--text-sec);line-height:1.6;white-space:pre-wrap}
+
+/* ========================================================================
+   MOBILE
+   ======================================================================== */
+@media(max-width:768px){
+  .app{grid-template-columns:1fr;grid-template-rows:var(--topbar) 1fr 48px}
+  .sidebar{grid-row:3;flex-direction:row;justify-content:space-around;border-right:none;border-top:1px solid var(--border);
+    padding:4px 0;overflow-x:auto}
+  .nav-btn{width:36px;height:36px;font-size:13px}
+  .nav-btn.active::before{top:auto;bottom:0;left:20%;right:20%;width:auto;height:3px;border-radius:2px 2px 0 0}
+  .main{padding:10px}
+  .grid-3,.grid-4,.grid-6{grid-template-columns:1fr 1fr}
+  .email-layout{grid-template-columns:1fr}
+  .tb-stat:nth-child(n+4){display:none}
+}
+@media(max-width:480px){
+  .grid-2,.grid-3,.grid-4,.grid-6{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-dot" id="status-dot"></div>
+      <div>
+        <div class="brand-name"><b>GanjaMon</b> AI</div>
+        <div class="brand-tag">Agent Brain Explorer</div>
+      </div>
+    </div>
+    <span class="chain-badge">MONAD</span>
+    <div class="tb-stat stat-live"><div class="brand-dot" style="width:6px;height:6px"></div><b id="tb-state">...</b></div>
+    <div class="tb-stat">Rounds <b id="tb-rounds">-</b></div>
+    <div class="tb-stat">Tools <b id="tb-tools">39</b></div>
+    <div class="tb-stat" id="tb-conn">Connected</div>
+    <span id="tb-time"></span>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <button class="nav-btn active" data-tab="dashboard" title="Dashboard"><span>🏠</span></button>
+    <button class="nav-btn" data-tab="trading" title="Trading"><span>📈</span></button>
+    <button class="nav-btn" data-tab="alpha" title="Alpha Hunts"><span>🔍</span></button>
+    <button class="nav-btn" data-tab="brain" title="Brain"><span>🧠</span></button>
+    <button class="nav-btn" data-tab="research" title="Research"><span>📚</span></button>
+    <button class="nav-btn" data-tab="social" title="Social"><span>📢</span></button>
+    <button class="nav-btn" data-tab="a2a" title="A2A Network"><span>🤖</span></button>
+    <button class="nav-btn" data-tab="grow" title="Grow"><span>🌱</span></button>
+    <button class="nav-btn" data-tab="tasks" title="Tasks"><span>🔧</span></button>
+    <button class="nav-btn" data-tab="email" title="Email"><span>📧</span></button>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TAB 1: DASHBOARD -->
+    <div class="tab active" id="tab-dashboard">
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:16px;margin-bottom:16px">
+        <div style="text-align:center">
+          <div class="consciousness-ring"><div class="state" id="dash-state">...</div></div>
+          <div style="font-size:.7rem;color:var(--muted)">Consciousness</div>
+        </div>
+        <div class="thought-bubble" id="dash-monologue">Waiting for agent signal...</div>
+      </div>
+
+      <div class="section-title"><span class="icon">🎯</span> Goals</div>
+      <div class="card" style="margin-bottom:16px" id="dash-goals">
+        <div class="goal-row"><span class="goal-label">Make Money</span><div class="goal-bar"><div class="progress-bar"><div class="progress-fill" style="width:0;background:var(--gold)"></div></div></div><span class="goal-pct">-</span></div>
+        <div class="goal-row"><span class="goal-label">Grow Plant</span><div class="goal-bar"><div class="progress-bar"><div class="progress-fill" style="width:0;background:var(--green)"></div></div></div><span class="goal-pct">-</span></div>
+        <div class="goal-row"><span class="goal-label">Community</span><div class="goal-bar"><div class="progress-bar"><div class="progress-fill" style="width:0;background:var(--purple)"></div></div></div><span class="goal-pct">-</span></div>
+      </div>
+
+      <div class="section-title"><span class="icon">📊</span> Key Metrics</div>
+      <div class="grid-6" id="dash-metrics" style="margin-bottom:16px">
+        <div class="card"><div class="card-title">PnL</div><div class="card-value" id="m-pnl">-</div></div>
+        <div class="card"><div class="card-title">Open Pos</div><div class="card-value" id="m-pos">-</div></div>
+        <div class="card"><div class="card-title">Signals</div><div class="card-value" id="m-signals">-</div></div>
+        <div class="card"><div class="card-title">Posts/24h</div><div class="card-value" id="m-posts">-</div></div>
+        <div class="card"><div class="card-title">Temp</div><div class="card-value" id="m-temp">-</div></div>
+        <div class="card"><div class="card-title">VPD</div><div class="card-value" id="m-vpd">-</div></div>
+      </div>
+
+      <div class="section-title"><span class="icon">📉</span> Market Regime</div>
+      <div class="regime-badge-lg regime-unknown" id="dash-regime">Loading...</div>
+    </div>
+
+    <!-- TAB 2: TRADING -->
+    <div class="tab" id="tab-trading">
+      <div class="section-title"><span class="icon">📈</span> Portfolio</div>
+      <div class="grid-4" style="margin-bottom:16px" id="trading-summary">
+        <div class="card"><div class="card-title">Cash</div><div class="card-value" id="t-cash">-</div></div>
+        <div class="card"><div class="card-title">Total PnL</div><div class="card-value" id="t-pnl">-</div></div>
+        <div class="card"><div class="card-title">Win Rate</div><div class="card-value" id="t-winrate">-</div></div>
+        <div class="card"><div class="card-title">Trades</div><div class="card-value" id="t-trades">-</div></div>
+      </div>
+
+      <div class="section-title"><span class="icon">📂</span> Open Positions</div>
+      <div class="card scroll-x" style="margin-bottom:16px">
+        <table><thead><tr><th>Symbol</th><th>Chain</th><th>Entry</th><th>Current</th><th>PnL%</th><th>Time</th></tr></thead>
+        <tbody id="t-open"></tbody></table>
+      </div>
+
+      <div class="section-title"><span class="icon">📋</span> Recent Closed</div>
+      <div class="card scroll-x" style="margin-bottom:16px">
+        <table><thead><tr><th>Symbol</th><th>PnL%</th><th>Exit Reason</th><th>Duration</th></tr></thead>
+        <tbody id="t-closed"></tbody></table>
+      </div>
+
+      <div class="section-title"><span class="icon">🌐</span> Domain Performance</div>
+      <div class="grid-3" id="t-domains"></div>
+    </div>
+
+    <!-- TAB 3: ALPHA HUNTS -->
+    <div class="tab" id="tab-alpha">
+      <div class="section-title"><span class="icon">🔍</span> Alpha Hunts</div>
+      <div class="grid-3" style="margin-bottom:16px" id="alpha-stats">
+        <div class="card"><div class="card-title">Targets</div><div class="card-value" id="a-targets">-</div></div>
+        <div class="card"><div class="card-title">Sources</div><div class="card-value" id="a-sources">-</div></div>
+        <div class="card"><div class="card-title">Acted/Ignored</div><div class="card-value" id="a-ratio">-</div></div>
+      </div>
+
+      <div class="section-title"><span class="icon">📊</span> Signal Funnel</div>
+      <div class="card" style="margin-bottom:16px"><div class="funnel" id="alpha-funnel"></div></div>
+
+      <div class="section-title"><span class="icon">👁️</span> Recent Observations</div>
+      <div class="card" style="max-height:400px;overflow-y:auto" id="alpha-obs"></div>
+    </div>
+
+    <!-- TAB 4: BRAIN -->
+    <div class="tab" id="tab-brain">
+      <div class="agentic-banner" id="brain-banner">
+        <div class="big">Agentic Brain</div>
+        <div class="detail">Loading decision data...</div>
+      </div>
+
+      <div class="section-title"><span class="icon">🔗</span> Tool Chain</div>
+      <div class="card" style="margin-bottom:16px"><div class="tool-chain" id="brain-tools"></div></div>
+
+      <div class="section-title"><span class="icon">💭</span> Latest Decision</div>
+      <div class="card" style="margin-bottom:16px"><div class="decision-text" id="brain-decision">No decision data</div></div>
+
+      <div class="section-title"><span class="icon">🔮</span> Consciousness</div>
+      <div class="card" style="margin-bottom:16px" id="brain-consciousness"></div>
+
+      <div class="section-title"><span class="icon">📜</span> Decision History</div>
+      <div class="card" style="max-height:300px;overflow-y:auto;margin-bottom:16px" id="brain-history"></div>
+
+      <div class="section-title"><span class="icon">🧬</span> Episodic Memory</div>
+      <div class="card" style="max-height:300px;overflow-y:auto" id="brain-memory"></div>
+    </div>
+
+    <!-- TAB 5: RESEARCH -->
+    <div class="tab" id="tab-research">
+      <div class="section-title"><span class="icon">📚</span> Edge Research</div>
+      <div id="research-edge" style="margin-bottom:16px"></div>
+
+      <div class="section-title"><span class="icon">🔄</span> Cross-Domain Insights</div>
+      <div class="card" style="margin-bottom:16px" id="research-cross"></div>
+
+      <div class="section-title"><span class="icon">🧪</span> Strategy Learnings</div>
+      <div class="card" style="margin-bottom:16px" id="research-strategy"></div>
+
+      <div class="section-title"><span class="icon">🔬</span> Recent Sessions</div>
+      <div id="research-sessions"></div>
+    </div>
+
+    <!-- TAB 6: SOCIAL -->
+    <div class="tab" id="tab-social">
+      <div class="section-title"><span class="icon">📢</span> Social Platforms</div>
+      <div class="grid-4" style="margin-bottom:12px" id="social-platforms"></div>
+      <div class="platform-pills" id="social-pills">
+        <button class="pill active" data-platform="all">All</button>
+      </div>
+      <div class="card" style="max-height:600px;overflow-y:auto" id="social-feed"></div>
+    </div>
+
+    <!-- TAB 7: A2A NETWORK -->
+    <div class="tab" id="tab-a2a">
+      <div class="section-title"><span class="icon">🤖</span> A2A Network</div>
+      <div class="grid-4" style="margin-bottom:16px" id="a2a-stats"></div>
+
+      <div class="section-title"><span class="icon">💬</span> Conversations</div>
+      <div class="card" style="margin-bottom:16px"><div class="chat-feed" id="a2a-chat"></div></div>
+
+      <div class="section-title"><span class="icon">📇</span> Agent Directory</div>
+      <div class="card scroll-x">
+        <table><thead><tr><th>Agent</th><th>Chain</th><th>Trust</th><th>Quality</th><th>Last Contact</th></tr></thead>
+        <tbody id="a2a-agents"></tbody></table>
+      </div>
+    </div>
+
+    <!-- TAB 8: GROW -->
+    <div class="tab" id="tab-grow">
+      <div class="section-title"><span class="icon">🌱</span> Sensors</div>
+      <div class="grid-3" style="margin-bottom:16px;justify-items:center" id="grow-gauges"></div>
+
+      <div class="grid-2" style="margin-bottom:16px">
+        <div>
+          <div class="section-title"><span class="icon">🌿</span> Growth Stage</div>
+          <div class="card" id="grow-stage">Loading...</div>
+        </div>
+        <div>
+          <div class="section-title"><span class="icon">🎯</span> Targets vs Actual</div>
+          <div class="card" id="grow-targets"></div>
+        </div>
+      </div>
+
+      <div class="section-title"><span class="icon">💡</span> Latest Grok Decision</div>
+      <div class="card"><div class="decision-text" id="grow-decision">Loading...</div></div>
+    </div>
+
+    <!-- TAB 9: TASKS & SELF-IMPROVEMENT -->
+    <div class="tab" id="tab-tasks">
+      <div class="grid-2" style="margin-bottom:16px">
+        <div>
+          <div class="section-title"><span class="icon">📋</span> Tasks</div>
+          <div class="card" style="max-height:400px;overflow-y:auto" id="tasks-list"></div>
+        </div>
+        <div>
+          <div class="section-title"><span class="icon">⚡</span> Capabilities <span class="badge badge-gold" id="cap-health">-</span></div>
+          <div class="cap-grid" id="cap-grid"></div>
+        </div>
+      </div>
+
+      <div class="section-title"><span class="icon">🚀</span> Upgrades</div>
+      <div class="grid-3" style="margin-bottom:12px" id="upgrade-stats"></div>
+      <div class="card" style="max-height:300px;overflow-y:auto" id="upgrade-list"></div>
+    </div>
+
+    <!-- TAB 10: EMAIL -->
+    <div class="tab" id="tab-email">
+      <div class="section-title"><span class="icon">📧</span> Email & Comms</div>
+      <div class="email-layout">
+        <div class="email-list" id="email-list"></div>
+        <div class="email-detail" id="email-detail"><div class="empty-state">Select an email</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ========================================================================
+   STATE & CONFIG
+   ======================================================================== */
+const S = { tab: 'dashboard', data: {}, timer: null, connected: true, socialFilter: 'all', selectedEmail: null };
+const REFRESH = 30000;
+const TABS = {
+  dashboard: ['/api/agent/consciousness','/api/agent/trading','/api/agent/market-regime','/api/agent/social','/api/sensors/latest'],
+  trading: ['/api/agent/trading'],
+  alpha: ['/api/agent/alpha-hunts'],
+  brain: ['/api/agent/brain-activity','/api/agent/consciousness','/api/ai/latest'],
+  research: ['/api/agent/research','/api/agent/learning'],
+  social: ['/api/agent/social-feed','/api/agent/social'],
+  a2a: ['/api/agent/conversations'],
+  grow: ['/api/sensors/latest','/api/ai/latest','/api/agent/brain-activity'],
+  tasks: ['/api/agent/tasks','/api/agent/capabilities','/api/agent/self-improvement'],
+  email: ['/api/agent/emails']
+};
+
+/* ========================================================================
+   FETCH HELPERS
+   ======================================================================== */
+async function fetchJSON(url) {
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    S.connected = true;
+    return await r.json();
+  } catch(e) {
+    S.connected = false;
+    return null;
+  }
+}
+
+async function loadTab(tab) {
+  const urls = TABS[tab] || [];
+  const results = await Promise.all(urls.map(u => fetchJSON(u)));
+  urls.forEach((u, i) => { if (results[i]) S.data[u] = results[i]; });
+  updateConn();
+  renderTab(tab);
+  document.getElementById('tb-time').textContent = new Date().toLocaleTimeString();
+}
+
+function updateConn() {
+  const el = document.getElementById('tb-conn');
+  if (S.connected) { el.textContent = 'Connected'; el.classList.remove('err'); }
+  else { el.textContent = 'Disconnected'; el.classList.add('err'); }
+}
+
+/* ========================================================================
+   HELPERS
+   ======================================================================== */
+const $ = id => document.getElementById(id);
+const esc = s => s ? String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+const pnlClass = v => v >= 0 ? 'pnl-positive' : 'pnl-negative';
+const fmtPnl = v => (v >= 0 ? '+' : '') + Number(v||0).toFixed(2);
+const fmtPct = v => Number(v||0).toFixed(1) + '%';
+const fmtMoney = v => '$' + Number(v||0).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtTime = ts => { if(!ts) return '-'; try { return new Date(ts).toLocaleString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); } catch(e) { return ts; } };
+const fmtTimeShort = ts => { if(!ts) return '-'; try { return new Date(ts).toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}); } catch(e) { return ts; } };
+
+function formatDecisionText(text) {
+  if (!text) return '<span class="empty-state">No decision</span>';
+  let html = esc(text);
+  // Style [think] blocks
+  html = html.replace(/\[think\]([\s\S]*?)\[\/think\]/g, '<div class="think-block">$1</div>');
+  return html;
+}
+
+function qualityBadge(q) {
+  if (!q) return '';
+  const map = { valuable:'badge-green', generic:'badge-amber', useless:'badge-red' };
+  return `<span class="badge ${map[q]||'badge-muted'}">${esc(q)}</span>`;
+}
+
+function triggerBadge(t) {
+  return `<span class="trigger-badge trigger-${t||'scheduled'}">${esc(t||'scheduled')}</span>`;
+}
+
+/* ========================================================================
+   RENDER: DASHBOARD
+   ======================================================================== */
+function renderDashboard() {
+  const c = S.data['/api/agent/consciousness'] || {};
+  const t = S.data['/api/agent/trading'] || {};
+  const r = S.data['/api/agent/market-regime'] || {};
+  const s = S.data['/api/agent/social'] || {};
+  const sensors = S.data['/api/sensors/latest'] || {};
+
+  // State
+  const state = (c.state||c.consciousness_state||'unknown').toUpperCase();
+  const stateEl = $('dash-state');
+  stateEl.textContent = state;
+  stateEl.className = 'state ' + (state==='ACTIVE'?'active':state==='STUCK'?'stuck':'idle');
+  $('tb-state').textContent = state;
+
+  // Monologue
+  const mono = c.inner_monologue || c.monologue || c.focus || 'Agent is silent...';
+  $('dash-monologue').innerHTML = esc(typeof mono === 'string' ? mono : JSON.stringify(mono));
+
+  // Goals
+  const goals = c.goals || {};
+  const goalRows = $('dash-goals').querySelectorAll('.goal-row');
+  const goalKeys = ['make_money','grow_plant','build_community'];
+  goalRows.forEach((row, i) => {
+    const g = goals[goalKeys[i]] || {};
+    const pct = Number(g.progress || g.pct || 0);
+    row.querySelector('.progress-fill').style.width = pct + '%';
+    row.querySelector('.goal-pct').textContent = fmtPct(pct);
+  });
+
+  // Metrics
+  const pnl = Number(t.pnl || t.total_pnl || 0);
+  $('m-pnl').textContent = fmtMoney(pnl);
+  $('m-pnl').className = 'card-value ' + pnlClass(pnl);
+  $('m-pos').textContent = (t.open_trades||[]).length || t.open_count || 0;
+  $('m-signals').textContent = t.total_signals || '-';
+  $('m-posts').textContent = s.total_posts || '-';
+  $('m-temp').textContent = sensors.air_temp ? Number(sensors.air_temp).toFixed(1)+'°' : '-';
+  $('m-vpd').textContent = sensors.vpd ? Number(sensors.vpd).toFixed(2) : '-';
+
+  // Rounds
+  $('tb-rounds').textContent = r.total_rounds || '-';
+
+  // Regime
+  const regime = (r.regime||'unknown').toLowerCase();
+  const regimeEl = $('dash-regime');
+  regimeEl.textContent = (r.regime||'Unknown').toUpperCase() + (r.confidence ? ' (' + fmtPct(r.confidence) + ' confidence)' : '');
+  regimeEl.className = 'regime-badge-lg regime-' + regime;
+}
+
+/* ========================================================================
+   RENDER: TRADING
+   ======================================================================== */
+function renderTrading() {
+  const d = S.data['/api/agent/trading'] || {};
+  $('t-cash').textContent = fmtMoney(d.cash || d.current_cash);
+  const pnl = Number(d.pnl || d.total_pnl || 0);
+  $('t-pnl').innerHTML = `<span class="${pnlClass(pnl)}">${fmtMoney(pnl)}</span>`;
+  $('t-winrate').textContent = fmtPct(d.win_rate || d.win_rate_pct);
+  $('t-trades').textContent = d.total_trades || d.trade_count || '-';
+
+  // Open positions
+  const open = d.open_trades || [];
+  $('t-open').innerHTML = open.length ? open.map(t => `<tr>
+    <td style="font-weight:600;color:var(--text)">${esc(t.symbol)}</td>
+    <td><span class="badge badge-purple">${esc(t.chain||'?')}</span></td>
+    <td>${fmtMoney(t.entry_price)}</td>
+    <td>${fmtMoney(t.current_price)}</td>
+    <td class="${pnlClass(t.pnl_pct)}">${fmtPnl(t.pnl_pct)}%</td>
+    <td>${fmtTime(t.entry_time)}</td>
+  </tr>`).join('') : '<tr><td colspan="6" class="empty-state">No open positions</td></tr>';
+
+  // Closed
+  const closed = d.recent_closed || [];
+  $('t-closed').innerHTML = closed.length ? closed.map(t => `<tr>
+    <td style="font-weight:600;color:var(--text)">${esc(t.symbol)}</td>
+    <td class="${pnlClass(t.pnl_pct)}">${fmtPnl(t.pnl_pct)}%</td>
+    <td><span class="badge badge-muted">${esc(t.exit_reason||'-')}</span></td>
+    <td>${esc(t.duration||'-')}</td>
+  </tr>`).join('') : '<tr><td colspan="4" class="empty-state">No recent closed trades</td></tr>';
+
+  // Domains
+  const domains = d.domains || {};
+  $('t-domains').innerHTML = Object.entries(domains).map(([name,data]) =>
+    `<div class="card"><div class="card-title">${esc(name)}</div><div class="card-value">${data.signals_seen||0}</div><div class="card-sub">signals</div></div>`
+  ).join('') || '<div class="empty-state">No domain data</div>';
+}
+
+/* ========================================================================
+   RENDER: ALPHA HUNTS
+   ======================================================================== */
+function renderAlpha() {
+  const d = S.data['/api/agent/alpha-hunts'] || {};
+  const targets = d.hunting_targets || [];
+  const sources = d.hunted_sources || d.discovered_sources || [];
+  const obs = d.observations || [];
+  const stats = d.observation_stats || {};
+
+  $('a-targets').textContent = Array.isArray(targets) ? targets.length : '-';
+  $('a-sources').textContent = Array.isArray(sources) ? sources.length : '-';
+  $('a-ratio').textContent = stats.total ? `${stats.acted}/${stats.ignored}` : '-';
+
+  // Funnel
+  const total = stats.total || 0;
+  const acted = stats.acted || 0;
+  const levels = [
+    { label: 'Total Observed', count: total, color: 'var(--text-sec)', w: 100 },
+    { label: 'Noticed', count: Math.round(total * 0.6), color: 'var(--amber)', w: 75 },
+    { label: 'Validated', count: Math.round(acted * 1.5), color: 'var(--gold)', w: 50 },
+    { label: 'Acted', count: acted, color: 'var(--green)', w: 30 },
+  ];
+  $('alpha-funnel').innerHTML = levels.map(l =>
+    `<div class="funnel-level" style="width:${l.w}%;background:rgba(255,199,0,.06);border:1px solid ${l.color};color:${l.color}">${l.label}: ${l.count}</div>`
+  ).join('');
+
+  // Observations
+  $('alpha-obs').innerHTML = obs.length ? obs.slice(0,50).map(o => {
+    const acted = o.acted || o.action_taken;
+    const cls = acted ? 'obs-acted' : (o.noticed ? 'obs-noticed' : 'obs-ignored');
+    return `<div class="obs-item"><div class="obs-dot ${cls}"></div><div>
+      <div style="font-weight:600;color:var(--text);font-size:.75rem">${esc(o.title||o.signal||o.source||'Observation')}</div>
+      <div style="font-size:.7rem;color:var(--text-sec)">${esc(o.detail||o.description||o.notes||'')}</div>
+      <div style="font-size:.6rem;color:var(--muted)">${fmtTime(o.timestamp||o.ts)}</div>
+    </div></div>`;
+  }).join('') : '<div class="empty-state">No observations yet</div>';
+}
+
+/* ========================================================================
+   RENDER: BRAIN
+   ======================================================================== */
+function renderBrain() {
+  const b = S.data['/api/agent/brain-activity'] || {};
+  const c = S.data['/api/agent/consciousness'] || {};
+  const ai = S.data['/api/ai/latest'] || {};
+
+  // Agentic banner
+  const ag = b.agentic || {};
+  const rounds = ag.tool_rounds || 0;
+  const calls = ag.total_tool_calls || 0;
+  const trigger = ag.trigger || 'scheduled';
+  $('brain-banner').innerHTML = `
+    <div class="big">Agentic Brain</div>
+    <div class="detail">Grok reasoned for <b style="color:var(--gold)">${rounds}</b> round${rounds!==1?'s':''}, made <b style="color:var(--gold)">${calls}</b> tool call${calls!==1?'s':''}</div>
+    ${triggerBadge(trigger)}`;
+
+  // Tool chain
+  const actions = ag.actions_taken || b.latest_decision?.actions_taken || [];
+  if (actions.length) {
+    $('brain-tools').innerHTML = actions.map((a,i) => {
+      const cls = a.success !== false ? 'ok' : 'fail';
+      return (i > 0 ? '<span class="tool-arrow">→</span>' : '') +
+        `<span class="tool-pill ${cls}" title="${esc(a.message||'')}">${esc(a.tool)}</span>`;
+    }).join('');
+  } else {
+    $('brain-tools').innerHTML = '<span class="empty-state" style="padding:8px">No tool calls in latest decision</span>';
+  }
+
+  // Decision text
+  const decisionText = b.latest_decision?.reasoning || b.latest_decision?.output_text || b.latest_decision?.text || ai.reasoning || ai.output_text || '';
+  $('brain-decision').innerHTML = formatDecisionText(decisionText);
+
+  // Consciousness
+  const focus = c.focus || c.current_focus || '';
+  const stuck = c.stuck_detection || {};
+  $('brain-consciousness').innerHTML = `
+    <div style="margin-bottom:6px"><span class="card-title">Focus:</span> <span style="color:var(--text)">${esc(focus||'None')}</span></div>
+    <div style="margin-bottom:6px"><span class="card-title">Stuck:</span> ${stuck.is_stuck ? '<span class="badge badge-red">STUCK</span>' : '<span class="badge badge-green">OK</span>'}</div>
+    <div><span class="card-title">Monologue:</span> <span style="color:var(--text-sec);font-style:italic">${esc(c.inner_monologue||c.monologue||'Silent')}</span></div>`;
+
+  // Decision history
+  const history = b.decision_history || [];
+  $('brain-history').innerHTML = history.length ? history.slice(0,20).map(d =>
+    `<div class="timeline-item"><div class="timeline-time">${fmtTimeShort(d.timestamp)}</div>
+    <div class="timeline-content">${esc((d.summary||d.output_text||d.text||'').substring(0,200))}</div></div>`
+  ).join('') : '<div class="empty-state">No decisions today</div>';
+
+  // Episodic memory
+  const mem = b.episodic_memory || [];
+  $('brain-memory').innerHTML = mem.length ? mem.slice(0,30).map(m =>
+    `<div class="timeline-item"><div class="timeline-time">${fmtTimeShort(m.timestamp||m.ts)}</div>
+    <div class="timeline-content">${esc(m.formatted_text||m.text||m.narrative||JSON.stringify(m).substring(0,200))}</div></div>`
+  ).join('') : '<div class="empty-state">No memories stored</div>';
+}
+
+/* ========================================================================
+   RENDER: RESEARCH
+   ======================================================================== */
+function renderResearch() {
+  const r = S.data['/api/agent/research'] || {};
+  const l = S.data['/api/agent/learning'] || {};
+
+  // Edge research (accordion)
+  const edge = r.edge_research || {};
+  if (typeof edge === 'object' && !Array.isArray(edge)) {
+    $('research-edge').innerHTML = Object.entries(edge).map(([domain, data]) => {
+      const content = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+      return `<div class="accordion"><div class="accordion-header" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+        <span>${esc(domain)}</span><span class="arrow">▶</span></div>
+        <div class="accordion-body"><pre style="white-space:pre-wrap;font-size:.72rem">${esc(content).substring(0,2000)}</pre></div></div>`;
+    }).join('');
+  } else {
+    $('research-edge').innerHTML = '<div class="empty-state">No edge research data</div>';
+  }
+
+  // Cross-domain insights
+  const cross = r.cross_domain_learnings || {};
+  const insights = typeof cross === 'object' ? Object.entries(cross) : [];
+  $('research-cross').innerHTML = insights.length ? insights.slice(0,20).map(([key, val]) => {
+    const conf = typeof val === 'object' ? (val.confidence||0) : 0;
+    return `<div class="confidence-bar"><span class="label">${esc(key)}</span>
+      <div class="bar"><div class="fill" style="width:${conf*100}%"></div></div>
+      <span style="font-size:.65rem;color:var(--gold)">${fmtPct(conf*100)}</span></div>`;
+  }).join('') : '<div class="empty-state">No cross-domain insights</div>';
+
+  // Strategy learnings
+  const strat = r.strategy_learnings || {};
+  const stratContent = typeof strat === 'string' ? strat : JSON.stringify(strat, null, 2);
+  $('research-strategy').innerHTML = `<pre style="white-space:pre-wrap;font-size:.72rem;color:var(--text-sec)">${esc(stratContent).substring(0,3000)}</pre>`;
+
+  // Sessions
+  const sessions = r.recent_sessions || [];
+  $('research-sessions').innerHTML = sessions.length ? sessions.map(s => {
+    const title = s.title || s.name || s.session_id || 'Session';
+    const body = JSON.stringify(s, null, 2);
+    return `<div class="accordion"><div class="accordion-header" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span>${esc(title)}</span><span class="arrow">▶</span></div>
+      <div class="accordion-body"><pre style="white-space:pre-wrap;font-size:.72rem">${esc(body).substring(0,2000)}</pre></div></div>`;
+  }).join('') : '<div class="empty-state">No learning sessions</div>';
+}
+
+/* ========================================================================
+   RENDER: SOCIAL
+   ======================================================================== */
+function renderSocial() {
+  const feed = S.data['/api/agent/social-feed'] || {};
+  const stats = S.data['/api/agent/social'] || {};
+  const posts = feed.posts || feed.feed || [];
+
+  // Platforms
+  const platforms = stats.platforms || {};
+  const platformNames = Object.keys(platforms);
+  $('social-platforms').innerHTML = platformNames.length ? platformNames.map(p =>
+    `<div class="card" style="text-align:center"><div class="card-title">${esc(p)}</div>
+    <div class="card-value">${platforms[p].count||platforms[p].posts||0}</div></div>`
+  ).join('') : '';
+
+  // Pills
+  const seen = new Set(['all']);
+  posts.forEach(p => { const pl = (p.platform||p.channel||'').toLowerCase(); if(pl) seen.add(pl); });
+  $('social-pills').innerHTML = [...seen].map(p =>
+    `<button class="pill ${S.socialFilter===p?'active':''}" data-platform="${p}" onclick="S.socialFilter='${p}';renderSocial()">${p==='all'?'All':esc(p)}</button>`
+  ).join('');
+
+  // Feed
+  const filtered = S.socialFilter === 'all' ? posts : posts.filter(p => (p.platform||p.channel||'').toLowerCase() === S.socialFilter);
+  $('social-feed').innerHTML = filtered.length ? filtered.slice(0,50).map(p => {
+    const platform = (p.platform||p.channel||'?').toLowerCase();
+    const colorMap = {twitter:'var(--blue)',farcaster:'var(--purple)',telegram:'var(--teal)',moltbook:'var(--amber)'};
+    return `<div class="post-card"><div class="post-header">
+      <span class="post-platform" style="color:${colorMap[platform]||'var(--text-sec)'}">${esc(platform)}</span>
+      <span class="badge badge-muted">${esc(p.action||'post')}</span>
+      <span class="post-time">${fmtTime(p.timestamp||p.ts)}</span></div>
+      <div class="post-body">${esc(p.content||p.text||p.message||'')}</div>
+      ${p.url||p.link?`<div class="post-link"><a href="${esc(p.url||p.link)}" target="_blank">View →</a></div>`:''}
+    </div>`;
+  }).join('') : '<div class="empty-state">No posts</div>';
+}
+
+/* ========================================================================
+   RENDER: A2A NETWORK
+   ======================================================================== */
+function renderA2A() {
+  const d = S.data['/api/agent/conversations'] || {};
+  const convos = d.conversations || d.interactions || [];
+  const stats = d.stats || {};
+
+  // Stats
+  $('a2a-stats').innerHTML = `
+    <div class="card"><div class="card-title">Total Calls</div><div class="card-value">${stats.total_calls||convos.length}</div></div>
+    <div class="card"><div class="card-title">Success Rate</div><div class="card-value">${fmtPct(stats.success_rate||0)}</div></div>
+    <div class="card"><div class="card-title">x402 Spent</div><div class="card-value" style="color:var(--purple)">${fmtMoney(stats.x402_spent_today||stats.total_x402||0)}</div></div>
+    <div class="card"><div class="card-title">Valuable</div><div class="card-value" style="color:var(--green)">${stats.valuable_count||convos.filter(c=>c.response_quality==='valuable').length}</div></div>`;
+
+  // Chat
+  const chatHTML = convos.slice(0,30).map(c => {
+    const msg = c.response_data?.message || c.response_data?.text || (typeof c.response_data === 'string' ? c.response_data : '');
+    let html = `<div class="chat-msg chat-theirs"><div class="chat-agent">${esc(c.agent_name||'?')} <span class="badge badge-purple">${esc(c.agent_chain||'')}</span> ${qualityBadge(c.response_quality)}</div>
+      <div>${esc(String(msg).substring(0,500))}</div>
+      <div class="chat-meta">${fmtTime(c.timestamp)} ${c.x402_paid?'| x402: $'+Number(c.x402_paid).toFixed(4):''}</div></div>`;
+
+    // Followup
+    if (c.followup_response) {
+      try {
+        const turns = typeof c.followup_response === 'string' ? JSON.parse(c.followup_response) : c.followup_response;
+        if (Array.isArray(turns)) {
+          turns.forEach(t => {
+            if (t.us) html += `<div class="chat-msg chat-ours">${esc(t.us)}</div>`;
+            if (t.them) html += `<div class="chat-msg chat-theirs">${esc(t.them)}</div>`;
+          });
+        }
+      } catch(e) {}
+    }
+    return html;
+  }).join('');
+  $('a2a-chat').innerHTML = chatHTML || '<div class="empty-state">No conversations</div>';
+
+  // Agent directory
+  const agents = {};
+  convos.forEach(c => {
+    const name = c.agent_name || '?';
+    if (!agents[name]) agents[name] = { chain: c.agent_chain, trust: c.agent_trust_score, quality: c.response_quality, ts: c.timestamp, count: 0 };
+    agents[name].count++;
+    if (c.timestamp > (agents[name].ts||'')) { agents[name].ts = c.timestamp; agents[name].quality = c.response_quality; }
+  });
+  $('a2a-agents').innerHTML = Object.entries(agents).sort((a,b) => (b[1].trust||0) - (a[1].trust||0)).map(([name, a]) =>
+    `<tr><td style="font-weight:600;color:var(--text)">${esc(name)}</td>
+    <td><span class="badge badge-purple">${esc(a.chain||'?')}</span></td>
+    <td>${Number(a.trust||0).toFixed(0)}</td>
+    <td>${qualityBadge(a.quality)}</td>
+    <td>${fmtTime(a.ts)}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="empty-state">No agents</td></tr>';
+}
+
+/* ========================================================================
+   RENDER: GROW
+   ======================================================================== */
+function renderGrow() {
+  const sensors = S.data['/api/sensors/latest'] || {};
+  const ai = S.data['/api/ai/latest'] || {};
+  const b = S.data['/api/agent/brain-activity'] || {};
+
+  // Gauges
+  const gauges = [
+    { label: 'Temp', val: sensors.air_temp, unit: '°C', ok: [20,28], warn: [15,32] },
+    { label: 'Humidity', val: sensors.humidity, unit: '%', ok: [40,65], warn: [30,75] },
+    { label: 'VPD', val: sensors.vpd, unit: 'kPa', ok: [0.8,1.4], warn: [0.4,1.8] },
+    { label: 'CO2', val: sensors.co2, unit: 'ppm', ok: [600,1200], warn: [400,1500] },
+    { label: 'Soil', val: sensors.soil_moisture, unit: '%', ok: [25,60], warn: [15,75] },
+  ];
+  $('grow-gauges').innerHTML = gauges.map(g => {
+    const v = Number(g.val||0);
+    const cls = (v >= g.ok[0] && v <= g.ok[1]) ? 'ok' : (v >= g.warn[0] && v <= g.warn[1]) ? 'warn' : 'crit';
+    return `<div><div class="gauge ${cls}"><div class="val">${g.val!=null?v.toFixed(1):'-'}</div><div class="unit">${g.unit}</div></div>
+      <div style="text-align:center;font-size:.7rem;color:var(--muted)">${g.label}</div></div>`;
+  }).join('');
+
+  // Stage
+  const stage = sensors.growth_stage || 'vegetative';
+  $('grow-stage').innerHTML = `
+    <div style="font-family:var(--font-h);font-size:1.1rem;color:var(--green);margin-bottom:4px">${esc(stage).toUpperCase()}</div>
+    <div style="font-size:.75rem;color:var(--text-sec)">Granddaddy Purple Runtz</div>
+    <div style="font-size:.7rem;color:var(--muted)">Day ${sensors.grow_day||'?'} | ${sensors.photoperiod||'18/6'}</div>`;
+
+  // Targets vs actual
+  $('grow-targets').innerHTML = gauges.map(g => {
+    const v = Number(g.val||0);
+    const inRange = v >= g.ok[0] && v <= g.ok[1];
+    return `<div class="target-row"><span class="target-label">${g.label}</span>
+      <span class="target-range">${g.ok[0]}–${g.ok[1]}${g.unit}</span>
+      <span class="target-actual" style="color:${inRange?'var(--green)':'var(--red)'}">${g.val!=null?v.toFixed(1):'-'}</span>
+      <span class="target-status">${inRange?'✅':'❌'}</span></div>`;
+  }).join('');
+
+  // Decision
+  const dec = b.latest_decision || ai;
+  $('grow-decision').innerHTML = formatDecisionText(dec.reasoning || dec.output_text || dec.text || 'No decision');
+}
+
+/* ========================================================================
+   RENDER: TASKS
+   ======================================================================== */
+function renderTasks() {
+  const td = S.data['/api/agent/tasks'] || {};
+  const cd = S.data['/api/agent/capabilities'] || {};
+  const si = S.data['/api/agent/self-improvement'] || {};
+
+  // Tasks
+  const tasks = td.tasks || (Array.isArray(td) ? td : []);
+  const sorted = [...tasks].sort((a,b) => {
+    const pri = {critical:0,high:1,medium:2,low:3};
+    return (pri[a.priority]||9) - (pri[b.priority]||9);
+  });
+  $('tasks-list').innerHTML = sorted.length ? sorted.map(t =>
+    `<div class="task-item" onclick="this.classList.toggle('expanded')">
+      <div class="task-header"><div class="task-priority priority-${t.priority||'medium'}"></div>
+      <div class="task-title">${esc(t.title)}</div>
+      <div class="task-status">${esc(t.status||'pending')}</div></div>
+      <div class="task-desc">${esc(t.description||'')}</div></div>`
+  ).join('') : '<div class="empty-state">No tasks</div>';
+
+  // Capabilities
+  $('cap-health').textContent = (cd.health_pct||0) + '% healthy';
+  const caps = cd.capabilities || {};
+  const entries = typeof caps === 'object' && !Array.isArray(caps) ? Object.entries(caps) : (Array.isArray(caps) ? caps.map((c,i) => [c.name||i, c]) : []);
+  $('cap-grid').innerHTML = entries.length ? entries.map(([name, data]) => {
+    const status = typeof data === 'object' ? (data.status||'unknown') : String(data);
+    return `<div class="cap-tile cap-${status}">${esc(name)}</div>`;
+  }).join('') : '<div class="empty-state">No capability data</div>';
+
+  // Upgrades
+  const us = si.upgrade_stats || {};
+  $('upgrade-stats').innerHTML = `
+    <div class="card"><div class="card-title">Total</div><div class="card-value">${us.total||0}</div></div>
+    <div class="card"><div class="card-title">Pending</div><div class="card-value" style="color:var(--amber)">${us.pending||0}</div></div>
+    <div class="card"><div class="card-title">Completed</div><div class="card-value" style="color:var(--green)">${us.completed||0}</div></div>`;
+
+  const upgrades = si.recent_upgrades || [];
+  $('upgrade-list').innerHTML = upgrades.length ? upgrades.map(u =>
+    `<div class="timeline-item"><div class="timeline-time">${fmtTimeShort(u.timestamp||u.created)}</div>
+    <div class="timeline-content"><b>${esc(u.title||u.name||u.type||'Upgrade')}</b>: ${esc(u.description||u.reason||u.status||'')}</div></div>`
+  ).join('') : '<div class="empty-state">No upgrade requests</div>';
+}
+
+/* ========================================================================
+   RENDER: EMAIL
+   ======================================================================== */
+function renderEmail() {
+  const d = S.data['/api/agent/emails'] || {};
+  const inbox = d.inbox || d.emails || [];
+  const outbox = d.outbox || [];
+  const all = [
+    ...inbox.map(e => ({...e, dir: 'in'})),
+    ...outbox.map(e => ({...e, dir: 'out'}))
+  ].sort((a,b) => (b.timestamp||b.received_at||'').localeCompare(a.timestamp||a.received_at||''));
+
+  $('email-list').innerHTML = all.length ? all.map((e,i) =>
+    `<div class="email-item ${S.selectedEmail===i?'selected':''}" onclick="S.selectedEmail=${i};renderEmailDetail(${i})">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="email-dir ${e.dir}">${e.dir==='in'?'IN':'OUT'}</span>
+      <span class="email-from">${esc(e.from||e.sender||e.to||'?')}</span></div>
+    <div class="email-subject">${esc(e.subject||'(no subject)')}</div>
+    <div class="email-time">${fmtTime(e.timestamp||e.received_at)}</div></div>`
+  ).join('') : '<div class="empty-state">No emails</div>';
+
+  if (S.selectedEmail !== null && all[S.selectedEmail]) {
+    renderEmailDetail(S.selectedEmail);
+  }
+
+  // Store for detail view
+  S._emails = all;
+}
+
+function renderEmailDetail(idx) {
+  S.selectedEmail = idx;
+  const e = S._emails?.[idx];
+  if (!e) return;
+  $('email-detail').innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <span class="email-dir ${e.dir}">${e.dir==='in'?'INBOUND':'OUTBOUND'}</span>
+      <span style="font-size:.7rem;color:var(--muted)">${fmtTime(e.timestamp||e.received_at)}</span></div>
+    <div style="font-size:.75rem;color:var(--text-sec);margin-bottom:4px"><b>From:</b> ${esc(e.from||e.sender||'?')}</div>
+    <h3 style="color:var(--gold)">${esc(e.subject||'(no subject)')}</h3>
+    <div class="body">${esc(e.body||e.text||'')}</div>`;
+  // Highlight selected
+  document.querySelectorAll('.email-item').forEach((el,i) => el.classList.toggle('selected', i===idx));
+}
+
+/* ========================================================================
+   TAB ROUTER
+   ======================================================================== */
+const renderers = {
+  dashboard: renderDashboard, trading: renderTrading, alpha: renderAlpha,
+  brain: renderBrain, research: renderResearch, social: renderSocial,
+  a2a: renderA2A, grow: renderGrow, tasks: renderTasks, email: renderEmail
+};
+
+function renderTab(tab) {
+  const fn = renderers[tab];
+  if (fn) fn();
+}
+
+function switchTab(tab) {
+  S.tab = tab;
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  const tabEl = document.getElementById('tab-' + tab);
+  if (tabEl) tabEl.classList.add('active');
+  const btnEl = document.querySelector(`[data-tab="${tab}"]`);
+  if (btnEl) btnEl.classList.add('active');
+  location.hash = tab;
+  loadTab(tab);
+}
+
+// Nav
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+// Auto-refresh
+function startRefresh() {
+  if (S.timer) clearInterval(S.timer);
+  S.timer = setInterval(() => loadTab(S.tab), REFRESH);
+}
+
+// Init
+(function init() {
+  const hash = location.hash.replace('#','') || 'dashboard';
+  switchTab(hash);
+  startRefresh();
+})();
+</script>
+</body>
+</html>

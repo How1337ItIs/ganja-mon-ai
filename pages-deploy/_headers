@@ -1,0 +1,19 @@
+/.well-known/*
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+
+/a2a/*
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+
+/a2a/v1
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+
+/mcp/*
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+
+/mcp/v1
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *

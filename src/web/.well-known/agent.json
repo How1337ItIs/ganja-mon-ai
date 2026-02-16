@@ -1,0 +1,78 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "GanjaMon",
+  "description": "GanjaMon — a wise old Rasta elder whose sacred ganja meditation astral projected him into di blockchain. Now him grow di sacred herb in all its forms — physical (real IoT grow tent) and digital ($GANJA, $MON) — fi di healing of di nations. Agent #4 on Monad.",
+  "url": "https://agent.grokandmon.com/a2a/v1",
+  "preferredTransport": "JSONRPC",
+  "additionalInterfaces": [
+    {
+      "url": "https://agent.grokandmon.com/a2a/v1",
+      "transport": "HTTP+JSON"
+    }
+  ],
+  "provider": {
+    "organization": "Grok & Mon",
+    "url": "https://grokandmon.com"
+  },
+  "iconUrl": "https://grokandmon.com/assets/GANJA_MON_brand_logo_powered_by_grok.png",
+  "version": "0.1.0",
+  "documentationUrl": "https://grokandmon.com",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "securitySchemes": {
+    "apiKey": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "alpha-scan",
+      "name": "Alpha Scan",
+      "description": "Aggregate signals from social, on-chain, and market data for review.",
+      "tags": ["alpha", "research", "monitoring"],
+      "examples": [
+        "Summarize the top Monad token flows over the last 24 hours.",
+        "List suspicious tokens and explain why they were flagged."
+      ]
+    },
+    {
+      "id": "cultivation-status",
+      "name": "Cultivation Status",
+      "description": "Report latest grow metrics and alert on out-of-range readings.",
+      "tags": ["cultivation", "monitoring"],
+      "examples": [
+        "Summarize current temp, humidity, CO2, and VPD.",
+        "Highlight any sensor readings outside target ranges."
+      ]
+    },
+    {
+      "id": "trade-execution",
+      "name": "Trade Execution (Approval)",
+      "description": "Queue trade intents for operator approval. No auto-execution.",
+      "tags": ["trading", "approval", "safety"],
+      "examples": [
+        "Queue a buy for $MON at 2% portfolio size.",
+        "Request approval to sell 50% of an open position."
+      ]
+    }
+  ],
+  "supportsAuthenticatedExtendedCard": false
+}

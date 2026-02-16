@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Dashboard - GanjaMon AI</title>
+    <link rel="icon" type="image/png" href="assets/MON_official_logo.jpg">
+    <meta name="description" content="GanjaMon AI autonomous trading agent dashboard. Live portfolio, alpha signals, market regime analysis.">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #1e1e36;
+            --bg-input: #12121c;
+            --border: #2a2a3e;
+            --border-bright: #3a3a52;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #606078;
+            --gold: #FFD700;
+            --gold-dim: rgba(255, 215, 0, 0.15);
+            --green: #00ff88;
+            --green-dim: rgba(0, 255, 136, 0.12);
+            --red: #ff4444;
+            --red-dim: rgba(255, 68, 68, 0.12);
+            --blue: #60a5fa;
+            --purple: #a78bfa;
+            --cyan: #22d3ee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* ── Header ─────────────────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+        .header-left a:hover { color: var(--gold); }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--green-dim);
+            border: 1px solid var(--green);
+            color: var(--green);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .badge-live .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,136,0.6); }
+            50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(0,255,136,0); }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .refresh-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .btn-refresh {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .btn-refresh:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .btn-refresh.loading {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* ── Grid Layout ────────────────────────────────────────── */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .card:hover {
+            border-color: var(--border-bright);
+        }
+
+        .card-wide { grid-column: span 2; }
+        .card-full { grid-column: span 3; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .card-header .tag {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* ── Token Card ─────────────────────────────────────────── */
+        .token-hero {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .token-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            object-fit: cover;
+        }
+
+        .token-price {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+        }
+
+        .token-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .token-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-box {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .positive { color: var(--green); }
+        .negative { color: var(--red); }
+        .gold-text { color: var(--gold); }
+
+        /* ── Regime Card ────────────────────────────────────────── */
+        .regime-display {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .regime-label {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .regime-confidence {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .attention-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .attention-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .attention-name {
+            width: 100px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .attention-bar-wrap {
+            flex: 1;
+            height: 10px;
+            background: var(--bg-input);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .attention-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.6s ease;
+        }
+
+        .attention-pct {
+            width: 40px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--text-muted);
+        }
+
+        /* ── Portfolio Card ──────────────────────────────────────── */
+        .portfolio-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* ── Table ──────────────────────────────────────────────── */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.825rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.7rem;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid rgba(42,42,62,0.5);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        .data-table tr:last-child td { border-bottom: none; }
+
+        .data-table tr:hover td {
+            background: rgba(255,215,0,0.03);
+        }
+
+        .chain-badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .chain-monad { background: rgba(130,80,255,0.2); color: #b49aff; }
+        .chain-base { background: rgba(0,82,255,0.2); color: #6698ff; }
+        .chain-solana { background: rgba(0,255,163,0.2); color: #66ffcc; }
+        .chain-ethereum { background: rgba(98,126,234,0.2); color: #8b9fef; }
+        .chain-default { background: rgba(160,160,184,0.15); color: var(--text-secondary); }
+
+        /* ── Signals List ────────────────────────────────────────── */
+        .signals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .signal-card {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 0.875rem;
+            border-left: 3px solid var(--purple);
+        }
+
+        .signal-domain {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--purple);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .signal-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+        }
+
+        .signal-pct {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Alpha Hunts ─────────────────────────────────────────── */
+        .hunt-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .observation-list {
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .observation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(42,42,62,0.4);
+            font-size: 0.8rem;
+        }
+
+        .observation-item:last-child { border-bottom: none; }
+
+        .obs-acted {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 0.35rem;
+            flex-shrink: 0;
+        }
+        .obs-acted.yes { background: var(--green); }
+        .obs-acted.no { background: var(--text-muted); }
+
+        .obs-content {
+            flex: 1;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .obs-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            font-family: monospace;
+        }
+
+        /* ── Intelligence Sources ────────────────────────────────── */
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .source-item {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .source-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            color: var(--cyan);
+        }
+
+        .source-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+
+        /* ── Empty / Error State ─────────────────────────────────── */
+        .unavailable {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.875rem;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-card-hover) 50%, var(--bg-input) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+            height: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton.wide { width: 80%; }
+        .skeleton.short { width: 40%; }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── Footer ──────────────────────────────────────────────── */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+            margin-top: 1rem;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ──────────────────────────────────────────── */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card-full { grid-column: span 2; }
+            .card-wide { grid-column: span 2; }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            .card-full, .card-wide { grid-column: span 1; }
+            .header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+            .token-stats { grid-template-columns: repeat(2, 1fr); }
+            .portfolio-summary { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<header class="header">
+    <div class="header-left">
+        <a href="/" title="Back to Home">Home</a>
+        <div class="header-title">
+            <h1>GanjaMon AI - Trading Dashboard</h1>
+            <span class="badge-live"><span class="dot"></span> LIVE</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <span class="refresh-info" id="lastUpdate">Loading...</span>
+        <button class="btn-refresh" id="btnRefresh" onclick="refreshAll()" title="Refresh now">Refresh</button>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav style="background:rgba(26,26,46,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #2a2a3e;padding:0 2rem;display:flex;gap:0;overflow-x:auto;">
+    <a href="/" style="color:#a0a0b8;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;">&#127793; Grow</a>
+    <a href="/trading.html" style="color:#00ff88;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid #00ff88;">&#128200; Trading</a>
+    <a href="/social.html" style="color:#a0a0b8;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;">&#128225; Social</a>
+    <a href="/brain.html" style="color:#a0a0b8;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;">&#129504; Brain</a>
+    <a href="/a2a.html" style="color:#a0a0b8;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;">&#128279; A2A</a>
+    <a href="/art.html" style="color:#a0a0b8;text-decoration:none;padding:0.75rem 1.25rem;font-size:0.85rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;">&#127912; Art</a>
+</nav>
+
+<!-- ── Dashboard Grid ──────────────────────────────────────────────── -->
+<main class="dashboard">
+
+    <!-- $MON Token ──────────────────────────────────────────────────── -->
+    <div class="card" id="cardToken">
+        <div class="card-header">
+            <h2>$MON Token</h2>
+            <span class="tag gold-text" style="background:var(--gold-dim);">Monad</span>
+        </div>
+        <div id="tokenContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Market Regime ───────────────────────────────────────────────── -->
+    <div class="card" id="cardRegime">
+        <div class="card-header">
+            <h2>Market Regime</h2>
+            <span class="tag" id="regimeTag" style="background:var(--green-dim); color:var(--green);">--</span>
+        </div>
+        <div id="regimeContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Intelligence Sources ────────────────────────────────────────── -->
+    <div class="card" id="cardIntel">
+        <div class="card-header">
+            <h2>Intelligence Sources</h2>
+        </div>
+        <div id="intelContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Portfolio Overview ──────────────────────────────────────────── -->
+    <div class="card card-full" id="cardPortfolio">
+        <div class="card-header">
+            <h2>Portfolio Overview</h2>
+            <span class="tag" style="background:var(--gold-dim); color:var(--gold);">Paper Trading</span>
+        </div>
+        <div id="portfolioContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Recent Signals ──────────────────────────────────────────────── -->
+    <div class="card card-wide" id="cardSignals">
+        <div class="card-header">
+            <h2>Signal Domains</h2>
+        </div>
+        <div id="signalsContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Alpha Hunts ─────────────────────────────────────────────────── -->
+    <div class="card" id="cardAlpha">
+        <div class="card-header">
+            <h2>Alpha Hunts</h2>
+        </div>
+        <div id="alphaContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+    <!-- Recent Observations (full width) ────────────────────────────── -->
+    <div class="card card-full" id="cardObs">
+        <div class="card-header">
+            <h2>Recent Observations</h2>
+            <span class="tag" id="obsCount" style="background:rgba(96,165,250,0.15); color:var(--blue);">--</span>
+        </div>
+        <div id="obsContent">
+            <div class="skeleton wide"></div>
+            <div class="skeleton short"></div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ── Footer ──────────────────────────────────────────────────────── -->
+<footer class="footer">
+    <a href="https://grokandmon.com">grokandmon.com</a> &middot; Powered by GanjaMon AI
+</footer>
+
+<script>
+// ── Utilities ────────────────────────────────────────────────────────
+function fmt(n, decimals = 2) {
+    if (n == null || isNaN(n)) return '--';
+    return Number(n).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+function fmtCompact(n) {
+    if (n == null || isNaN(n)) return '--';
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+    if (abs >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+    if (abs >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return fmt(n);
+}
+
+function pnlClass(v) { return v > 0 ? 'positive' : v < 0 ? 'negative' : ''; }
+function pnlSign(v) { return v > 0 ? '+' : ''; }
+
+function chainClass(chain) {
+    if (!chain) return 'chain-default';
+    const c = chain.toLowerCase();
+    if (c.includes('monad')) return 'chain-monad';
+    if (c.includes('base')) return 'chain-base';
+    if (c.includes('sol')) return 'chain-solana';
+    if (c.includes('eth')) return 'chain-ethereum';
+    return 'chain-default';
+}
+
+function relativeTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return Math.floor(diff / 86400) + 'd ago';
+}
+
+const DOMAIN_COLORS = ['#FFD700', '#00ff88', '#60a5fa', '#a78bfa', '#22d3ee', '#ff6b6b', '#fbbf24'];
+
+async function safeFetch(url) {
+    try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(resp.status);
+        return await resp.json();
+    } catch (e) {
+        console.warn('Fetch failed:', url, e.message);
+        return null;
+    }
+}
+
+// ── Renderers ────────────────────────────────────────────────────────
+
+function renderToken(data) {
+    const el = document.getElementById('tokenContent');
+    if (!data || data.error) {
+        el.innerHTML = '<div class="unavailable">Token data unavailable</div>';
+        return;
+    }
+    const price = data.price_usd ?? data.price ?? data.priceUsd ?? null;
+    const mcap = data.market_cap ?? data.marketCap ?? null;
+    const holders = data.holders ?? data.holder_count ?? null;
+    const change24h = data.price_change_24h ?? data.change_24h ?? data.priceChange24h ?? null;
+    const volume = data.volume_24h ?? data.volume ?? null;
+    const supply = data.total_supply ?? data.totalSupply ?? null;
+
+    el.innerHTML = `
+        <div class="token-hero">
+            <img class="token-icon" src="assets/MON_official_logo.jpg" alt="$MON" onerror="this.style.display='none'">
+            <div>
+                <div class="token-price ${pnlClass(change24h)}">$${price != null ? fmt(price, price < 0.01 ? 6 : price < 1 ? 4 : 2) : '--'}</div>
+                <div class="token-name">$MON &middot; Ganja Mon ${change24h != null ? `<span class="${pnlClass(change24h)}">(${pnlSign(change24h)}${fmt(change24h, 1)}%)</span>` : ''}</div>
+            </div>
+        </div>
+        <div class="token-stats">
+            <div class="stat-box">
+                <div class="stat-label">Market Cap</div>
+                <div class="stat-value gold-text">${fmtCompact(mcap)}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Holders</div>
+                <div class="stat-value">${holders != null ? Number(holders).toLocaleString() : '--'}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">24h Volume</div>
+                <div class="stat-value">${volume != null ? '$' + fmtCompact(volume) : '--'}</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderRegime(data) {
+    const el = document.getElementById('regimeContent');
+    const tag = document.getElementById('regimeTag');
+    if (!data) {
+        el.innerHTML = '<div class="unavailable">Regime data unavailable</div>';
+        return;
+    }
+
+    const regime = (data.regime || 'unknown').replace(/_/g, ' ');
+    const conf = data.confidence != null ? (data.confidence * 100) : null;
+    const rounds = data.total_rounds || 0;
+    const weights = data.attention_weights || {};
+
+    // Color regime tag
+    const regimeColor = regime.includes('bull') ? 'var(--green)' : regime.includes('bear') ? 'var(--red)' : 'var(--gold)';
+    tag.style.color = regimeColor;
+    tag.style.background = regime.includes('bull') ? 'var(--green-dim)' : regime.includes('bear') ? 'var(--red-dim)' : 'var(--gold-dim)';
+    tag.textContent = regime;
+
+    let barsHtml = '';
+    const entries = Object.entries(weights);
+    if (entries.length) {
+        const maxW = Math.max(...entries.map(([, v]) => v.weight || 0), 0.01);
+        barsHtml = entries.map(([name, v], i) => {
+            const w = v.weight || 0;
+            const pct = Math.round((w / maxW) * 100);
+            const color = DOMAIN_COLORS[i % DOMAIN_COLORS.length];
+            return `<div class="attention-row">
+                <span class="attention-name" title="${name}">${name}</span>
+                <div class="attention-bar-wrap"><div class="attention-bar-fill" style="width:${pct}%; background:${color};"></div></div>
+                <span class="attention-pct">${(w * 100).toFixed(0)}%</span>
+            </div>`;
+        }).join('');
+    }
+
+    el.innerHTML = `
+        <div class="regime-display">
+            <div class="regime-label" style="color:${regimeColor}">${regime}</div>
+            <div class="regime-confidence">${conf != null ? `Confidence: ${fmt(conf, 0)}%` : ''} ${rounds ? `&middot; Round ${rounds}` : ''}</div>
+        </div>
+        ${barsHtml ? '<div style="margin-top:0.5rem;"><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">Attention Weights</div><div class="attention-bars">' + barsHtml + '</div></div>' : ''}
+    `;
+}
+
+function renderPortfolio(data) {
+    const el = document.getElementById('portfolioContent');
+    if (!data) {
+        el.innerHTML = '<div class="unavailable">Trading data unavailable</div>';
+        return;
+    }
+
+    const balance = data.paper_balance ?? data.balance ?? null;
+    const totalPnl = data.total_pnl ?? data.totalPnl ?? null;
+    const openTrades = data.open_trades || [];
+    const closedTrades = data.recent_closed || [];
+    const totalSignals = data.total_signals || 0;
+    const startedAt = data.started_at;
+
+    el.innerHTML = `
+        <div class="portfolio-summary">
+            <div class="stat-box">
+                <div class="stat-label">Paper Balance</div>
+                <div class="stat-value gold-text">${balance != null ? '$' + fmtCompact(balance) : '--'}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total P&L</div>
+                <div class="stat-value ${pnlClass(totalPnl)}">${totalPnl != null ? pnlSign(totalPnl) + '$' + fmt(Math.abs(totalPnl)) : '--'}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Open Positions</div>
+                <div class="stat-value">${openTrades.length}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Signals Processed</div>
+                <div class="stat-value">${totalSignals.toLocaleString()}</div>
+            </div>
+        </div>
+
+        ${openTrades.length ? `
+        <h3 style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">Open Positions</h3>
+        <table class="data-table">
+            <thead><tr><th>Symbol</th><th>Chain</th><th>Entry</th><th>Current</th><th>P&L</th><th>Time</th></tr></thead>
+            <tbody>
+                ${openTrades.map(t => `<tr>
+                    <td style="color:var(--text-primary);font-weight:600;">${t.symbol || '?'}</td>
+                    <td><span class="chain-badge ${chainClass(t.chain)}">${t.chain || '?'}</span></td>
+                    <td>$${fmt(t.entry_price, t.entry_price < 0.01 ? 6 : 4)}</td>
+                    <td>$${fmt(t.current_price, t.current_price < 0.01 ? 6 : 4)}</td>
+                    <td class="${pnlClass(t.pnl_pct)}">${pnlSign(t.pnl_pct)}${fmt(t.pnl_pct, 1)}%</td>
+                    <td style="color:var(--text-muted);font-size:0.75rem;">${relativeTime(t.entry_time)}</td>
+                </tr>`).join('')}
+            </tbody>
+        </table>` : '<div class="unavailable" style="padding:0.75rem 0;">No open positions</div>'}
+
+        ${closedTrades.length ? `
+        <h3 style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;margin:1rem 0 0.5rem;">Recent Closed</h3>
+        <table class="data-table">
+            <thead><tr><th>Symbol</th><th>Chain</th><th>P&L</th><th>Reason</th></tr></thead>
+            <tbody>
+                ${closedTrades.slice(0, 5).map(t => `<tr>
+                    <td style="font-weight:600;">${t.symbol || '?'}</td>
+                    <td><span class="chain-badge ${chainClass(t.chain)}">${t.chain || '?'}</span></td>
+                    <td class="${pnlClass(t.pnl_pct)}">${pnlSign(t.pnl_pct)}${fmt(t.pnl_pct, 1)}%</td>
+                    <td style="color:var(--text-muted);font-size:0.75rem;">${t.exit_reason || '--'}</td>
+                </tr>`).join('')}
+            </tbody>
+        </table>` : ''}
+    `;
+}
+
+function renderSignals(data) {
+    const el = document.getElementById('signalsContent');
+    if (!data) {
+        el.innerHTML = '<div class="unavailable">Signal data unavailable</div>';
+        return;
+    }
+
+    const domains = data.domains || {};
+    const total = data.total_signals || 0;
+    const cycles = data.research_cycles || 0;
+    const entries = Object.entries(domains);
+
+    if (!entries.length) {
+        el.innerHTML = '<div class="unavailable">No signals yet</div>';
+        return;
+    }
+
+    el.innerHTML = `
+        <div style="display:flex;gap:1rem;margin-bottom:1rem;">
+            <div class="stat-box" style="flex:1;">
+                <div class="stat-label">Total Signals</div>
+                <div class="stat-value gold-text">${total.toLocaleString()}</div>
+            </div>
+            <div class="stat-box" style="flex:1;">
+                <div class="stat-label">Research Cycles</div>
+                <div class="stat-value">${cycles.toLocaleString()}</div>
+            </div>
+        </div>
+        <div class="signals-grid">
+            ${entries.map(([name, v], i) => {
+                const color = DOMAIN_COLORS[i % DOMAIN_COLORS.length];
+                return `<div class="signal-card" style="border-left-color:${color}">
+                    <div class="signal-domain" style="color:${color}">${name}</div>
+                    <div class="signal-count">${(v.signals || 0).toLocaleString()}</div>
+                    <div class="signal-pct">${((v.pct || 0) * 100).toFixed(1)}% of total</div>
+                </div>`;
+            }).join('')}
+        </div>
+        ${data.imbalanced ? `<div style="margin-top:0.75rem;padding:0.5rem 0.75rem;background:var(--red-dim);border-radius:6px;font-size:0.8rem;color:var(--red);">Signal imbalance detected: ${data.dominant_source} at ${data.dominant_pct}%</div>` : ''}
+    `;
+}
+
+function renderAlpha(data) {
+    const el = document.getElementById('alphaContent');
+    const obsEl = document.getElementById('obsContent');
+    const obsCount = document.getElementById('obsCount');
+
+    if (!data) {
+        el.innerHTML = '<div class="unavailable">Alpha hunt data unavailable</div>';
+        obsEl.innerHTML = '<div class="unavailable">No observations available</div>';
+        return;
+    }
+
+    const targets = data.hunting_targets || [];
+    const sources = data.hunted_sources || [];
+    const discovered = data.discovered_sources || [];
+    const stats = data.observation_stats || {};
+    const obs = data.observations || [];
+
+    el.innerHTML = `
+        <div class="hunt-stats">
+            <div class="stat-box">
+                <div class="stat-label">Targets</div>
+                <div class="stat-value gold-text">${Array.isArray(targets) ? targets.length : '--'}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Sources</div>
+                <div class="stat-value">${Array.isArray(sources) ? sources.length : '--'}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Discovered</div>
+                <div class="stat-value" style="color:var(--green);">${Array.isArray(discovered) ? discovered.length : '--'}</div>
+            </div>
+        </div>
+        <div class="hunt-stats">
+            <div class="stat-box">
+                <div class="stat-label">Observations</div>
+                <div class="stat-value">${(stats.total || 0).toLocaleString()}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Acted On</div>
+                <div class="stat-value" style="color:var(--green);">${(stats.acted || 0).toLocaleString()}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Ignored</div>
+                <div class="stat-value" style="color:var(--text-muted);">${(stats.ignored || 0).toLocaleString()}</div>
+            </div>
+        </div>
+    `;
+
+    // Observations
+    obsCount.textContent = `${obs.length} recent`;
+    if (!obs.length) {
+        obsEl.innerHTML = '<div class="unavailable">No observations yet</div>';
+        return;
+    }
+
+    obsEl.innerHTML = `
+        <div class="observation-list">
+            ${obs.slice(0, 20).map(o => {
+                const content = o.summary || o.content || o.observation || o.signal || JSON.stringify(o).slice(0, 120);
+                const acted = o.acted;
+                const ts = o.timestamp || o.time || o.created_at || '';
+                return `<div class="observation-item">
+                    <span class="obs-acted ${acted ? 'yes' : 'no'}" title="${acted ? 'Acted on' : 'Ignored'}"></span>
+                    <span class="obs-content">${escapeHtml(String(content).slice(0, 200))}</span>
+                    <span class="obs-time">${relativeTime(ts)}</span>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+function renderIntel(tradingData, signalsData) {
+    const el = document.getElementById('intelContent');
+    const domains = tradingData?.domains || signalsData?.domains || {};
+    const entries = Object.entries(domains);
+    const totalSignals = signalsData?.total_signals || tradingData?.total_signals || 0;
+
+    if (!entries.length) {
+        el.innerHTML = '<div class="unavailable">No intelligence sources detected</div>';
+        return;
+    }
+
+    el.innerHTML = `
+        <div class="sources-grid">
+            <div class="source-item">
+                <div class="source-count">${entries.length}</div>
+                <div class="source-label">Domains</div>
+            </div>
+            <div class="source-item">
+                <div class="source-count">${totalSignals.toLocaleString()}</div>
+                <div class="source-label">Total Signals</div>
+            </div>
+            ${entries.map(([name, v], i) => `<div class="source-item">
+                <div class="source-count" style="color:${DOMAIN_COLORS[i % DOMAIN_COLORS.length]}">${(v.signals_seen || v.signals || 0).toLocaleString()}</div>
+                <div class="source-label">${name}</div>
+            </div>`).join('')}
+        </div>
+    `;
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ── Data Loader ──────────────────────────────────────────────────────
+
+let refreshTimer = null;
+
+async function refreshAll() {
+    const btn = document.getElementById('btnRefresh');
+    btn.classList.add('loading');
+    btn.textContent = 'Loading...';
+
+    const [trading, signals, alphaHunts, regime, tokenMetrics] = await Promise.all([
+        safeFetch('/api/agent/trading'),
+        safeFetch('/api/agent/signals'),
+        safeFetch('/api/agent/alpha-hunts'),
+        safeFetch('/api/agent/market-regime'),
+        safeFetch('/api/token/metrics'),
+    ]);
+
+    renderToken(tokenMetrics);
+    renderRegime(regime);
+    renderPortfolio(trading);
+    renderSignals(signals);
+    renderAlpha(alphaHunts);
+    renderIntel(trading, signals);
+
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = 'Updated ' + now.toLocaleTimeString();
+
+    btn.classList.remove('loading');
+    btn.textContent = 'Refresh';
+}
+
+// Initial load
+refreshAll();
+
+// Auto-refresh every 60s
+refreshTimer = setInterval(refreshAll, 60000);
+</script>
+
+</body>
+</html>
+<!-- deployed 20260216T044727Z -->

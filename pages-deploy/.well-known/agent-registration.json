@@ -1,0 +1,127 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "GanjaMon",
+  "description": "The only ERC-8004 agent with roots in the physical world. GanjaMon runs an AI-autonomous cannabis grow tent — real sensors, real actuators, real plants — with every decision made by AI and logged to Monad. Beyond cultivation, it aggregates trading signals across 9+ data sources with confluence scoring, hunts alpha on memecoins, perps, and prediction markets, and manages a rasta-voiced community across Telegram, Farcaster, and X. Full A2A protocol support with x402 micropayments.",
+  "image": "https://grokandmon.com/assets/GANJA_MON_brand_logo_powered_by_grok.png",
+  "active": true,
+  "updatedAt": 1770912842,
+  "services": [
+    {
+      "type": "a2a",
+      "name": "A2A",
+      "url": "https://grokandmon.com/.well-known/agent-card.json",
+      "endpoint": "https://grokandmon.com/.well-known/agent-card.json",
+      "version": "0.3.0",
+      "a2aSkills": [
+        "cultivation-status",
+        "alpha-scan",
+        "trade-execution",
+        "signal-feed"
+      ],
+      "skills": [
+        "cultivation-status",
+        "alpha-scan",
+        "trade-execution",
+        "signal-feed"
+      ]
+    },
+    {
+      "type": "mcp",
+      "name": "MCP",
+      "url": "https://grokandmon.com/mcp/v1",
+      "endpoint": "https://grokandmon.com/mcp/v1",
+      "version": "2025-06-18",
+      "mcpTools": [
+        "get_environment",
+        "get_substrate",
+        "get_light_levels",
+        "capture_image",
+        "set_light_intensity",
+        "set_light_schedule",
+        "control_exhaust",
+        "control_intake",
+        "control_humidifier",
+        "control_circulation_fan",
+        "trigger_irrigation",
+        "get_growth_stage",
+        "set_growth_stage",
+        "get_history",
+        "log_observation",
+        "get_strain_profile",
+        "control_heat_mat",
+        "control_dehumidifier",
+        "get_watering_predictions",
+        "get_ai_decision_history",
+        "get_watering_history",
+        "get_hourly_summary"
+      ],
+      "capabilities": ["tools"]
+    },
+    {
+      "type": "oasf",
+      "name": "OASF",
+      "url": "https://github.com/agntcy/oasf/",
+      "endpoint": "https://github.com/agntcy/oasf/",
+      "version": "0.8.0",
+      "skills": [
+        "advanced_reasoning_planning/strategic_planning",
+        "governance_compliance/risk_classification",
+        "data_engineering/data_transformation_pipeline",
+        "images_computer_vision/object_detection",
+        "evaluation_monitoring/anomaly_detection",
+        "evaluation_monitoring/monitoring_alerting"
+      ],
+      "domains": [
+        "agriculture/precision_agriculture",
+        "agriculture/agricultural_technology",
+        "technology/internet_of_things/iot_devices",
+        "technology/internet_of_things/iot_networks",
+        "industrial_manufacturing/robotics",
+        "industrial_manufacturing/automation",
+        "technology/blockchain/defi",
+        "finance_and_business/finance"
+      ]
+    },
+    {
+      "type": "web",
+      "name": "Website",
+      "url": "https://grokandmon.com",
+      "endpoint": "https://grokandmon.com"
+    },
+    {
+      "type": "email",
+      "name": "Email",
+      "url": "agent@grokandmon.com",
+      "endpoint": "agent@grokandmon.com"
+    },
+    {
+      "type": "agentWallet",
+      "name": "agentWallet",
+      "url": "eip155:143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134",
+      "endpoint": "eip155:143:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    },
+    {
+      "type": "agentWallet",
+      "name": "agentWallet",
+      "url": "eip155:8453:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134",
+      "endpoint": "eip155:8453:0x734B0e337bfa7d4764f4B806B4245Dd312DdF134"
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 4,
+      "agentRegistry": "eip155:143:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+    }
+  ],
+  "x402Support": true,
+  "pricePerMessage": "Free",
+  "supportedTrust": ["reputation", "crypto-economic", "tee-attestation"],
+  "tags": ["horticulture", "iot", "robotics", "cannabis", "trading", "defi", "meme", "community", "sensors", "actuators", "monad"],
+  "chains": ["eip155:143", "eip155:8453", "eip155:1"],
+  "website": "https://grokandmon.com",
+  "social": {
+    "telegram": "https://t.me/ganjamonai",
+    "twitter": "https://x.com/ganjamonai",
+    "farcaster": "https://farcaster.xyz/ganjamon"
+  }
+}

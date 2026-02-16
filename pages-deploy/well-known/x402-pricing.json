@@ -1,0 +1,6 @@
+{
+  "priceUSD": 0.001,
+  "currency": "USDC",
+  "chain": "base",
+  "description": "Nominal per-request fee; waived if not using x402 facilitator."
+}
