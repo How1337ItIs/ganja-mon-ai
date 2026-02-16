@@ -1,0 +1,20 @@
+{
+  "ide": {
+    "enabled": true
+  },
+  "tools": {
+    "shell": {
+      "enableInteractiveShell": false
+    }
+  },
+  "security": {
+    "folderTrust": {
+      "enabled": true
+    }
+  },
+  "experimental": {
+    "codebaseInvestigatorSettings": {
+      "maxNumTurns": 42
+    }
+  }
+}

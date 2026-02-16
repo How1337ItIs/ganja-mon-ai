@@ -1,0 +1,67 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/claude-code/main/schemas/settings.json",
+  "$comment": "Stop-hook verification configuration for Ralph loops. Copy to .claude/settings.json",
+
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '🔍 Running verification checks...'",
+            "$comment": "Progress indicator"
+          },
+          {
+            "type": "command",
+            "command": "if ! npm test 2>/dev/null; then echo '❌ Tests failed - blocking stop'; exit 2; fi",
+            "$comment": "Run tests - exit 2 blocks stop"
+          },
+          {
+            "type": "command",
+            "command": "if ! npm run typecheck 2>/dev/null; then echo '❌ Typecheck failed - blocking stop'; exit 2; fi",
+            "$comment": "Run typecheck - exit 2 blocks stop"
+          },
+          {
+            "type": "command",
+            "command": "if ! npm run lint 2>/dev/null; then echo '❌ Lint failed - blocking stop'; exit 2; fi",
+            "$comment": "Run lint - exit 2 blocks stop"
+          },
+          {
+            "type": "command",
+            "command": "if ! npm run build 2>/dev/null; then echo '❌ Build failed - blocking stop'; exit 2; fi",
+            "$comment": "Run build - exit 2 blocks stop"
+          },
+          {
+            "type": "command",
+            "command": "echo '✅ All verification checks passed - allowing stop'",
+            "$comment": "Success indicator"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo '$CLAUDE_TOOL_INPUT' | jq -r '.file_path // .path // empty'); if [[ -n \"$FILE\" ]] && [[ $FILE == *.ts || $FILE == *.tsx ]]; then prettier --write \"$FILE\" 2>/dev/null || true; fi",
+            "$comment": "Auto-format TypeScript files after edit"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo '$CLAUDE_TOOL_INPUT' | jq -r '.file_path // .path // empty'); if [[ \"$FILE\" == .env* ]] || [[ \"$FILE\" == *credentials* ]] || [[ \"$FILE\" == *secret* ]]; then echo '🚫 Protected file - blocking edit'; exit 2; fi",
+            "$comment": "Protect sensitive files from modification"
+          }
+        ]
+      }
+    ]
+  }
+}
