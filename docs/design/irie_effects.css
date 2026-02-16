@@ -1,0 +1,446 @@
+/**
+ * 🌿 IRIE EFFECTS - Rasta-Dub CSS Library for Ganja Mon
+ * Drop this into index.html for instant irie vibes
+ */
+
+/* ==========================================================================
+   ENHANCED RASTA COLOR SYSTEM
+   ========================================================================== */
+
+:root {
+    /* Rasta Core Colors (Ethiopian Flag) */
+    --rasta-red: #D00F00;
+    --rasta-red-dim: #a00c00;
+    --rasta-red-glow: rgba(208, 15, 0, 0.4);
+    
+    --rasta-gold: #FFCA00;
+    --rasta-gold-dim: #d4a800;
+    --rasta-gold-glow: rgba(255, 202, 0, 0.4);
+    
+    --rasta-green: #178C14;
+    --rasta-green-dim: #116610;
+    --rasta-green-glow: rgba(23, 140, 20, 0.4);
+    
+    /* Deep Foundation */
+    --irie-black: #0A0A0F;
+    --irie-dark: #0E091C;
+    --irie-card: #12101f;
+    
+    /* Dub Echo Colors */
+    --echo-blue: #85E6FF;
+    --echo-purple: #6E54FF;
+    --smoke-gray: #4a4a6a;
+    
+    /* Gradients */
+    --rasta-gradient: linear-gradient(90deg, var(--rasta-red), var(--rasta-gold), var(--rasta-green));
+    --rasta-vertical: linear-gradient(180deg, var(--rasta-green), var(--rasta-gold), var(--rasta-red));
+    --irie-glow: linear-gradient(135deg, var(--rasta-green-glow), var(--rasta-gold-glow), var(--rasta-red-glow));
+}
+
+/* ==========================================================================
+   RASTA STRIPE ELEMENTS
+   ========================================================================== */
+
+/* Horizontal Rasta Stripe Band */
+.rasta-stripe {
+    height: 6px;
+    background: var(--rasta-gradient);
+    width: 100%;
+}
+
+.rasta-stripe-thick {
+    height: 12px;
+    background: var(--rasta-gradient);
+    width: 100%;
+}
+
+/* Animated Rasta Stripe */
+.rasta-stripe-animated {
+    height: 4px;
+    background: linear-gradient(90deg, 
+        var(--rasta-red) 0%, 
+        var(--rasta-red) 33.33%, 
+        var(--rasta-gold) 33.33%, 
+        var(--rasta-gold) 66.66%, 
+        var(--rasta-green) 66.66%, 
+        var(--rasta-green) 100%
+    );
+    background-size: 300% 100%;
+    animation: rasta-flow 8s linear infinite;
+}
+
+@keyframes rasta-flow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 0%; }
+}
+
+/* Three-bar stack */
+.rasta-bars {
+    display: flex;
+    flex-direction: column;
+}
+
+.rasta-bars .bar-red,
+.rasta-bars .bar-gold,
+.rasta-bars .bar-green {
+    height: 4px;
+}
+
+.rasta-bars .bar-red { background: var(--rasta-red); }
+.rasta-bars .bar-gold { background: var(--rasta-gold); }
+.rasta-bars .bar-green { background: var(--rasta-green); }
+
+/* ==========================================================================
+   GLASSMORPHISM CARDS (RASTA-TINTED)
+   ========================================================================== */
+
+.glass-card {
+    background: rgba(18, 16, 31, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+}
+
+.glass-card-green {
+    background: rgba(23, 140, 20, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(23, 140, 20, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(23, 140, 20, 0.1);
+}
+
+.glass-card-gold {
+    background: rgba(255, 202, 0, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 202, 0, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(255, 202, 0, 0.1);
+}
+
+.glass-card-red {
+    background: rgba(208, 15, 0, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(208, 15, 0, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 0 30px rgba(208, 15, 0, 0.1);
+}
+
+/* ==========================================================================
+   DUB ECHO ANIMATIONS
+   ========================================================================== */
+
+/* Echo Pulse - Like a dub delay effect */
+@keyframes echo-pulse {
+    0% {
+        box-shadow: 0 0 0 0 var(--rasta-green-glow),
+                    0 0 0 0 var(--rasta-gold-glow),
+                    0 0 0 0 var(--rasta-red-glow);
+    }
+    33% {
+        box-shadow: 0 0 0 10px transparent,
+                    0 0 0 0 var(--rasta-gold-glow),
+                    0 0 0 0 var(--rasta-red-glow);
+    }
+    66% {
+        box-shadow: 0 0 0 20px transparent,
+                    0 0 0 10px transparent,
+                    0 0 0 0 var(--rasta-red-glow);
+    }
+    100% {
+        box-shadow: 0 0 0 30px transparent,
+                    0 0 0 20px transparent,
+                    0 0 0 10px transparent;
+    }
+}
+
+.echo-pulse {
+    animation: echo-pulse 2s ease-out infinite;
+}
+
+/* Delay Ghost - Creates shadow copies */
+@keyframes delay-ghost {
+    0%, 100% {
+        text-shadow: 
+            2px 2px 0 var(--rasta-red),
+            4px 4px 0 var(--rasta-gold),
+            6px 6px 0 var(--rasta-green);
+    }
+    50% {
+        text-shadow: 
+            4px 4px 2px var(--rasta-red),
+            8px 8px 2px var(--rasta-gold),
+            12px 12px 2px var(--rasta-green);
+    }
+}
+
+.text-echo {
+    animation: delay-ghost 3s ease-in-out infinite;
+}
+
+/* Bass Drop Bounce */
+@keyframes bass-drop {
+    0%, 100% { transform: scale(1); }
+    10% { transform: scale(1.05); }
+    20% { transform: scale(0.98); }
+    30% { transform: scale(1.02); }
+    40% { transform: scale(1); }
+}
+
+.bass-drop:hover {
+    animation: bass-drop 0.5s ease-out;
+}
+
+/* Vinyl Wobble */
+@keyframes vinyl-wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+}
+
+.vinyl-wobble {
+    animation: vinyl-wobble 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   SMOKE & HERB EFFECTS
+   ========================================================================== */
+
+/* Smoke Rising Particles */
+@keyframes smoke-rise {
+    0% {
+        opacity: 0;
+        transform: translateY(0) translateX(0) scale(1);
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) translateX(20px) scale(2);
+    }
+}
+
+.smoke-particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, var(--smoke-gray) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: smoke-rise 4s ease-out infinite;
+    pointer-events: none;
+}
+
+/* Cannabis Leaf Watermark */
+.leaf-watermark {
+    position: absolute;
+    font-size: 20rem;
+    opacity: 0.02;
+    pointer-events: none;
+    user-select: none;
+    filter: blur(1px);
+}
+
+/* ==========================================================================
+   SOUNDWAVE / VISUALIZER EFFECTS
+   ========================================================================== */
+
+/* Soundwave Bars */
+.soundwave-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+}
+
+.soundwave-bar {
+    width: 4px;
+    background: var(--rasta-gradient);
+    border-radius: 2px;
+    animation: soundwave 1s ease-in-out infinite;
+}
+
+@keyframes soundwave {
+    0%, 100% { height: 10px; }
+    50% { height: 40px; }
+}
+
+.soundwave-bar:nth-child(1) { animation-delay: 0s; }
+.soundwave-bar:nth-child(2) { animation-delay: 0.1s; }
+.soundwave-bar:nth-child(3) { animation-delay: 0.2s; }
+.soundwave-bar:nth-child(4) { animation-delay: 0.3s; }
+.soundwave-bar:nth-child(5) { animation-delay: 0.4s; }
+.soundwave-bar:nth-child(6) { animation-delay: 0.5s; }
+.soundwave-bar:nth-child(7) { animation-delay: 0.4s; }
+.soundwave-bar:nth-child(8) { animation-delay: 0.3s; }
+.soundwave-bar:nth-child(9) { animation-delay: 0.2s; }
+.soundwave-bar:nth-child(10) { animation-delay: 0.1s; }
+
+/* ==========================================================================
+   IRIE BUTTONS & INTERACTIVE ELEMENTS
+   ========================================================================== */
+
+.btn-irie {
+    background: var(--rasta-gradient);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    color: #000;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-irie:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--rasta-green-glow),
+                0 4px 15px var(--rasta-gold-glow);
+}
+
+.btn-irie::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.btn-irie:hover::before {
+    left: 100%;
+}
+
+/* Outline variant */
+.btn-irie-outline {
+    background: transparent;
+    border: 2px solid;
+    border-image: var(--rasta-gradient) 1;
+    padding: 0.75rem 1.5rem;
+    color: var(--rasta-gold);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-irie-outline:hover {
+    background: rgba(255, 202, 0, 0.1);
+    box-shadow: 0 0 20px var(--rasta-gold-glow);
+}
+
+/* ==========================================================================
+   TEXT EFFECTS
+   ========================================================================== */
+
+/* Rasta Gradient Text */
+.text-rasta {
+    background: var(--rasta-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Neon Glow Text */
+.text-glow-green {
+    color: var(--rasta-green);
+    text-shadow: 0 0 10px var(--rasta-green-glow),
+                 0 0 20px var(--rasta-green-glow),
+                 0 0 40px var(--rasta-green-glow);
+}
+
+.text-glow-gold {
+    color: var(--rasta-gold);
+    text-shadow: 0 0 10px var(--rasta-gold-glow),
+                 0 0 20px var(--rasta-gold-glow),
+                 0 0 40px var(--rasta-gold-glow);
+}
+
+/* Stacked Shadow (Dub Typography) */
+.text-dub-stack {
+    text-shadow: 
+        1px 1px 0 var(--rasta-red),
+        2px 2px 0 var(--rasta-gold),
+        3px 3px 0 var(--rasta-green),
+        4px 4px 10px rgba(0,0,0,0.5);
+}
+
+/* ==========================================================================
+   DECORATIVE BORDERS
+   ========================================================================== */
+
+.border-rasta-top {
+    border-top: 4px solid;
+    border-image: var(--rasta-gradient) 1;
+}
+
+.border-rasta-left {
+    border-left: 4px solid;
+    border-image: var(--rasta-vertical) 1;
+}
+
+.border-rasta-glow {
+    box-shadow: 
+        0 0 0 1px var(--rasta-red),
+        0 0 0 2px var(--rasta-gold),
+        0 0 0 3px var(--rasta-green),
+        0 0 10px var(--rasta-green-glow);
+}
+
+/* ==========================================================================
+   VINTAGE / NOISE OVERLAYS
+   ========================================================================== */
+
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* VHS Scan Lines */
+.scanlines::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+    );
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.irie-shadow {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 80px var(--rasta-green-glow);
+}
+
+.irie-glow-hover:hover {
+    box-shadow: 0 0 30px var(--rasta-green-glow),
+                0 0 60px var(--rasta-gold-glow);
+}
+
+/* JAH RASTAFARI 🦁👑 */

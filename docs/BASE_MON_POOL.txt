@@ -1,0 +1,25 @@
+MON/USDC Aerodrome Pool on Base
+================================
+
+Pool Address: 0x2f2ec3e1b42756f949bd05f9b491c0b9c49fee3a
+Token0 (USDC): 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+Token1 (MON): 0xE390612D7997B538971457cfF29aB4286cE97BE2
+
+Initial Liquidity:
+  USDC: $250.95
+  MON: 6,654,295
+  MON Price: $0.00003771
+
+Swap Links:
+  Buy MON:  https://aerodrome.finance/swap?from=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913&to=0xE390612D7997B538971457cfF29aB4286cE97BE2
+  Sell MON: https://aerodrome.finance/swap?from=0xE390612D7997B538971457cfF29aB4286cE97BE2&to=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+
+Pool Page:
+  https://aerodrome.finance/deposit?token0=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&token1=0xe390612d7997b538971457cff29ab4286ce97be2&type=-1&chain0=8453&chain1=8453
+
+Bridge Infrastructure:
+  Base NTT Manager: 0xAED180F30c5bd9EBE5399271999bf72E843a1E09
+  Base Transceiver 1: 0xf2ce259C1Ff7E517F8B5aC9ECF86c29de54FC1E4
+  Base Transceiver 2: 0x3e7bFF16795b96eABeC56A4aA2a26bb0BE488C2D
+
+Created: 2026-02-03
