@@ -1,0 +1,31 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/mnt/c/Users/natha/sol-cannabis/openclaw-workspace/ganjamon"
+    },
+    "list": [
+      {
+        "id": "ganjamon",
+        "name": "GanjaMon",
+        "workspace": "/mnt/c/Users/natha/sol-cannabis/openclaw-workspace/ganjamon"
+      },
+      {
+        "id": "moltbook",
+        "name": "Moltbook Observer",
+        "workspace": "/mnt/c/Users/natha/sol-cannabis/openclaw-workspace/moltbook-observer"
+      }
+    ]
+  },
+  "skills": {
+    "clawk": {
+      "env": {
+        "CLAWK_API_KEY": "clawk_7afedcd144be3d158301da0d4c3e98a5"
+      }
+    },
+    "moltbook": {
+      "env": {
+        "MOLTBOOK_API_KEY": "moltbook_sk_BGOmtCrPN8R2KOmNtgMUDB_mKDxxU7mI"
+      }
+    }
+  }
+}

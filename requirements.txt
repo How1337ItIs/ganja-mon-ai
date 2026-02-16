@@ -1,0 +1,66 @@
+# Grok & Mon - Python Dependencies
+
+# HTTP Client (for xAI Grok API)
+httpx>=0.27.0
+aiohttp>=3.10.11  # CVE-2024-23334, CVE-2024-52304 fixes
+
+# Web/API Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+websockets>=12.0
+python-multipart>=0.0.6  # For FastAPI form data
+
+# MQTT (Real-time IoT communication - SmartGrow pattern)
+aiomqtt>=2.0.0
+
+# Hardware Control
+python-kasa>=0.6.0
+tapo>=0.5.0              # TP-Link Tapo smart plugs (P100/P110/P115)
+opencv-python>=4.9.0
+Pillow>=10.2.0
+
+# Arduino/ESP32 Integration (optional)
+pyserial>=3.5           # Serial communication with Arduino
+pyserial-asyncio>=0.6   # Async serial for Arduino nodes
+
+# Data & Config
+sqlalchemy>=2.0.0
+aiosqlite>=0.19.0
+pydantic>=2.6.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Utilities
+rich>=13.7.0
+structlog>=24.1.0
+
+# Scheduling (Photoperiod automation)
+apscheduler>=3.10.0
+
+# Social Media
+tweepy>=4.14.0
+
+# Authentication
+python-jose[cryptography]>=3.3.0
+passlib>=1.7.0
+bcrypt>=4.0.0,<5.0.0  # Version 5.x has compatibility issues with passlib
+
+# Notifications
+discord.py>=2.3.0
+python-telegram-bot>=21.0
+
+# Telegram Batch Ganjafy
+telethon>=1.34.0
+google-genai>=0.3.0
+
+# Web Scraping (Death Star)
+archivebox>=0.7.0
+crawl4ai>=0.1.0
+playwright>=1.40.0
+scrapy>=2.11.0
+supervisor>=4.2.0
+
+# Blockchain (Monad/EVM)
+web3>=6.15.0
+eth-account>=0.11.0

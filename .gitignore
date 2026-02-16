@@ -1,0 +1,190 @@
+# Sol Cannabis / GanjaMon .gitignore
+# Public release — keep source, exclude all generated/sensitive/large content
+
+# ============================================================
+# SECRETS & CREDENTIALS (CRITICAL: Never commit!)
+# ============================================================
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.local.yaml
+*.pem
+*.key
+*.enc
+wallets/
+private_keys/
+**/secrets.yaml
+**/credentials.json
+**/credentials-*.json
+**/service-account*.json
+x_cookies.json
+config/hardware.yaml
+config/secrets.yaml
+streaming/stream_keys.env
+
+# ============================================================
+# PYTHON
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+.venv-win/
+venv-telegram/
+ENV/
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# ============================================================
+# NODE
+# ============================================================
+node_modules/
+
+# ============================================================
+# LARGE DIRECTORIES (not source code)
+# ============================================================
+
+# Third-party cloned repos (40+ repos, 14 GB)
+cloned-repos/
+
+# NFT generation (16 GB images/models)
+irie-milady/
+
+# Voice pipeline bulk data (voice samples, datasets, RVC models)
+rasta-voice/voice_samples*/
+rasta-voice/voice_samples_cleaned/
+rasta-voice/voice_dataset/
+rasta-voice/rvc_models/
+rasta-voice/elevenlabs_upload/
+rasta-voice/cleaned_samples/
+
+# Research data
+research/
+
+# Music files (2.2 GB)
+src/web/music/
+
+# Generated output (videos, voiceovers, screenshots)
+output/
+
+# Large project directories (not core source)
+death-star-forensic-scraper/
+ganjamon-website/
+acquisition-pipeline/
+smoldapp-tokenAssets/
+ntt-deployment/
+dxt-extension/
+base-migration/
+stability-ralph-loop/
+dashboard/
+website-ralph-loop/
+reports/
+gists/
+
+# Embedded git repos (have their own remotes)
+agents/farcaster/
+agents/ganjamon/
+hyperliquid-ai-trading-bot/
+hyperliquid-trading-bot/
+mon-bridge/
+openclaw-trading-assistant/
+contracts/grow/lib/
+
+# Foundry build artifacts (recompile with forge build)
+contracts/grow/out/
+contracts/grow/cache/
+
+# Development archive (741 handoff/debug notes)
+docs/archive/
+docs/scraping/
+docs/forensics/
+docs/*.json
+
+# OpenClaw framework (third-party, 214 MB — install separately)
+openclaw/
+
+# ============================================================
+# DATA & DATABASES
+# ============================================================
+data/
+*.db
+*.sqlite
+*.jsonl
+agents/ganjamon/data/
+agents/ganjamon/logs/
+
+# ============================================================
+# BUILD & CACHE
+# ============================================================
+.cache/
+.wrangler/
+.playwright-mcp/
+*.session
+
+# ============================================================
+# TEMP & SCRATCH FILES
+# ============================================================
+*.tmp
+*.temp
+tmp_*
+NUL
+
+# Root-level scratch screenshots
+/*.png
+/*.webp
+/*.jpg
+
+# Large transcript/debug markdown files at root
+/Fixing Bluetooth Audio Quality.md
+/Refining Stereo Multichannel.md
+/Refining Voice Isolation.md
+/CODEX_*.md
+/TOKEN_EFFICIENCY_HANDOFF.md
+/check_watering.py
+/antigravity.md
+
+# Internal docs not for public repo
+docs/archive/
+docs/scraping/
+docs/forensics/
+docs/*.json
+docs/CODEX_*.md
+docs/audits/MON_vs_BOOLY*
+docs/screenshots/
+docs/release/
+
+# ============================================================
+# IDE & OS
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+.cursorrules
+
+# ============================================================
+# CLAUDE AUTO-MEMORY (personal, not for git)
+# ============================================================
+.claude/projects/
+
+# ============================================================
+# ASSETS (keep small assets, exclude large media)
+# ============================================================
+assets/screenshots/
+assets/timelapse/
+data/timelapse/
+data/logs/
+data/metrics/

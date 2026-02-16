@@ -1,0 +1,133 @@
+# config/pitfalls.yaml
+# ====================
+# Machine-readable registry of known gotchas.
+# Loaded at agent startup, injected into AI context as guardrails.
+# Source: CLAUDE.md, AGENTS.md, operational experience.
+
+pitfalls:
+  - id: xai-penalty-params
+    severity: critical
+    description: "grok-4-1-fast-non-reasoning does NOT support presence_penalty OR frequency_penalty parameters"
+    trigger: "Using presence_penalty or frequency_penalty with Grok API calls"
+    fix: "Remove BOTH penalty params from API call payload — both cause 400 errors"
+    source: CLAUDE.md
+
+  - id: email-stdlib-conflict
+    severity: high
+    description: "Never create src/email/ directory — conflicts with Python stdlib 'email' module"
+    trigger: "Creating email-related module in src/"
+    fix: "Use src/mailer/ instead"
+    source: CLAUDE.md
+
+  - id: telegram-bot-token-mix
+    severity: critical
+    description: "Two Telegram bots exist with different tokens — community bot vs plant bot"
+    trigger: "Deploying ganja-mon-bot.service or editing Telegram config"
+    fix: "Verify TELEGRAM_COMMUNITY_BOT_TOKEN vs TELEGRAM_BOT_TOKEN before deploying"
+    source: AGENTS.md
+
+  - id: twitter-no-hashtags
+    severity: high
+    description: "Never use hashtags in tweets — instant character break"
+    trigger: "Generating Twitter content"
+    fix: "Strip all # symbols from output. enforce_voice() handles this automatically."
+    source: .claude/rules/twitter.md
+
+  - id: twitter-no-leaf-emoji
+    severity: medium
+    description: "Never use 🌿 leaf emoji — it's not even cannabis"
+    trigger: "Generating social content"
+    fix: "Remove U+1F33F from output. enforce_voice() handles this automatically."
+    source: .claude/rules/twitter.md
+
+  - id: moltbook-content-field
+    severity: high
+    description: "Moltbook API expects 'content' field, not 'text' — empty posts result from wrong field name"
+    trigger: "Posting to Moltbook API"
+    fix: "Use 'content' key in POST payload, not 'text'"
+    source: docs/MOLTBOOK_LESSONS_LEARNED.md
+
+  - id: mcp-endpoint-localhost
+    severity: medium
+    description: "MCP endpoint pointed to localhost:3010 which is unreachable externally"
+    trigger: "External agents trying to reach MCP endpoint"
+    fix: "Use Cloudflare tunnel URL or public endpoint in registration.json"
+    source: agent-registration.json
+
+  - id: prop64-plant-limit
+    severity: critical
+    description: "California Prop 64 limits personal cultivation to 6 plants maximum"
+    trigger: "Discussing grow capacity or scaling"
+    fix: "Never reference plans for more than 6 plants"
+    source: California Prop 64
+
+  - id: oasf-invalid-categories
+    severity: medium
+    description: "8004scan validates OASF categories strictly — custom categories are flagged"
+    trigger: "Updating agent-registration.json OASF categories"
+    fix: "Use only categories from docs/OASF_VALID_CATEGORIES.md"
+    source: docs/OASF_CATEGORIES_MAPPING.md
+
+  - id: cloudflare-worker-routing
+    severity: high
+    description: "Production routing goes through cloudflare-worker-router.js, not direct Pages"
+    trigger: "Debugging why a deployed page isn't reachable"
+    fix: "Check cloudflare-worker-router.js for the route, then grokandmon-static Pages project"
+    source: CLAUDE.md
+
+  - id: trading-agent-subprocess-isolation
+    severity: critical
+    description: "The trading agent (ganjamon-agent) runs as an ISOLATED subprocess with separate PYTHONPATH, .env, and data/ directory. It is NOT part of src/."
+    trigger: "Editing trading code, referencing data paths, or deploying changes"
+    fix: "Trading code is in cloned-repos/ganjamon-agent/src/. Data is in ganjamon-agent/data/ (NOT sol-cannabis/data/). Has own .env. deploy.sh does NOT deploy it. Cross-domain features must read BOTH data directories."
+    source: run.py, CLAUDE.md
+
+  - id: env-duplicate-key-override
+    severity: high
+    description: "Duplicate keys in .env files silently override — the LAST occurrence wins"
+    trigger: "Adding feature flags or API keys to .env files"
+    fix: "grep for existing key before adding. ganjamon-agent/.env had ENABLE_TWITTER=true overridden by ENABLE_TWITTER=false 16 lines later."
+    source: ganjamon-agent/.env
+
+  - id: openclaw-no-config-flag
+    severity: critical
+    description: "OpenClaw CLI has NO --config flag. Config is ALWAYS read from ~/.openclaw/openclaw.json"
+    trigger: "Starting openclaw gateway with custom config path"
+    fix: "Copy config to ~/.openclaw/openclaw.json before starting. Use: openclaw gateway run --bind loopback --port 18789 --force"
+    source: memory/openclaw_gateway.md
+
+  - id: openclaw-unresolved-env-vars
+    severity: critical
+    description: "Unresolved ${VAR} in openclaw.json causes fatal MissingEnvVarError crash — no fallback"
+    trigger: "Adding ${ENV_VAR} references to openclaw config without ensuring the var is set"
+    fix: "Verify all env vars exist before syncing config. Remove gateway.auth section if OPENCLAW_GATEWAY_TOKEN is not set."
+    source: memory/openclaw_gateway.md
+
+  - id: openclaw-identity-key-location
+    severity: high
+    description: "Top-level 'identity' key in openclaw.json is deprecated in v2026.2.9 — crashes gateway"
+    trigger: "Editing openclaw.json identity section"
+    fix: "Place identity inside agents.list[].identity, NOT at top level. Run 'openclaw doctor --fix' to auto-migrate."
+    source: memory/openclaw_gateway.md
+
+  - id: telegram-bot-no-time-awareness
+    severity: high
+    description: "Telegram bot's AI has no time awareness unless explicitly injected — will hallucinate dark/light periods"
+    trigger: "Telegram bot making factually wrong time-dependent claims (e.g. 'dark period' at noon)"
+    fix: "Ensure get_plant_summary() in src/telegram/plant_data.py injects current time + is_dark_period from API. See docs/TELEGRAM_BOT_DARK_PERIOD_FIX.md"
+    source: docs/TELEGRAM_BOT_DARK_PERIOD_FIX.md
+
+  - id: social-silence-without-cron
+    severity: critical
+    description: "Social posting, research, and all scheduled activities MUST run through OpenClaw cron jobs — NOT as Python daemons in run.py. The 'run.py all' mode launches only 3 subprocesses (HAL, OpenClaw gateway, trading agent). The gateway's cron system handles everything else."
+    trigger: "Temptation to add social/research/scheduled tasks as Python subprocesses in run.py, or finding zero tweets/casts in production"
+    fix: "Run scripts/setup_openclaw_crons.sh on the Chromebook to install all cron jobs. Verify with 'openclaw cron list'. Force-run with 'openclaw cron run <jobId> --force'. NEVER add multiprocessing.Process for schedulable work."
+    source: scripts/setup_openclaw_crons.sh
+
+  - id: python-daemon-anti-pattern
+    severity: high
+    description: "Adding Python daemons (multiprocessing or threading loops) for social posting, research, or scheduled tasks violates the OpenClaw-first architecture. Python src/ is the Hardware Abstraction Layer — scheduling belongs to OpenClaw cron."
+    trigger: "Any attempt to add 'run_social()', 'run_research()', or similar async loops to run.py as subprocesses"
+    fix: "Use 'openclaw cron add' instead. See HEARTBEAT.md for the schedule, scripts/setup_openclaw_crons.sh for the implementation, and openclaw/docs/automation/cron-jobs.md for the API reference."
+    source: antigravity.md
+

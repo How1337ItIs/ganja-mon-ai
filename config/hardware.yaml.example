@@ -1,0 +1,97 @@
+# Sol Cannabis Hardware Configuration
+# ====================================
+# Copy this file to hardware.yaml and customize for your setup
+
+grow_name: "Sol Cannabis Grow #1"
+location: "California"
+
+# Growth stage tracking
+growth:
+  current_stage: "SEEDLING"  # SEEDLING, VEGETATIVE, TRANSITION, FLOWERING, LATE_FLOWER
+  stage_started: "2026-01-12"
+  strain: "Unknown"
+
+# Sensor configuration
+sensors:
+  environment:
+    type: "dht22"  # dht22, sht31, bme280
+    pin: 4
+    poll_interval_seconds: 60
+  
+  # Optional sensors (set enabled: false if not installed)
+  co2:
+    enabled: false
+    type: "scd40"
+    i2c_address: 0x62
+  
+  light:
+    enabled: false
+    type: "tsl2591"  # or "manual" for PPFD input
+  
+  substrate:
+    enabled: false
+    type: "capacitive"
+    pin: 17
+
+# Camera configuration
+cameras:
+  main:
+    type: "usb"  # usb, picamera, ip
+    device: 0    # /dev/video0
+    resolution: [1920, 1080]
+    capture_interval_minutes: 30
+
+# Actuator configuration (smart plugs)
+actuators:
+  grow_light:
+    type: "kasa"
+    ip: "192.168.1.100"
+    dimmable: true  # Set false for on/off only
+  
+  exhaust_fan:
+    type: "kasa"
+    ip: "192.168.1.101"
+    speed_control: false  # PWM control vs on/off
+  
+  humidifier:
+    type: "kasa"
+    ip: "192.168.1.102"
+  
+  circulation_fan:
+    type: "kasa"
+    ip: "192.168.1.103"
+  
+  # Optional
+  intake_fan:
+    enabled: false
+    type: "kasa"
+    ip: "192.168.1.104"
+  
+  irrigation:
+    enabled: false
+    type: "relay"
+    pin: 18
+
+# Safety limits
+safety:
+  max_temp_f: 90
+  min_temp_f: 55
+  max_humidity: 85
+  min_humidity: 20
+  max_irrigation_seconds: 120
+  max_actions_per_cycle: 3
+
+# AI configuration
+ai:
+  model: "claude-sonnet-4-20250514"
+  decision_interval_minutes: 30
+  require_approval_for:
+    - "set_growth_stage"
+    - "trigger_irrigation"
+
+# Data storage
+data:
+  database: "data/sol_cannabis.db"
+  timelapse_dir: "data/timelapse"
+  logs_dir: "data/logs"
+  retention_days: 30
