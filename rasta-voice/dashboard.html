@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ganja Mon Live Transcript</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: linear-gradient(135deg, #2d1b4e 0%, #8b4513 50%, #c41e3a 100%);
+            color: #ffd700;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid;
+            border-image: linear-gradient(90deg, #c41e3a, #ffd700, #228b22) 1;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        h1 {
+            font-family: 'VT323', monospace;
+            font-size: 4em;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+        }
+
+        .feed {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .entry {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 4px solid #ffd700;
+            border-radius: 8px;
+        }
+
+        .timestamp {
+            color: #ff8c00;
+            margin-bottom: 10px;
+        }
+
+        .original {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 5px;
+        }
+
+        .patois {
+            padding: 10px;
+            background: rgba(34, 139, 34, 0.3);
+            border-radius: 5px;
+        }
+
+        .label {
+            color: #ffa500;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .text {
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .emotion {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🎙️ GANJA MON LIVE 🎙️</h1>
+        <div id="status">Waiting for transcripts...</div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <!-- Transcript Feed -->
+        <div style="background: rgba(0,0,0,0.6); border: 2px solid #ffd700; border-radius: 10px; padding: 20px;">
+            <h2 style="font-family: VT323; font-size: 2em; color: #ffd700; margin-bottom: 15px;">LIVE TRANSCRIPT</h2>
+            <div class="feed" id="feed" style="height: 500px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- Controls -->
+        <div style="background: rgba(0,0,0,0.6); border: 2px solid #ffd700; border-radius: 10px; padding: 20px;">
+            <h2 style="font-family: VT323; font-size: 2em; color: #ffd700; margin-bottom: 15px;">VOICE CONTROLS</h2>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #ffd700; margin-bottom: 5px;"
+                    title="ElevenLabs only accepts 0.0, 0.5, or 1.0">
+                    Expressiveness: <span id="stabVal">0.0</span> <small style="color:#888">(0=Creative)</small>
+                </label>
+                <input type="range" id="stability" min="0" max="1" step="0.5" value="0.0" style="width: 100%;"
+                    oninput="document.getElementById('stabVal').textContent = this.value">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #ffd700; margin-bottom: 5px;">
+                    Style: <span id="styleVal">0.8</span>
+                </label>
+                <input type="range" id="style" min="0" max="1" step="0.1" value="0.8" style="width: 100%;"
+                    oninput="document.getElementById('styleVal').textContent = this.value">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #ffd700; margin-bottom: 5px;">
+                    Temperature: <span id="tempVal">0.7</span>
+                </label>
+                <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" style="width: 100%;"
+                    oninput="document.getElementById('tempVal').textContent = this.value">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <button id="startBtn" onclick="startPipeline()"
+                    style="width: 100%; padding: 15px; background: #228b22; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1.3em; cursor: pointer; margin-bottom: 10px;">
+                    ▶ START PIPELINE
+                </button>
+                <button id="stopBtn" onclick="stopPipeline()" disabled
+                    style="width: 100%; padding: 15px; background: #c41e3a; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1.3em; cursor: pointer; margin-bottom: 10px;">
+                    ⏹ STOP PIPELINE
+                </button>
+                <button onclick="clearTranscripts()"
+                    style="width: 100%; padding: 10px; background: #8b4513; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1em; cursor: pointer; margin-bottom: 10px;">
+                    CLEAR TRANSCRIPTS
+                </button>
+                <button onclick="nukeAll()"
+                    style="width: 100%; padding: 15px; background: #8b0000; color: #fff; border: 3px solid #ff0000; border-radius: 8px; font-size: 1.1em; cursor: pointer; font-weight: 600;">
+                    ☢️ KILL ALL PIPELINES
+                </button>
+            </div>
+
+            <div style="margin-bottom: 15px; padding: 10px; background: rgba(255,215,0,0.1); border-radius: 5px;">
+                <div style="font-size: 0.9em; color: #ff8c00; margin-bottom: 5px;">Pipeline Status:</div>
+                <div id="pipelineStatus" style="color: #ffd700; font-weight: 600;">Checking...</div>
+            </div>
+
+            <!-- Microphone Selector -->
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #ffd700; margin-bottom: 5px; font-weight: 600;">
+                    🎤 Microphone Input:
+                </label>
+                <select id="micSelect" onchange="switchMicrophone()"
+                    style="width: 100%; padding: 10px; background: rgba(0,0,0,0.6); color: #ffd700; border: 2px solid #ffd700; border-radius: 5px; font-size: 1em; cursor: pointer;">
+                    <option value="">Loading devices...</option>
+                </select>
+            </div>
+
+            <!-- Audio Levels -->
+            <div style="margin-bottom: 15px; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 5px;">
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.9em; color: #ff8c00; margin-bottom: 5px;">Input Level:</div>
+                    <div
+                        style="width: 100%; height: 20px; background: rgba(0,0,0,0.6); border-radius: 10px; border: 1px solid #ffd700; overflow: hidden;">
+                        <div id="inputLevel"
+                            style="width: 0%; height: 100%; background: linear-gradient(90deg, #228b22, #ffd700, #c41e3a); transition: width 0.1s;">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 0.9em; color: #ff8c00; margin-bottom: 5px;">Output Level:</div>
+                    <div
+                        style="width: 100%; height: 20px; background: rgba(0,0,0,0.6); border-radius: 10px; border: 1px solid #ffd700; overflow: hidden;">
+                        <div id="outputLevel"
+                            style="width: 0%; height: 100%; background: linear-gradient(90deg, #228b22, #ffd700, #c41e3a); transition: width 0.1s;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="applySettings()"
+                style="width: 100%; padding: 12px; background: #228b22; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1em; cursor: pointer;">
+                APPLY VOICE SETTINGS
+            </button>
+
+            <!-- Text Translator -->
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid rgba(255,215,0,0.35);">
+                <h2 style="font-family: VT323; font-size: 2em; color: #ffd700; margin-bottom: 10px;">TEXT TRANSLATOR
+                </h2>
+                <div style="font-size: 0.9em; color: #ff8c00; margin-bottom: 8px;">
+                    Same Ganja Mon personality — plain text only (no emotion tags).
+                </div>
+
+                <textarea id="ttInput" placeholder="Type English here..."
+                    style="width: 100%; height: 110px; resize: vertical; padding: 10px; border-radius: 8px; border: 2px solid rgba(255,215,0,0.45); background: rgba(0,0,0,0.45); color: #fff; outline: none;"></textarea>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <button onclick="translateText()"
+                        style="padding: 12px; background: #228b22; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: 600;">
+                        TRANSLATE
+                    </button>
+                    <button onclick="copyTranslation()"
+                        style="padding: 12px; background: #8b4513; color: #fff; border: 2px solid #ffd700; border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: 600;">
+                        COPY
+                    </button>
+                </div>
+
+                <div id="ttMeta" style="margin-top: 8px; font-size: 0.85em; color: rgba(255,255,255,0.75);"></div>
+
+                <div
+                    style="margin-top: 10px; padding: 10px; background: rgba(34,139,34,0.18); border-radius: 8px; border: 1px solid rgba(255,215,0,0.25);">
+                    <div class="label" style="margin-bottom: 5px;">GANJA MON (TEXT):</div>
+                    <div id="ttOutput" class="text" style="white-space: pre-wrap;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function highlight(text) {
+            return text.replace(/\[([^\]]+)\]/g, '<span class="emotion">[$1]</span>');
+        }
+
+        async function update() {
+            const res = await fetch('/api/transcripts');
+            const data = await res.json();
+
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+
+            data.entries.reverse().forEach(e => {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                div.innerHTML = `
+                    <div class="timestamp">${e.timestamp}</div>
+                    <div class="original">
+                        <div class="label">YOU:</div>
+                        <div class="text">${e.original}</div>
+                    </div>
+                    <div class="patois">
+                        <div class="label">GANJA MON:</div>
+                        <div class="text">${highlight(e.patois)}</div>
+                    </div>
+                `;
+                feed.appendChild(div);
+            });
+
+            document.getElementById('status').textContent =
+                `${data.entries.length} exchanges | Last update: ${new Date().toLocaleTimeString()}`;
+        }
+
+        async function startPipeline() {
+            const res = await fetch('/api/start', { method: 'POST' });
+            const data = await res.json();
+            document.getElementById('pipelineStatus').textContent = 'RUNNING';
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+        }
+
+        async function stopPipeline() {
+            const res = await fetch('/api/stop', { method: 'POST' });
+            document.getElementById('pipelineStatus').textContent = 'STOPPED';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+
+        async function pollPipelineStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                const running = !!data.running;
+                document.getElementById('pipelineStatus').textContent = running ? 'RUNNING' : 'STOPPED';
+                document.getElementById('startBtn').disabled = running;
+                document.getElementById('stopBtn').disabled = !running;
+            } catch (e) {
+                // ignore transient errors
+            }
+        }
+
+        async function clearTranscripts() {
+            await fetch('/api/clear', { method: 'POST' });
+            document.getElementById('feed').innerHTML = '';
+            document.getElementById('status').textContent = 'Transcripts cleared';
+        }
+
+        async function applySettings() {
+            const settings = {
+                stability: parseFloat(document.getElementById('stability').value),
+                style: parseFloat(document.getElementById('style').value),
+                temperature: parseFloat(document.getElementById('temp').value)
+            };
+            await fetch('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(settings) });
+            alert('Settings saved!');
+        }
+
+        async function translateText() {
+            const input = document.getElementById('ttInput').value || '';
+            const out = document.getElementById('ttOutput');
+            const meta = document.getElementById('ttMeta');
+
+            out.textContent = '';
+            meta.textContent = 'Translating...';
+
+            const payload = {
+                text: input,
+                temperature: parseFloat(document.getElementById('temp').value)
+            };
+
+            try {
+                const res = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    meta.textContent = `Error: ${data.detail || 'request failed'}`;
+                    return;
+                }
+
+                out.textContent = data.translated || '';
+                const ms = data.latency_ms ? Math.round(data.latency_ms) : '?';
+                meta.textContent = `Model: ${data.model || 'grok'} | ${ms}ms`;
+            } catch (e) {
+                meta.textContent = `Error: ${e}`;
+            }
+        }
+
+        async function copyTranslation() {
+            const text = (document.getElementById('ttOutput').textContent || '').trim();
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                document.getElementById('ttMeta').textContent = 'Copied to clipboard.';
+            } catch (e) {
+                document.getElementById('ttMeta').textContent = 'Copy failed (browser blocked clipboard).';
+            }
+        }
+
+        async function nukeAll() {
+            if (confirm('Kill ALL voice pipeline processes? This cannot be undone.')) {
+                await fetch('/api/nuke', { method: 'POST' });
+                document.getElementById('pipelineStatus').textContent = 'ALL KILLED';
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                alert('All pipelines terminated!');
+            }
+        }
+
+        async function loadDevices() {
+            try {
+                const res = await fetch('/api/devices');
+                const data = await res.json();
+                const select = document.getElementById('micSelect');
+                select.innerHTML = '';
+
+                data.devices.forEach(dev => {
+                    const option = document.createElement('option');
+                    option.value = dev.id;
+                    option.textContent = `${dev.name} (${dev.samplerate}Hz)`;
+                    if (dev.id === 21) option.selected = true; // Default to laptop mic
+                    select.appendChild(option);
+                });
+            } catch (e) {
+                console.error('Failed to load devices:', e);
+            }
+        }
+
+        async function switchMicrophone() {
+            const deviceId = parseInt(document.getElementById('micSelect').value);
+            if (!deviceId && deviceId !== 0) return;
+
+            try {
+                const res = await fetch(`/api/restart?device_id=${deviceId}`, { method: 'POST' });
+                const data = await res.json();
+                document.getElementById('pipelineStatus').textContent = `RESTARTED (Device ${deviceId})`;
+                alert(`Pipeline restarted with microphone ID ${deviceId}`);
+            } catch (e) {
+                alert('Failed to restart pipeline: ' + e);
+            }
+        }
+
+        // Track recent activity to show meaningful levels
+        let lastInputTime = 0;
+        let lastOutputTime = 0;
+        let lastTranscriptCount = 0;
+
+        function updateAudioLevels() {
+            // Show input level based on recent transcript activity
+            const now = Date.now();
+            const timeSinceInput = now - lastInputTime;
+            const timeSinceOutput = now - lastOutputTime;
+
+            // Input level decays over 3 seconds after last input
+            let inputLevel = Math.max(0, 100 - (timeSinceInput / 30));
+
+            // Output level decays over 5 seconds after last output
+            let outputLevel = Math.max(0, 100 - (timeSinceOutput / 50));
+
+            document.getElementById('inputLevel').style.width = inputLevel + '%';
+            document.getElementById('outputLevel').style.width = outputLevel + '%';
+        }
+
+        // Override update function to track activity
+        const originalUpdate = update;
+        async function update() {
+            const res = await fetch('/api/transcripts');
+            const data = await res.json();
+
+            // Detect new transcripts
+            if (data.entries.length > lastTranscriptCount) {
+                lastInputTime = Date.now();
+                lastOutputTime = Date.now() + 2000; // Output happens ~2s after input
+                lastTranscriptCount = data.entries.length;
+            }
+
+            // Call original update
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+
+            data.entries.reverse().forEach(e => {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                div.innerHTML = `
+                    <div class="timestamp">${e.timestamp}</div>
+                    <div class="original">
+                        <div class="label">YOU:</div>
+                        <div class="text">${e.original}</div>
+                    </div>
+                    <div class="patois">
+                        <div class="label">GANJA MON:</div>
+                        <div class="text">${highlight(e.patois)}</div>
+                    </div>
+                `;
+                feed.appendChild(div);
+            });
+
+            document.getElementById('status').textContent =
+                `${data.entries.length} exchanges | Last update: ${new Date().toLocaleTimeString()}`;
+        }
+
+        setInterval(update, 500);
+        update();
+        setInterval(pollPipelineStatus, 2000);
+        pollPipelineStatus();
+        setInterval(updateAudioLevels, 100);
+        loadDevices();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+numpy
+sounddevice
+websockets
+openai
+elevenlabs
+python-dotenv
+RPi.GPIO

@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "purpose": "Auto-generated local sources from voice_samples/",
+  "copyright_note": "Only include audio you have rights to use.",
+  "voices": [
+    {
+      "id": "bob_marley",
+      "display_name": "Bob Marley",
+      "category": "local_samples",
+      "notes": "Auto-selected from voice_samples/ to hit target minutes.",
+      "sources": [
+        {
+          "id": "5b4159bc928e1d6f3052c4b91751c7bcb3b6a329",
+          "title": "marley_doc_Bob Marley (Knowledge, Wisdom & Overstanding)",
+          "local_path": "voice_samples/bob_marley/marley_doc_Bob Marley (Knowledge, Wisdom & Overstanding).mp3",
+          "license": "user-asserted",
+          "duration_seconds": 2183.956
+        }
+      ]
+    },
+    {
+      "id": "hermes",
+      "display_name": "Hermes",
+      "category": "local_samples",
+      "notes": "Auto-selected from voice_samples/ to hit target minutes.",
+      "sources": [
+        {
+          "id": "060c02bed7eb33bb4acc00f1d38a7c6bdc692e69",
+          "title": "hermes_sFuturama - A good bureaucrat never finishes early",
+          "local_path": "voice_samples/hermes/hermes_sFuturama - A good bureaucrat never finishes early.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 8.139
+        },
+        {
+          "id": "950cf4e8d3084b7355f7f5c3c5dbfdc52f32ed49",
+          "title": "hermes_sFuturama Cast Answer The 50 Most Searched Futurama Questions ｜ WIRED",
+          "local_path": "voice_samples/hermes/hermes_sFuturama Cast Answer The 50 Most Searched Futurama Questions ｜ WIRED.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 920.218
+        },
+        {
+          "id": "2a1d42d3d63dc0bf2a0b60dd5474046d4c0dc329",
+          "title": "phil_lamarr_Futurama Cast Answer The 50 Most Searched Futurama Questions ｜ WIRED",
+          "local_path": "voice_samples/hermes/phil_lamarr_Futurama Cast Answer The 50 Most Searched Futurama Questions ｜ WIRED.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 920.218
+        },
+        {
+          "id": "cf7d48054aa0ca861f7c3e72afa2a6aa16d63918",
+          "title": "phil_lamarr_futurama voice in studio",
+          "local_path": "voice_samples/hermes/phil_lamarr_futurama voice in studio.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 109.041
+        },
+        {
+          "id": "27b05b5564694bd631c5179c73e10481ca0de6e6",
+          "title": "phil_lamarr_The Voice Behind 250 of Your Favorite Cartoons",
+          "local_path": "voice_samples/hermes/phil_lamarr_The Voice Behind 250 of Your Favorite Cartoons.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 207.851
+        }
+      ]
+    },
+    {
+      "id": "lee_perry",
+      "display_name": "Lee Perry",
+      "category": "local_samples",
+      "notes": "Auto-selected from voice_samples/ to hit target minutes.",
+      "sources": [
+        {
+          "id": "f90037342519e815c68915e13a14b3edc7a324bb",
+          "title": "lee_perry_Lee 'Scratch' Perry： The Last Visit With The Legend",
+          "local_path": "voice_samples/lee_perry/lee_perry_Lee 'Scratch' Perry： The Last Visit With The Legend.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 310.699
+        },
+        {
+          "id": "b162e5ae0ee29452ab664de17c60e065a7c03eda",
+          "title": "lee_perry_Lee ＂Scratch＂ Perry, The Return of The Super Ape, 1997 documentary directed by Rick Elgood Don Letts",
+          "local_path": "voice_samples/lee_perry/lee_perry_Lee ＂Scratch＂ Perry, The Return of The Super Ape, 1997 documentary directed by Rick Elgood Don Letts.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 1549.549
+        },
+        {
+          "id": "9204c66070a917ef87a465a09b09df9548011fc2",
+          "title": "lee_perry_Lee ＂Scratch＂ Perry： 'I gave Bob Marley reggae as a present'",
+          "local_path": "voice_samples/lee_perry/lee_perry_Lee ＂Scratch＂ Perry： 'I gave Bob Marley reggae as a present'.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 453.931
+        }
+      ]
+    },
+    {
+      "id": "little_jacob",
+      "display_name": "Little Jacob",
+      "category": "local_samples",
+      "notes": "Auto-selected from voice_samples/ to hit target minutes.",
+      "sources": [
+        {
+          "id": "83ee631a62fbc38a731441efd02bb3122453ac1c",
+          "title": "coolie_ranx_podcast",
+          "local_path": "voice_samples/little_jacob/coolie_ranx_podcast.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 1505.779
+        },
+        {
+          "id": "f90026055e72bfac0495533d3367effd1a532e95",
+          "title": "gta_extra_Grand Theft Auto IV - Niko does not understand Badman so well",
+          "local_path": "voice_samples/little_jacob/gta_extra_Grand Theft Auto IV - Niko does not understand Badman so well.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 147.83
+        },
+        {
+          "id": "a3907747c2be9dc91f7cff5bd509fb053a059815",
+          "title": "gta_extra_GTA 4 - Hanging out with Little Jacob vs Roman - Funny Skit",
+          "local_path": "voice_samples/little_jacob/gta_extra_GTA 4 - Hanging out with Little Jacob vs Roman - Funny Skit.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 95.317
+        },
+        {
+          "id": "cb167baedba14c3d112977c9b98b57b017e23f5c",
+          "title": "gta_extra_GTA IV - Niko in a mission with little Jacob",
+          "local_path": "voice_samples/little_jacob/gta_extra_GTA IV - Niko in a mission with little Jacob.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 131.518
+        },
+        {
+          "id": "678fdcd9ba96674dd7814da41ca27484b6278b7b",
+          "title": "gta_extra_GTA IV- Roman & Niko Bellic (FUNNY)",
+          "local_path": "voice_samples/little_jacob/gta_extra_GTA IV- Roman & Niko Bellic (FUNNY).mp3",
+          "license": "user-asserted",
+          "duration_seconds": 228.241
+        },
+        {
+          "id": "103c8010010854f1ce8ebca6bdd1872369c1fe8d",
+          "title": "gta_extra_Little Jacob asks Niko his age – GTA 4",
+          "local_path": "voice_samples/little_jacob/gta_extra_Little Jacob asks Niko his age – GTA 4.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 51.304
+        },
+        {
+          "id": "6611e6201fd927bd539076fb0370328049c82760",
+          "title": "gta_extra_Niko's most iconic line ｜ GTA IV",
+          "local_path": "voice_samples/little_jacob/gta_extra_Niko's most iconic line ｜ GTA IV.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 9.707
+        }
+      ]
+    },
+    {
+      "id": "rastamouse",
+      "display_name": "Rastamouse",
+      "category": "local_samples",
+      "notes": "Auto-selected from voice_samples/ to hit target minutes.",
+      "sources": [
+        {
+          "id": "bbde55e8d4ea9de1a4bc96f6507dfee48d6aca83",
+          "title": "easy_crew_Rastamouse - Dude, Where's Mi Bongos？",
+          "local_path": "voice_samples/rastamouse/easy_crew_Rastamouse - Dude, Where's Mi Bongos？.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 679.706
+        },
+        {
+          "id": "77a0c62d30c25beeebede9fd86a572437a14dba7",
+          "title": "easy_crew_Rastamouse S01E08 Wicked Threads",
+          "local_path": "voice_samples/rastamouse/easy_crew_Rastamouse S01E08 Wicked Threads.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 681.041
+        },
+        {
+          "id": "7517511a93714c59784572e6bb4937ad62af821d",
+          "title": "rastamouse_comp_Rastamouse en Español (Episodios Completos) Compilation",
+          "local_path": "voice_samples/rastamouse/rastamouse_comp_Rastamouse en Español (Episodios Completos) Compilation.mp3",
+          "license": "user-asserted",
+          "duration_seconds": 1909.841
+        }
+      ]
+    }
+  ]
+}

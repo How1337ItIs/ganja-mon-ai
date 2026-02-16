@@ -1,0 +1,70 @@
+{
+  "config": {
+    "grok_model": "grok-3",
+    "grok_temperature": 0.7,
+    "tts_model": "eleven_turbo_v2_5"
+  },
+  "results": [
+    {
+      "timestamp": "2026-01-20T17:54:00.045029",
+      "input": "What's up everyone, welcome back to the grow room. Today we're checking on the Purple Milk and she's looking absolutely beautiful right now.",
+      "issues": [],
+      "patois": "Wah gwaan, mi people, welcome back to di grow room. Today we a check pon di Purple Milk an\u2019 she lookin\u2019 absolutely beautiful right now, ya know?",
+      "llm_latency_ms": 2637.3207000006005,
+      "tts_generation_ms": 491.91759999939677,
+      "audio_duration_ms": 7616.166666666667,
+      "total_latency_ms": 3129.2382999999973
+    },
+    {
+      "timestamp": "2026-01-20T17:54:19.498622",
+      "input": "So I wanted to talk about something really important, which is VPD. A lot of growers don't pay attention to vapor pressure deficit, but it's actually one of the most critical metrics for plant health.",
+      "issues": [],
+      "patois": "So mi waan chat bout someting real important, ya know, and dat a VPD. Plenty a growers nuh pay no mind to vapor pressure deficit, but tru ting, it a one a di most critical metrics fi plant health, seen?",
+      "llm_latency_ms": 1786.1015999997107,
+      "tts_generation_ms": 692.827999999281,
+      "audio_duration_ms": 13281.833333333334,
+      "total_latency_ms": 2478.9295999989918
+    },
+    {
+      "timestamp": "2026-01-20T17:54:49.660813",
+      "input": "The thing about AI cultivation is that it's not trying to replace the grower, it's trying to help you make better decisions. Think of it like having a really smart assistant watching your plants twenty four seven.",
+      "issues": [],
+      "patois": "Di ting bout AI cultivation is dat it nuh try fi replace di grower, it a try fi help yuh mek better decisions, ya know? Tink of it like yuh have a real smart assistant a watch yuh plants twenty-four seven, seen?",
+      "llm_latency_ms": 1947.0943000005718,
+      "tts_generation_ms": 620.0168999994276,
+      "audio_duration_ms": 14535.708333333334,
+      "total_latency_ms": 2567.1111999999994
+    },
+    {
+      "timestamp": "2026-01-20T17:55:22.428918",
+      "input": "Alright, let me walk you through what happened today. This morning I woke up and checked the dashboard, and I noticed the humidity was running a little low. So Grok automatically kicked on the humidifier to bring us back into the target range. That's the kind of thing that would normally require me to manually adjust settings, but now it just happens automatically.",
+      "issues": [],
+      "patois": "Alright, mek mi walk yuh through wah happen today, seen? Dis mornin\u2019 mi wake up an\u2019 check di dashboard, an\u2019 mi notice seh di humidity was runnin\u2019 a likkle low. So Grok automatically kick on di humidifier fi bring we back into di target range. Dat a di kinda ting dat woulda normally need mi fi manually adjust settings, but now it jus\u2019 happen automatic, ya know?",
+      "llm_latency_ms": 3025.3316000007544,
+      "tts_generation_ms": 837.2784999992291,
+      "audio_duration_ms": 21780.333333333336,
+      "total_latency_ms": 3862.6100999999835
+    },
+    {
+      "timestamp": "2026-01-20T17:56:10.940309",
+      "input": "You know what's really cool about this strain? Purple Milk is a cross between Horchata and Grape Gasoline, and what makes it special is how it responds to temperature drops. When you lower the temperature in late flower, you get these amazing purple hues coming through. It's not just genetics, it's about understanding the science and using it to bring out the best in the plant.",
+      "issues": [],
+      "patois": "Yuh know wah really nice bout dis strain? Purple Milk a di cross between Horchata and Grape Gasoline, and wah mek it special is how it react when di temperature drop. When yuh lower di temperature in late flower, yuh get dem wicked purple hues comin\u2019 out. It nuh just bout genetics, it bout understanding di science and usin\u2019 it fi bring out di best in di plant, ya hear mi?",
+      "llm_latency_ms": 2685.5076000001645,
+      "tts_generation_ms": 860.2372999994259,
+      "audio_duration_ms": 22523.375,
+      "total_latency_ms": 3545.7448999995904
+    },
+    {
+      "timestamp": "2026-01-20T17:57:00.731239",
+      "input": "Hey, thanks for joining the space! I'm really excited to share what we've been building with Ganja Mon. It's basically an autonomous grow system where the AI makes all the decisions about watering, lighting, climate control. And the coolest part is everything gets recorded on the blockchain, so you can actually verify that this cannabis was grown with AI guidance from seed to harvest.",
+      "issues": [],
+      "patois": "Wah gwaan, big up unu fi join di space! Mi proper excited fi share wah wi been a build wid Ganja Mon. It\u2019s like a fully autonomous grow system, yuh know, where di AI run tings\u2014decidin\u2019 bout watering, lighting, climate control, all a dat. An\u2019 di wickedest part? Everyting get recorded pon di blockchain, so yuh can straight up verify dat dis cannabis grow wid AI guidance from seed to harvest. Ya hear mi?",
+      "llm_latency_ms": 3050.5959000001894,
+      "tts_generation_ms": 1013.6604999997871,
+      "audio_duration_ms": 24798.916666666668,
+      "total_latency_ms": 4064.2563999999766
+    }
+  ],
+  "timestamp": "2026-01-20T17:57:55.518203"
+}

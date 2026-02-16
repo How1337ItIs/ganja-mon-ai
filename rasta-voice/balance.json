@@ -1,0 +1,1 @@
+{"category":"INSUFFICIENT_PERMISSIONS","message":"Your account does not have the required scope to perform that action for this project.","details":"Check that your account has the 'billing:read' scope for this project.","request_id":"b3165f30-fb3d-4a92-8756-b413d9a07d80"}

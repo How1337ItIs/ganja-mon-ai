@@ -1,0 +1,147 @@
+{
+  "active": "conference_floor",
+  "profiles": {
+    "default": {
+      "NOISE_GATE_RMS": 0.002,
+      "CHANNEL_DOMINANCE_RATIO": 1.1,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.08,
+      "DIARIZE_LR_STRONG_RATIO": 1.22,
+      "ACOUSTIC_WINDOW_S": 1.4,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.0,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.24,
+      "AEC_ADAPT_MID": 0.1,
+      "AEC_ADAPT_SLOW": 0.03,
+      "AEC_NCC_ECHO_MIN": 0.35,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.955
+    },
+    "indoor": {
+      "NOISE_GATE_RMS": 0.002,
+      "CHANNEL_DOMINANCE_RATIO": 1.08,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.06,
+      "DIARIZE_LR_STRONG_RATIO": 1.18,
+      "ACOUSTIC_WINDOW_S": 1.4,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.0,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.24,
+      "AEC_ADAPT_MID": 0.1,
+      "AEC_ADAPT_SLOW": 0.03,
+      "AEC_NCC_ECHO_MIN": 0.35,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.955
+    },
+    "outdoor": {
+      "NOISE_GATE_RMS": 0.003,
+      "CHANNEL_DOMINANCE_RATIO": 1.15,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.12,
+      "DIARIZE_LR_STRONG_RATIO": 1.26,
+      "ACOUSTIC_WINDOW_S": 1.8,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.3,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.28,
+      "AEC_ADAPT_MID": 0.12,
+      "AEC_ADAPT_SLOW": 0.03,
+      "AEC_NCC_ECHO_MIN": 0.32,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.95
+    },
+    "conference": {
+      "NOISE_GATE_RMS": 0.003,
+      "CHANNEL_DOMINANCE_RATIO": 1.18,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.14,
+      "DIARIZE_LR_STRONG_RATIO": 1.32,
+      "ACOUSTIC_WINDOW_S": 1.6,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.25,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.28,
+      "AEC_ADAPT_MID": 0.12,
+      "AEC_ADAPT_SLOW": 0.025,
+      "AEC_NCC_ECHO_MIN": 0.32,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.955
+    },
+    "conference_floor": {
+      "NOISE_GATE_RMS": 0.0034,
+      "CHANNEL_DOMINANCE_RATIO": 1.22,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.17,
+      "DIARIZE_LR_STRONG_RATIO": 1.36,
+      "ACOUSTIC_WINDOW_S": 1.9,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.5,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.3,
+      "AEC_ADAPT_MID": 0.14,
+      "AEC_ADAPT_SLOW": 0.02,
+      "AEC_NCC_ECHO_MIN": 0.3,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.948
+    },
+    "conference_floor_outdoor": {
+      "NOISE_GATE_RMS": 0.0038,
+      "CHANNEL_DOMINANCE_RATIO": 1.24,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.19,
+      "DIARIZE_LR_STRONG_RATIO": 1.4,
+      "ACOUSTIC_WINDOW_S": 2.1,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.65,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.32,
+      "AEC_ADAPT_MID": 0.15,
+      "AEC_ADAPT_SLOW": 0.02,
+      "AEC_NCC_ECHO_MIN": 0.28,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.945
+    },
+    "ultra_conference": {
+      "NOISE_GATE_RMS": 0.0042,
+      "CHANNEL_DOMINANCE_RATIO": 1.28,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.22,
+      "DIARIZE_LR_STRONG_RATIO": 1.45,
+      "ACOUSTIC_WINDOW_S": 2.2,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.8,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.34,
+      "AEC_ADAPT_MID": 0.16,
+      "AEC_ADAPT_SLOW": 0.018,
+      "AEC_NCC_ECHO_MIN": 0.26,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.944
+    },
+    "ultra_conference_outdoor": {
+      "NOISE_GATE_RMS": 0.0048,
+      "CHANNEL_DOMINANCE_RATIO": 1.32,
+      "DIARIZE_LR_ACCEPT_RATIO": 1.25,
+      "DIARIZE_LR_STRONG_RATIO": 1.5,
+      "ACOUSTIC_WINDOW_S": 2.5,
+      "AEC_ALPHA_MIN": 0.0,
+      "AEC_ALPHA_MAX": 2.95,
+      "AEC_MAX_ABS": 0.98,
+      "AEC_ADAPT_FAST": 0.36,
+      "AEC_ADAPT_MID": 0.18,
+      "AEC_ADAPT_SLOW": 0.016,
+      "AEC_NCC_ECHO_MIN": 0.24,
+      "AEC_NCC_NEAR_MAX": 0.18,
+      "HPF_A": 0.94
+    }
+  },
+  "metadata": {
+    "conference_floor": {
+      "preset": "Pinned by Codex for high-noise conference floor baseline"
+    },
+    "conference_floor_outdoor": {
+      "preset": "Pinned by Codex for high-noise outdoor conference baseline"
+    },
+    "ultra_conference": {
+      "preset": "Pinned by Codex for extremely noisy conference halls"
+    },
+    "ultra_conference_outdoor": {
+      "preset": "Pinned by Codex for extremely noisy outdoor conference zones"
+    }
+  }
+}

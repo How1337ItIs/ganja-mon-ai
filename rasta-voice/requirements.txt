@@ -1,0 +1,26 @@
+# Rasta Voice Pipeline - Real-time voice transformation for Twitter Spaces
+# Mic → Deepgram STT → Groq LLM (Patois) → ElevenLabs TTS → VB-Cable
+
+# Speech-to-Text
+aiohttp>=3.9.0              # Deepgram WebSocket connection
+
+# LLM (Patois transformation)
+groq>=0.4.0                 # Groq API client
+openai>=1.0.0               # xAI Grok API client (OpenAI-compatible)
+
+# Text-to-Speech
+elevenlabs>=1.0.0           # ElevenLabs TTS (Denzel voice)
+
+# Audio handling
+numpy>=1.24.0               # Audio array processing
+sounddevice>=0.4.6          # Audio playback to VB-Cable
+scipy>=1.17.0               # High-quality audio resampling
+
+# Utils
+python-dotenv>=1.0.0        # Environment variables
+fastapi>=0.110.0            # Dashboard API
+uvicorn>=0.23.0             # Dashboard server
+
+# Optional: RVC pipeline (requires Python 3.10 venv)
+# edge-tts                  # Free TTS (Microsoft)
+# rvc-python                # Voice conversion (requires Visual C++ Build Tools)

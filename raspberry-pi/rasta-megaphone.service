@@ -1,0 +1,20 @@
+[Unit]
+Description=Rasta Mon Megaphone Voice Pipeline
+After=network-online.target sound.target bluetooth.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=midaswhale
+WorkingDirectory=/home/midaswhale/megaphone
+Environment="PATH=/home/midaswhale/megaphone/venv/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PULSE_SERVER=unix:/run/user/1000/pulse/native"
+ExecStartPre=/bin/sleep 5
+ExecStart=/home/midaswhale/megaphone/venv/bin/python3 megaphone.py --no-gpio
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

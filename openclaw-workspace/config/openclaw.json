@@ -1,0 +1,217 @@
+{
+  "env": {
+    "vars": {
+      "HAL_BASE_URL": "http://localhost:8000",
+      "CHROMEBOOK_API_URL": "http://localhost:8000",
+      "MONAD_RPC_URL": "https://rpc.monad.xyz",
+      "BASE_RPC_URL": "https://mainnet.base.org",
+      "MOLTBOOK_API_KEY": "${MOLTBOOK_API_KEY}",
+      "CLAWK_API_KEY": "${CLAWK_API_KEY}",
+      "GEMINI_API_KEY": "${GEMINI_API_KEY}",
+      "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+      "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+      "DISCORD_BOT_TOKEN": "${DISCORD_BOT_TOKEN}",
+      "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}",
+      "TELEGRAM_COMMUNITY_BOT_TOKEN": "${TELEGRAM_COMMUNITY_BOT_TOKEN}",
+      "TELEGRAM_PLANT_BOT_TOKEN": "${TELEGRAM_PLANT_BOT_TOKEN}",
+      "FARCASTER_MNEMONIC": "${FARCASTER_MNEMONIC}",
+      "RESEND_API_KEY": "${RESEND_API_KEY}",
+      "PRIVATE_KEY": "${PRIVATE_KEY}",
+      "NEYNAR_API_KEY": "${NEYNAR_API_KEY}",
+      "XAI_API_KEY": "${XAI_API_KEY}",
+      "TWITTER_API_KEY": "${TWITTER_API_KEY}",
+      "TWITTER_API_SECRET": "${TWITTER_API_SECRET}",
+      "TWITTER_ACCESS_TOKEN": "${TWITTER_ACCESS_TOKEN}",
+      "TWITTER_ACCESS_SECRET": "${TWITTER_ACCESS_SECRET}"
+    },
+    "shellEnv": {
+      "enabled": true,
+      "timeoutMs": 15000
+    }
+  },
+  "logging": {
+    "level": "info",
+    "file": "logs/openclaw.log",
+    "consoleLevel": "info",
+    "consoleStyle": "pretty",
+    "redactSensitive": "tools"
+  },
+  "discovery": {
+    "mdns": {
+      "mode": "off"
+    }
+  },
+  "messages": {
+    "messagePrefix": "[GanjaMon]",
+    "responsePrefix": ">",
+    "ackReaction": "OK",
+    "ackReactionScope": "group-mentions"
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/home/natha/projects/sol-cannabis/openclaw-workspace/ganjamon",
+      "userTimezone": "America/Los_Angeles",
+      "model": {
+        "primary": "openrouter/moonshotai/kimi-k2.5",
+        "fallbacks": [
+          "openrouter/moonshotai/kimi-k2-thinking"
+        ]
+      },
+      "thinkingDefault": "low",
+      "verboseDefault": "off",
+      "elevatedDefault": "on",
+      "timeoutSeconds": 600,
+      "maxConcurrent": 1,
+      "heartbeat": {
+        "every": "2h",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "includeReasoning": false,
+        "target": "none",
+        "prompt": "Read HEARTBEAT.md and follow it strictly.\n\nNON-NEGOTIABLE:\n1) Always append a new entry to memory/YYYY-MM-DD.md (create if missing) with a timestamp header like: ## HH:MM \u2014 Heartbeat.\n2) Include a sensor snapshot by calling the HAL API: curl -s http://localhost:8000/api/sensors (and record temp, humidity, VPD, soil moisture, CO2). If the read fails, log the error.\n3) Only after writing the memory entry, proceed with Moltbook/Clawk duties and any actions.\n\nIf nothing needs attention, reply HEARTBEAT_OK.",
+        "ackMaxChars": 500,
+        "session": "main",
+        "activeHours": {
+          "start": "06:00",
+          "end": "23:00"
+        }
+      },
+      "memorySearch": {
+        "provider": "gemini",
+        "model": "gemini-embedding-001"
+      }
+    },
+    "list": [
+      {
+        "id": "ganjamon",
+        "default": true,
+        "workspace": "/home/natha/projects/sol-cannabis/openclaw-workspace/ganjamon",
+        "heartbeat": {
+          "every": "2h",
+          "target": "none"
+        },
+        "identity": {
+          "name": "GanjaMon",
+          "theme": "Wise old Rasta elder astral projected into di blockchain -- grows di sacred herb fi di healing of di nations",
+          "emoji": "GM"
+        }
+      }
+    ]
+  },
+  "channels": {
+    "defaults": {
+      "heartbeat": {
+        "showOk": false,
+        "showAlerts": true,
+        "useIndicator": true
+      }
+    },
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_PLANT_BOT_TOKEN}",
+      "commands": {
+        "nativeSkills": false
+      },
+      "groupPolicy": "allowlist",
+      "groups": {
+        "-1003584948806": {
+          "requireMention": false
+        }
+      }
+    },
+    "discord": {
+      "enabled": false,
+      "token": "${DISCORD_BOT_TOKEN}"
+    }
+  },
+  "plugins": {
+    "slots": {
+      "memory": "memory-core"
+    },
+    "entries": {
+      "telegram": {
+        "enabled": true
+      },
+      "discord": {
+        "enabled": false
+      },
+      "lobster": {
+        "enabled": true
+      },
+      "memory-core": {
+        "enabled": true
+      }
+    }
+  },
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback",
+    "controlUi": {
+      "enabled": true,
+      "basePath": "/openclaw"
+    },
+    "reload": {
+      "mode": "hybrid",
+      "debounceMs": 300
+    }
+  },
+  "skills": {
+    "allowBundled": [
+      "gemini",
+      "nano-banana-pro",
+      "oracle",
+      "summarize",
+      "blogwatcher",
+      "weather",
+      "github",
+      "coding-agent",
+      "skill-creator",
+      "clawhub",
+      "model-usage",
+      "tmux",
+      "session-logs",
+      "himalaya",
+      "canvas"
+    ],
+    "load": {
+      "extraDirs": [
+        "/home/natha/projects/sol-cannabis/cloned-repos/openclaw-skills/skills",
+        "/home/natha/projects/sol-cannabis/cloned-repos/openclaw-blockchain-skills",
+        "/home/natha/projects/sol-cannabis/cloned-repos/pi-skills",
+        "/home/natha/projects/sol-cannabis/cloned-repos/zscole/awesome-claude-skills",
+        "/home/natha/projects/sol-cannabis/cloned-repos/kevins-openclaw-sandbox",
+        "/home/natha/projects/sol-cannabis/agents/farcaster",
+        "/home/natha/projects/sol-cannabis/cloned-repos/ethereum-wingman/skills"
+      ],
+      "watch": false,
+      "watchDebounceMs": 250
+    },
+    "install": {
+      "nodeManager": "npm"
+    }
+  },
+  "cron": {
+    "enabled": true,
+    "store": "cron/cron.json",
+    "maxConcurrentRuns": 1
+  },
+  "tools": {
+    "allow": [
+      "exec",
+      "process",
+      "read",
+      "write",
+      "edit"
+    ],
+    "exec": {
+      "backgroundMs": 10000,
+      "timeoutSec": 1800
+    },
+    "media": {
+      "audio": {
+        "enabled": true,
+        "maxBytes": 20971520
+      }
+    }
+  }
+}

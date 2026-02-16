@@ -1,0 +1,3 @@
+@echo off
+echo Installing VB-Cable with Administrator privileges...
+powershell -Command "Start-Process -FilePath '%~dp0VBCABLE_Driver\VBCABLE_Setup_x64.exe' -Verb RunAs"

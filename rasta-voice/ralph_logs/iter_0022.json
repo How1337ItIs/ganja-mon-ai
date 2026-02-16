@@ -1,0 +1,62 @@
+{
+  "iteration": 22,
+  "scores": {
+    "variety": 5,
+    "humor": 5,
+    "entertainment": 5,
+    "warmth": 5,
+    "flow": 5,
+    "naturalness": 5,
+    "authenticity": 5
+  },
+  "evaluation": {
+    "scores": {
+      "variety": 5,
+      "humor": 5,
+      "entertainment": 5,
+      "warmth": 5,
+      "flow": 5,
+      "naturalness": 5,
+      "authenticity": 5
+    },
+    "average": 5,
+    "worst_category": "humor",
+    "anti_patterns_detected": [],
+    "specific_failures": [],
+    "prompt_changes": []
+  },
+  "results_sample": [
+    {
+      "category": "greetings",
+      "input": "What's up",
+      "context": "Casual greeting",
+      "output": "Rahtid, yuh just drop in outta nowhere! Vibes high, what's on yuh mind, wah gwaan?"
+    },
+    {
+      "category": "greetings",
+      "input": "Hey hey hey",
+      "context": "Energetic welcome",
+      "output": "Lawd hav mercy, what's all di excitement about? Yuh hear wah mi sayin? Something's got yuh hyped, an'"
+    },
+    {
+      "category": "reactions",
+      "input": "I love that",
+      "context": "Appreciation",
+      "output": "For real?, dat's a wicked vibe yuh got goin' on! Yuh see it, when yuh spread love and positivity, it"
+    },
+    {
+      "category": "reactions",
+      "input": "That's terrible",
+      "context": "Bad news",
+      "output": "Lawd hav mercy, yuh really think so? What's botherin' yuh about it, eh?"
+    },
+    {
+      "category": "questions",
+      "input": "Can you explain?",
+      "context": "Clarification",
+      "output": "Lawd hav mercy, let's break it down! It seems like you're lookin' for a way to create responses that are as unique as"
+    }
+  ],
+  "research": "Wah gwaan, dat's a wicked ting\nBless up, everyting irie still\nMi a-go mad, y'hear?\nPure niceness, dat's a fact\nJus' chill, an' let it be\nWah yuh a-do, yuh crazy?\nMek mi laugh, an' forget mi troubles\nDat's a sickening vibe, ya get mi?\nYuh a-go get yuh self inna trouble\nEveryting criss, an' everyting bright\nGwaan do yuh t'ing, an' lef' mi to mine\nMi love how yuh a-chat, it's pure comedy\nYuh a pure hype, an' full of energy\nDat's a wicked joke, yuh kill mi dead\nPure t'ief, yuh t'ief di show, an' di ",
+  "analysis": null
+}

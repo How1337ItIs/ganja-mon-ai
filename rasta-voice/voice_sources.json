@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "purpose": "Long-form speaking references for iconic Jamaican / Jamaican-coded voices. This manifest is link-only by default (no ripping).",
+  "copyright_note": "Most film/TV/music interviews are copyrighted. Do not download/rehost unless you have the rights. Prefer official uploads, licensed archives, or sources that explicitly offer downloads.",
+  "voices": [
+    {
+      "id": "hermes_conrad",
+      "display_name": "Hermes Conrad (Futurama)",
+      "category": "fictional",
+      "notes": "Cartoonish comedic Jamaican-coded character voice reference.",
+      "sources": [
+        {
+          "title": "Futurama Hermes' Curry Goat (local sample)",
+          "local_path": "voice_samples/hermes/hermes_Futurama Hermes' Curry Goat.mp3",
+          "license": "user-asserted"
+        },
+        {
+          "title": "My Manwich! (local sample)",
+          "local_path": "voice_samples/hermes/hermes_My Manwich!.mp3",
+          "license": "user-asserted"
+        }
+      ]
+    },
+    {
+      "id": "little_jacob",
+      "display_name": "Little Jacob (GTA IV)",
+      "category": "fictional",
+      "notes": "High-signal comedic reference; this is the character voice itself (not actor interview).",
+      "sources": [
+        {
+          "title": "All Little Jacob Cutscenes in 4K - GTA 4 (local sample)",
+          "local_path": "voice_samples/little_jacob/little_jacob_All Little Jacob Cutscenes in 4K - GTA 4.mp3",
+          "license": "user-asserted"
+        },
+        {
+          "title": "GTA IV - All Little Jacob voiceclips (local sample)",
+          "local_path": "voice_samples/little_jacob/little_jacob_GTA IV - All Little Jacob voiceclips.mp3",
+          "license": "user-asserted"
+        },
+        {
+          "title": "Little Jacob asks Niko his age – GTA 4 (local sample)",
+          "local_path": "voice_samples/little_jacob/little_jacob_Little Jacob asks Niko his age – GTA 4.mp3",
+          "license": "user-asserted"
+        }
+      ]
+    },
+    {
+      "id": "bob_marley",
+      "display_name": "Bob Marley",
+      "category": "real",
+      "notes": "Global reference for 'Rasta voice'. Prioritize spoken interviews (not songs) for accent + cadence.",
+      "sources": [
+        {
+          "title": "Bob Marley (official history / videos hub)",
+          "url": "https://bobmarley.com/history",
+          "platform": "web",
+          "kind": "reference",
+          "downloadable": false
+        },
+        {
+          "title": "YouTube: Bob Marley interview (seed link from repo script)",
+          "url": "https://www.youtube.com/watch?v=jcHqPhkHrFg",
+          "platform": "youtube",
+          "kind": "stream",
+          "downloadable": false,
+          "suggested_segments": []
+        },
+        {
+          "title": "YouTube: Bob Marley interview (seed link from repo script)",
+          "url": "https://www.youtube.com/watch?v=bxXH-Kc5Jmc",
+          "platform": "youtube",
+          "kind": "stream",
+          "downloadable": false,
+          "suggested_segments": []
+        }
+      ]
+    },
+    {
+      "id": "peter_tosh",
+      "display_name": "Peter Tosh",
+      "category": "real",
+      "notes": "Militant, sharp delivery. Look for long interviews / speeches.",
+      "sources": []
+    },
+    {
+      "id": "lee_scratch_perry",
+      "display_name": "Lee \"Scratch\" Perry",
+      "category": "real",
+      "notes": "Highly characterful speaking voice; interviews are ideal.",
+      "sources": [
+        {
+          "title": "Wikipedia (biography + pointers to media)",
+          "url": "https://en.wikipedia.org/wiki/Lee_%22Scratch%22_Perry",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "burning_spear",
+      "display_name": "Burning Spear",
+      "category": "real",
+      "notes": "Deep, deliberate cadence; prioritize interview footage.",
+      "sources": []
+    },
+    {
+      "id": "buju_banton",
+      "display_name": "Buju Banton",
+      "category": "real",
+      "notes": "Distinctive gravelly voice; interviews and stage banter both work.",
+      "sources": []
+    },
+    {
+      "id": "toots_hibbert",
+      "display_name": "Toots Hibbert",
+      "category": "real",
+      "notes": "For 'speaking voice' specifically, prioritize interviews over songs.",
+      "sources": []
+    },
+    {
+      "id": "dennis_brown",
+      "display_name": "Dennis Brown",
+      "category": "real",
+      "notes": "Spoken interviews can be harder to find; list any confirmed long-form audio/video here.",
+      "sources": []
+    },
+    {
+      "id": "capleton",
+      "display_name": "Capleton",
+      "category": "real",
+      "notes": "High-energy preacher cadence; interview + live talking segments.",
+      "sources": []
+    },
+    {
+      "id": "sizzla",
+      "display_name": "Sizzla",
+      "category": "real",
+      "notes": "Fast, biting cadence. VP Records references a documentary with interviews.",
+      "sources": [
+        {
+          "title": "VP Records: \"The Bobby Digital Story\" (article / pointer)",
+          "url": "https://vprecords.com/bobby-digital-x-sizzla-kalonji-20th-anniversary-of-da-real-thing",
+          "platform": "web",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "mutabaruka",
+      "display_name": "Mutabaruka",
+      "category": "real",
+      "notes": "Iconic spoken-word delivery; prefer interviews/lectures rather than songs.",
+      "sources": [
+        {
+          "title": "Wikipedia (biography + media pointers)",
+          "url": "https://en.wikipedia.org/wiki/Mutabaruka",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "oku_onuora",
+      "display_name": "Oku Onuora",
+      "category": "real",
+      "notes": "Dub poet; performances can be long and speech-heavy.",
+      "sources": [
+        {
+          "title": "Wikipedia (biography + discography)",
+          "url": "https://en.wikipedia.org/wiki/Oku_Onuora",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "mikey_smith",
+      "display_name": "Mikey Smith",
+      "category": "real",
+      "notes": "Dub poet; look for full performances of \"Mi Cyaan Believe It\" etc.",
+      "sources": [
+        {
+          "title": "Wikipedia (biography + references)",
+          "url": "https://en.wikipedia.org/wiki/Mikey_Smith",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "coolie_ranx",
+      "display_name": "Coolie Ranx (voice of Little Jacob, GTA IV)",
+      "category": "real_actor_for_fictional_voice",
+      "notes": "Best long-form speaking reference is interview/podcast appearances by Coolie Ranx.",
+      "sources": [
+        {
+          "title": "YouTube: The VŌC Podcast // Coolie Ranx Interview (voice of Little Jacob)",
+          "url": "https://www.youtube.com/watch?v=TSQmKtfzfg0",
+          "platform": "youtube",
+          "kind": "stream",
+          "downloadable": false,
+          "suggested_segments": []
+        }
+      ]
+    },
+    {
+      "id": "phil_lamarr",
+      "display_name": "Phil LaMarr (Hermes Conrad voice)",
+      "category": "real_actor_for_fictional_voice",
+      "notes": "Prefer long-form interviews with Phil LaMarr (not clips of Futurama episodes).",
+      "sources": [
+        {
+          "title": "Wikipedia (filmography + external links)",
+          "url": "https://en.wikipedia.org/wiki/Phil_LaMarr",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    },
+    {
+      "id": "rastamouse",
+      "display_name": "Rastamouse / Da Easy Crew (official episodes)",
+      "category": "fictional",
+      "notes": "For the character voice itself, use official episode streams rather than reuploads.",
+      "sources": [
+        {
+          "title": "Rastamouse Series 1 [Da Rhymin Teef] (local sample)",
+          "local_path": "voice_samples/rastamouse/rastamouse_Rastamouse Series 1 [Da Rhymin Teef].mp3",
+          "license": "user-asserted"
+        },
+        {
+          "title": "Official Rastamouse website",
+          "url": "https://rastamouse.com/",
+          "platform": "web",
+          "kind": "stream",
+          "downloadable": false
+        },
+        {
+          "title": "YouTube: Rastamouse - Theme Tune (Official)",
+          "url": "https://www.youtube.com/watch?v=c2O30pDefKs",
+          "platform": "youtube",
+          "kind": "stream",
+          "downloadable": false,
+          "suggested_segments": []
+        }
+      ]
+    },
+    {
+      "id": "louie_rankin",
+      "display_name": "Louie Rankin (Ox / Teddy Bruckshot)",
+      "category": "real_actor_for_fictional_voice",
+      "notes": "For long speaking, prefer interviews with Louie Rankin; for character voice, reference films via legal streaming.",
+      "sources": [
+        {
+          "title": "Wikipedia (bio + filmography)",
+          "url": "https://en.wikipedia.org/wiki/Louie_Rankin",
+          "platform": "wikipedia",
+          "kind": "reference",
+          "downloadable": false
+        }
+      ]
+    }
+  ]
+}

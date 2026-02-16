@@ -1,0 +1,276 @@
+INFO:     Started server process [51740]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8085 (Press CTRL+C to quit)
+Starting Rasta Voice Dashboard on http://localhost:8085
+INFO:     127.0.0.1:53244 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53244 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53291 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "POST /api/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+============================================================
+RASTA VOICE PIPELINE STARTER
+============================================================
+Found existing pipeline PID: 36548
+Killed existing pipeline process
+Starting rasta voice pipeline...
+Command: C:\Users\natha\sol-cannabis\rasta-voice\venv\Scripts\python.exe C:\Users\natha\sol-cannabis\rasta-voice\rasta_live.py --twitter-device 16
+Pipeline started! (PID: 3236)
+
+Pipeline is now running in the background
+Audio routing:
+  Input:   Realtek mic (device 29)
+  Output:  VB-Cable 48kHz (device 16) + AirPods (device 17)
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+21:47:03 [INFO] Selected device 17: Headphones (AirPods Pro - Find My) @ 48000Hz
+21:47:03 [INFO] Auto-detected Headphones: device 17
+21:47:03 [INFO] ==================================================
+21:47:03 [INFO] AUDIO ROUTING:
+21:47:03 [INFO]   Twitter (VB-Cable): device 16
+21:47:03 [INFO]   Monitor (Headphones): device 17
+21:47:03 [INFO] ==================================================
+21:47:03 [INFO] In Twitter Spaces: Select 'CABLE Output' as your microphone
+21:47:03 [INFO] ==================================================
+21:47:03 [INFO] ============================================================
+21:47:03 [INFO] RASTA LIVE VOICE PIPELINE
+21:47:03 [INFO] ============================================================
+21:47:03 [INFO] Speak naturally. Press Ctrl+C to stop.
+21:47:04 [INFO] Connected to Deepgram
+21:47:04 [INFO] Microphone active - speak now!
+INFO:     127.0.0.1:52903 - "POST /api/nuke HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "POST /api/start HTTP/1.1" 200 OK
+============================================================
+RASTA VOICE PIPELINE STARTER
+============================================================
+No existing pipeline found
+Starting rasta voice pipeline...
+Command: C:\Users\natha\sol-cannabis\rasta-voice\venv\Scripts\python.exe C:\Users\natha\sol-cannabis\rasta-voice\rasta_live.py --twitter-device 16
+Pipeline started! (PID: 42720)
+
+Pipeline is now running in the background
+Audio routing:
+  Input:   Realtek mic (device 29)
+  Output:  VB-Cable 48kHz (device 16) + AirPods (device 17)
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+21:47:08 [INFO] Selected device 17: Headphones (AirPods Pro - Find My) @ 48000Hz
+21:47:08 [INFO] Auto-detected Headphones: device 17
+21:47:08 [INFO] ==================================================
+21:47:08 [INFO] AUDIO ROUTING:
+21:47:08 [INFO]   Twitter (VB-Cable): device 16
+21:47:08 [INFO]   Monitor (Headphones): device 17
+21:47:08 [INFO] ==================================================
+21:47:08 [INFO] In Twitter Spaces: Select 'CABLE Output' as your microphone
+21:47:08 [INFO] ==================================================
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+21:47:08 [INFO] ============================================================
+21:47:08 [INFO] RASTA LIVE VOICE PIPELINE
+21:47:08 [INFO] ============================================================
+21:47:08 [INFO] Speak naturally. Press Ctrl+C to stop.
+21:47:08 [INFO] Connected to Deepgram
+21:47:08 [INFO] Microphone active - speak now!
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+21:47:13 [INFO] Input: [operator] "Okay. Test one, two, three, four, five."
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+21:47:18 [INFO] HTTP Request: POST https://api.x.ai/v1/chat/completions "HTTP/1.1 200 OK"
+21:47:18 [INFO] Rasta: "[relaxed] Okay mon... [chuckles warmly] Test wan... tu... t'ree... foh... faiv. [laid back] Ya mon! [giggles]" (4239ms)
+21:47:18 [INFO] VB-Cable: Waiting for first chunk...
+21:47:18 [INFO] Headphones: Waiting for first chunk...
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+21:47:20 [INFO] HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/dhwafD61uVd8h85wAZSE?output_format=pcm_24000 "HTTP/1.1 200 OK"
+21:47:20 [INFO] Streaming to VB-Cable (device 16)
+21:47:20 [INFO] VB-Cable: Got chunk 1, queue size ~1
+21:47:20 [INFO] VB-Cable: Got chunk 2, queue size ~0
+21:47:20 [INFO] Streaming to Headphones (device 17)
+21:47:20 [INFO] Headphones: Got chunk 1, queue size ~3
+21:47:20 [INFO] Headphones: Got chunk 2, queue size ~2
+21:47:20 [INFO] Headphones: Got chunk 3, queue size ~1
+21:47:20 [INFO] Headphones: Got chunk 4, queue size ~0
+21:47:20 [INFO] VB-Cable: Got chunk 3, queue size ~2
+21:47:20 [INFO] VB-Cable: Got chunk 4, queue size ~1
+21:47:20 [INFO] VB-Cable: Got chunk 5, queue size ~0
+21:47:20 [INFO] VB-Cable: Playing buffer of 5 chunks...
+21:47:20 [INFO] Headphones: Got chunk 5, queue size ~0
+21:47:20 [INFO] Headphones: Playing buffer of 5 chunks...
+21:47:20 [INFO] VB-Cable: Converted 5120 samples, playing...
+21:47:20 [INFO] Headphones: Converted 5120 samples, playing...
+21:47:21 [INFO] VB-Cable: Buffer 1 playback done
+21:47:21 [INFO] VB-Cable: Got chunk 1, queue size ~49
+21:47:21 [INFO] VB-Cable: Got chunk 2, queue size ~48
+21:47:21 [INFO] VB-Cable: Got chunk 3, queue size ~47
+21:47:21 [INFO] VB-Cable: Got chunk 4, queue size ~46
+21:47:21 [INFO] VB-Cable: Got chunk 5, queue size ~45
+21:47:21 [INFO] VB-Cable: Playing buffer of 5 chunks...
+21:47:21 [INFO] VB-Cable: Converted 5120 samples, playing...
+21:47:21 [INFO] Headphones: Buffer 1 playback done
+21:47:21 [INFO] Headphones: Got chunk 1, queue size ~49
+21:47:21 [INFO] Headphones: Got chunk 2, queue size ~48
+21:47:21 [INFO] Headphones: Got chunk 3, queue size ~47
+21:47:21 [INFO] Headphones: Got chunk 4, queue size ~46
+21:47:21 [INFO] Headphones: Got chunk 5, queue size ~45
+21:47:21 [INFO] Headphones: Playing buffer of 5 chunks...
+21:47:21 [INFO] Headphones: Converted 5120 samples, playing...
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52175 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52903 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56097 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55249 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56097 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55249 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61061 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49224 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61061 - "GET /api/transcripts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49224 - "GET /api/status HTTP/1.1" 200 OK

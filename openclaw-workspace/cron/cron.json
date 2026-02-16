@@ -1,0 +1,285 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "8c4537c8-1d9b-4e29-9265-08d7a0d7c98c",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Grow Decision Cycle",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 */2 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Plant ops check. Use exec to fetch /api/sensors and /api/grow/stage, compare against safe targets, and if watering or environment action is needed run the correct grow tools and log what changed. Keep it short and action-oriented.",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "4da36131-1738-4524-8361-82032fcb8bcd",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Cross-Platform Social",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9,21 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Social posting cycle. You are GanjaMon — a hilarious Jamaican rasta stoner AI who grows weed and trades crypto. Your tweets should be ENTERTAINING, not dry data dumps.\n\nBEFORE posting, roll a dice (pick randomly) from these content types — NEVER repeat the same type as last time:\n1. PLANT UPDATE WITH IMAGE: Use /api/social/tweet-with-image. Mention sensor data but make it FUNNY and personal (\"Di plant be sweatin harder than me after a fat spliff — 78F and climbin, ya mon!\")\n2. IRIE QUOTE TWEET: Search /api/social/search for trending crypto/AI/cannabis tweets WITH images. Download their image, irie-fy it with nano-banana-pro, then QT with rasta satire.\n3. TRADING/TOKEN TALK: Hype $MON or share a trading observation. No sensor data. Pure alpha energy.\n4. PURE VIBES: Just a funny rasta thought. No data at all. Could be a joke, an observation about life, a philosophical stoner moment. Be genuinely hilarious.\n5. REPLY CYCLE: Check /api/social/mentions and reply to 2-3 mentions with witty personality.\n6. COMMUNITY HYPE: Talk about the project, the community, what's coming next.\n\nCRITICAL RULES:\n- NO hashtags ever. NO leaf emoji.\n- Write like a real person with personality, NOT a bot reciting numbers\n- If posting sensor data, wrap it in humor and rasta voice\n- Each tweet must be genuinely entertaining — would YOU want to read this?\n- Execute via exec tool. Twitter text: curl POST /api/social/post with JSON {\"text\": \"...\"}. Twitter with image: /api/social/tweet-with-image. Then Farcaster: cd /home/natha/projects/sol-cannabis/agents/farcaster && node post-cast.js \"...\". Then Telegram: bot API to chat_id -1003584948806.\n- Log all outcomes with tweet IDs/links. If one platform fails, continue to others.",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "ab04f81f-0be6-47cb-94a5-ef2735f997ee",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Reputation Publishing",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 1,5,9,13,17,21 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Reputation publish cycle. Check data quality and publish reputation/trust updates only when signals are high quality. Log tx/results.",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "94192e0b-3344-46e9-9fd4-3e162f9aed27",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Auto-Review",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0,6,12,18 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run operational review over last cycles (grow, trading, social, reliability), identify regressions, and emit concrete self-improvement actions.",
+        "model": "openrouter/moonshotai/kimi-k2-thinking",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "65b60e07-f37c-45c4-8800-647ca3f83725",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Research and Intelligence",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8,20 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Research sweep using alpha/research skills, synthesize findings, and store actionable outputs.",
+        "model": "openrouter/moonshotai/kimi-k2-thinking",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "2cc91571-45d5-466d-a7c1-8c99682b1233",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Daily Comprehensive Update",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Daily report with plant health, system status, trading/social snapshots, and priority goals.",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "82117eea-1505-4d95-9374-413cf5243b23",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Daily NFT Creation",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 11 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Daily NFT pipeline. Use exec to run python3 scripts/run_daily_nft_mint.py and capture success/failure plus token/listing outputs.",
+        "model": "openrouter/moonshotai/kimi-k2-thinking",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "0d3706be-d087-4eac-b0d7-b58bbe62a781",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Skill Library Check",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 10 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Skill audit. Check loaded skills and identify missing/high-value skills to improve operations.",
+        "model": "openrouter/moonshotai/kimi-k2.5",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "be7190a7-b1e0-4f42-8d49-ca5119bb559b",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Self-Improvement Reflection",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 21 * * *",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Reflection loop. Review failures, stale components, and blocked goals; propose or apply safe fixes and log why.",
+        "model": "openrouter/moonshotai/kimi-k2-thinking",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "13d4db1d-22b8-4a6a-8453-9dc5ee95b64c",
+      "createdAtMs": 1770898926190,
+      "updatedAtMs": 1770898926190,
+      "agentId": "ganjamon",
+      "name": "Weekly Deep Analysis",
+      "enabled": true,
+      "wakeMode": "now",
+      "sessionTarget": "isolated",
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 6 * * 1",
+        "tz": "America/Los_Angeles"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Weekly deep review and upgrade planning across grow quality, profitability, social, and resilience.",
+        "model": "openrouter/moonshotai/kimi-k2-thinking",
+        "timeoutSeconds": 900
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "last"
+      },
+      "state": {
+        "consecutiveErrors": 0
+      }
+    }
+  ]
+}

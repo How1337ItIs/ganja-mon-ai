@@ -1,0 +1,42 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                    WELCOME BACK AFTER RESTART!                    ║
+║                                                                   ║
+║  VB-Cable drivers have been removed. Now we install fresh.        ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+TELL NEW CLAUDE:
+"Read HANDOFF_POST_RESTART.md and continue the VB-Cable fix"
+
+OR JUST SAY:
+"do it all" or "continue"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT'S LEFT TO DO:
+
+1. Verify uninstall was clean (run check_status.py)
+2. Install fresh VB-Cable (click YES on UAC prompt)
+3. Restart Windows again (2nd restart)
+4. Test audio quality
+5. Run live pipeline for Twitter Spaces
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+QUICK START FOR NEW CLAUDE:
+
+cd /mnt/c/Users/natha/sol-cannabis/rasta-voice
+venv/Scripts/python.exe check_status.py
+powershell.exe -ExecutionPolicy Bypass -File install_vbaudio.ps1
+# (after install: restart Windows)
+# (after 2nd restart: test with check_status.py and rasta_live.py --test)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ALL CONTEXT PRESERVED IN:
+→ HANDOFF_POST_RESTART.md (comprehensive guide for next Claude)
+→ VB_CABLE_FIX_STEPS.md (detailed manual steps)
+→ check_status.py (status checker tool)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+YOU'RE ~10 MINUTES FROM A WORKING RASTA VOICE PIPELINE!
