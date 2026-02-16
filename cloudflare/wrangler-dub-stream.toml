@@ -1,0 +1,18 @@
+# Cloudflare Workers Configuration for Dub Stream
+# ===============================================
+# Account: a33a705d5aebbca59de7eb146029869a
+# Zone: grokandmon.com (97e79defaee450aa65217568dbf2f835)
+
+name = "grokmon-dub-stream"
+main = "cloudflare-worker-dub-stream.js"
+compatibility_date = "2024-01-01"
+account_id = "a33a705d5aebbca59de7eb146029869a"
+
+# R2 bucket for dub tracks
+[[r2_buckets]]
+binding = "DUB_TRACKS"
+bucket_name = "grokmon-dub-tracks"
+
+[[routes]]
+pattern = "grokandmon.com/api/playlist/dub/stream/*"
+zone_id = "97e79defaee450aa65217568dbf2f835"

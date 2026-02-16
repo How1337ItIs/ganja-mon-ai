@@ -1,0 +1,15 @@
+# R2 Public Access Worker
+# Serves R2 objects at grokandmon.com/r2/*
+
+name = "grokmon-r2"
+main = "cloudflare-worker-r2.js"
+compatibility_date = "2024-01-01"
+account_id = "a33a705d5aebbca59de7eb146029869a"
+
+[[r2_buckets]]
+binding = "GANJAMON1"
+bucket_name = "ganjamon1"
+
+[[routes]]
+pattern = "grokandmon.com/r2/*"
+zone_id = "97e79defaee450aa65217568dbf2f835"

@@ -1,0 +1,29 @@
+[Unit]
+Description=GanjaMon Agent Endpoint (A2A + Admin API on port 8080)
+After=network.target
+StartLimitBurst=5
+StartLimitIntervalSec=600
+
+[Service]
+Type=simple
+WorkingDirectory=/home/natha/projects/sol-cannabis/cloned-repos/ganjamon-agent/endpoint
+Environment=PATH=/home/natha/projects/sol-cannabis/venv/bin:/usr/bin
+EnvironmentFile=/home/natha/projects/sol-cannabis/.env
+
+# Start endpoint server on port 8080 (exposed via ganjamon-agent Cloudflare tunnel)
+ExecStart=/home/natha/projects/sol-cannabis/venv/bin/python -m uvicorn server:app --host 0.0.0.0 --port 8080
+
+# Smart restart policy: only restart on crashes, not manual stops
+Restart=on-failure
+RestartSec=10
+
+# Resource limits (lightweight server)
+MemoryMax=256M
+CPUQuota=50%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

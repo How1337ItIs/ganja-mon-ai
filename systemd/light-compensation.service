@@ -1,0 +1,13 @@
+[Unit]
+Description=One-time light compensation (turn OFF at 3:30 AM)
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/natha/projects/sol-cannabis
+Environment="PATH=/home/natha/projects/sol-cannabis/venv/bin:/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/home/natha/projects/sol-cannabis/.env
+ExecStart=/home/natha/projects/sol-cannabis/venv/bin/python3 -c "import asyncio; from src.hardware.tapo import TapoActuatorHub; import os; hub = TapoActuatorHub(device_ips={'grow_light': os.getenv('TAPO_GROW_LIGHT_IP')}, username=os.getenv('TAPO_USERNAME'), password=os.getenv('TAPO_PASSWORD')); asyncio.run(hub.connect()); asyncio.run(hub.set_device('grow_light', False)); print('Lights OFF - compensation complete')"
+
+[Install]
+WantedBy=default.target

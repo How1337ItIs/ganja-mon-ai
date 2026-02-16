@@ -1,0 +1,29 @@
+# Cloudflare Workers Configuration
+# ==================================
+# Account: a33a705d5aebbca59de7eb146029869a
+# Zone: grokandmon.com (97e79defaee450aa65217568dbf2f835)
+
+name = "grokmon-webcam"
+main = "cloudflare-worker-webcam.js"
+compatibility_date = "2024-01-01"
+account_id = "a33a705d5aebbca59de7eb146029869a"
+
+[[kv_namespaces]]
+binding = "WEBCAM_CACHE"
+id = "5fb7f823abbe468cb8a8e25b1211e9c2"
+
+# R2 bucket for dub tracks
+[[r2_buckets]]
+binding = "DUB_TRACKS"
+bucket_name = "grokmon-dub-tracks"
+
+# Cron triggers require workers.dev subdomain - will add via API after deployment
+# [triggers]
+# crons = ["*/1 * * * *"]
+
+[[routes]]
+pattern = "grokandmon.com/api/webcam/latest"
+zone_id = "97e79defaee450aa65217568dbf2f835"
+
+[vars]
+ORIGIN_URL = "http://192.168.125.128:8000"

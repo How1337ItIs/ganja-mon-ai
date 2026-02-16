@@ -1,0 +1,34 @@
+[Unit]
+Description=Grok & Mon Cannabis Cultivation Server
+After=network.target
+StartLimitBurst=5
+StartLimitIntervalSec=600
+
+[Service]
+Type=simple
+WorkingDirectory=/home/natha/projects/sol-cannabis
+Environment=PATH=/home/natha/projects/sol-cannabis/venv/bin:/usr/bin
+
+# Main process
+ExecStart=/home/natha/projects/sol-cannabis/venv/bin/python run.py all
+
+# Smart restart policy: only restart on crashes, not manual stops
+Restart=on-failure
+# Wait 30s before restart
+RestartSec=30
+# Force kill after 15s if stuck
+TimeoutStopSec=15
+
+# Resource limits (prevent runaway)
+# 4 subprocesses: FastAPI + social daemon + orchestrator + trading agent (12 learning loops)
+# Trading agent needs ~800M alone
+MemoryMax=1500M
+# Max 2 cores
+CPUQuota=200%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

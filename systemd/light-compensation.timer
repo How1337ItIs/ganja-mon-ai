@@ -1,0 +1,9 @@
+[Unit]
+Description=Timer for one-time light compensation at 3:30 AM
+
+[Timer]
+OnCalendar=2026-02-10 03:30:00
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
