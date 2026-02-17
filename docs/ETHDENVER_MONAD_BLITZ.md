@@ -124,19 +124,17 @@ Steps 1-4 run every 30 minutes. Steps 5-10 run once daily. All fully autonomous 
 
 ## Live Mint Proof (Feb 17, 2026 -- ETH Denver Day 1)
 
-Minted during Monad Blitz at ETH Denver:
+Three GrowRings minted on Monad during ETH Denver:
 
-| Field | Value |
-|-------|-------|
-| **Day** | 17 (Granddaddy Purple Runtz, veg stage) |
-| **Token ID** | 0 |
-| **TX Hash** | `0x6065fabd79b06dc82f53ae4452e37040737f792afa8ea7920e164cdef56bc414` |
-| **Art Style** | pixel_art |
-| **Milestone** | DailyJournal (Common) |
-| **AI Art** | [IPFS](https://gateway.pinata.cloud/ipfs/bafybeidu762jstlfbcfnmvwh7qolv2pzxjmkl73dfmxpittyzo46ta5xlm) |
-| **Raw Webcam** | [IPFS](https://gateway.pinata.cloud/ipfs/bafkreiggnqla6pobwkpyp7oh6allheaqmxl5fmqjpvnf7oo4vftekiossm) |
-| **Sensor Data** | 66.2F, VPD 0.4 kPa |
-| **Narrative** | "Day 17 of di grow. Di plant stand firm and reach fi di light. Irie vibes inna di garden, seen? One love." |
+| Token | TX Hash | Art Style | Proof |
+|-------|---------|-----------|-------|
+| **#0** (Day 16) | `0xc97430e1...` | psychedelic | [AI Art](https://gateway.pinata.cloud/ipfs/bafybeidu762jstlfbcfnmvwh7qolv2pzxjmkl73dfmxpittyzo46ta5xlm) |
+| **#1** (Day 17) | [`0xd426e9d8...`](https://monad.explorer.caldera.xyz/tx/0xd426e9d83ced6d4332e27ace22dd56f99a678bfe91ed26afb85cac9070b4d804) | hackathon_live | [AI Art](https://gateway.pinata.cloud/ipfs/bafybeibwxkjqjagfix75fcwfunr6rotcylwsn4a5wwscqtzqfki7tiuyzi) / [Raw Webcam](https://gateway.pinata.cloud/ipfs/bafkreidjpoymq6vc3um7dxb6gdf7emrtdurvr6rkbjb2cgdpqgzgb243ue) |
+| **#2** (Day 17) | `0x6065fabd...` | pixel_art | [AI Art](https://gateway.pinata.cloud/ipfs/bafybeidu762jstlfbcfnmvwh7qolv2pzxjmkl73dfmxpittyzo46ta5xlm) / [Raw Webcam](https://gateway.pinata.cloud/ipfs/bafkreiggnqla6pobwkpyp7oh6allheaqmxl5fmqjpvnf7oo4vftekiossm) |
+
+Token #1 narrative: *"Day 17 inna di grow and di bredren dem at ETH Denver watchin live! Di plant reach fi di light with pure irie energy..."*
+
+Token #1 minted at block 56,072,318. Gas: 1,000,000. Token #2 auto-minted seconds later by the autonomous cron -- proving the pipeline runs without human intervention.
 
 ---
 
