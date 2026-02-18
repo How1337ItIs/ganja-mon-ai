@@ -39,6 +39,18 @@ RARITY_NAMES = {0: "Common", 1: "Uncommon", 2: "Rare", 3: "Legendary"}
 # ABI for GrowRing.mintDaily function
 GROWRING_ABI = [
     {
+        "anonymous": False,
+        "inputs": [
+            {"indexed": True, "name": "tokenId", "type": "uint256"},
+            {"indexed": False, "name": "milestoneType", "type": "uint8"},
+            {"indexed": False, "name": "rarity", "type": "uint8"},
+            {"indexed": False, "name": "dayNumber", "type": "uint16"},
+            {"indexed": False, "name": "imageURI", "type": "string"},
+        ],
+        "name": "MilestoneMinted",
+        "type": "event",
+    },
+    {
         "inputs": [
             {"name": "_type", "type": "uint8"},
             {"name": "_dayNumber", "type": "uint16"},
@@ -106,17 +118,18 @@ def _get_account():
     """Get the agent's account from the private key."""
     from web3 import Account
 
-    # Match the pattern used by onchain_grow_logger.py and reputation_publisher.py
-    pk = os.getenv("MONAD_PRIVATE_KEY", os.getenv("PRIVATE_KEY", ""))
+    settings = get_settings()
+    pk = settings.private_key or os.getenv("MONAD_PRIVATE_KEY", "")
     if not pk:
-        raise ValueError("MONAD_PRIVATE_KEY / PRIVATE_KEY not set in .env")
+        raise ValueError("PRIVATE_KEY not set in .env")
     return Account.from_key(pk)
 
 
 def _get_contract():
     """Get the GrowRing contract instance."""
     w3 = _get_web3()
-    address = os.getenv("GROWRING_ADDRESS", "")
+    settings = get_settings()
+    address = settings.growring_address or os.getenv("GROWRING_ADDRESS", "")
     if not address:
         raise ValueError("GROWRING_ADDRESS not set in .env")
 
@@ -185,7 +198,7 @@ async def mint_growring(
         {
             "from": account.address,
             "nonce": nonce,
-            "gas": 500_000,
+            "gas": 1_000_000,
             "gasPrice": w3.eth.gas_price,
             "chainId": w3.eth.chain_id,
         }
@@ -225,14 +238,30 @@ async def mint_growring(
 
 
 def _parse_token_id(receipt) -> int:
-    """Parse the token ID from the MilestoneMinted event in transaction receipt."""
-    # MilestoneMinted(uint256 indexed tokenId, ...)
-    # topic[0] = event sig hash, topic[1] = tokenId
+    """Parse the token ID from the MilestoneMinted event in transaction receipt.
+
+    IMPORTANT: The receipt contains multiple events (Transfer, MilestoneMinted).
+    We must match on the MilestoneMinted event signature to avoid reading the
+    Transfer event's `from` field (address(0) = 0) as the token ID.
+    """
+    # keccak256("MilestoneMinted(uint256,uint8,uint8,uint16,string)")
+    MILESTONE_MINTED_SIG = "0x"  # Will match by topic count as fallback
+
+    # MilestoneMinted has 2 topics: [event_sig, tokenId]
+    # Transfer has 4 topics: [event_sig, from, to, tokenId]
+    # We want MilestoneMinted (exactly 2 topics) or Transfer's topics[3]
     for log in receipt.get("logs", []):
-        if len(log.get("topics", [])) >= 2:
-            # The MilestoneMinted event has tokenId as the first indexed param
+        topics = log.get("topics", [])
+        # MilestoneMinted: exactly 2 topics (sig + indexed tokenId)
+        if len(topics) == 2:
             try:
-                return int(log["topics"][1].hex(), 16)
+                return int(topics[1].hex(), 16)
+            except (ValueError, AttributeError):
+                continue
+        # ERC-721 Transfer(from, to, tokenId): 4 topics, tokenId is topics[3]
+        if len(topics) == 4:
+            try:
+                return int(topics[3].hex(), 16)
             except (ValueError, AttributeError):
                 continue
     # Fallback: read next token ID from contract

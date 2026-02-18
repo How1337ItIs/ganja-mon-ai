@@ -137,8 +137,8 @@ async def _create_dutch_auction(
     from web3 import Web3, Account
 
     settings = get_settings()
-    auction_address = os.getenv("GROW_AUCTION_ADDRESS", "")
-    growring_address = os.getenv("GROWRING_ADDRESS", "")
+    auction_address = settings.grow_auction_address or os.getenv("GROW_AUCTION_ADDRESS", "")
+    growring_address = settings.growring_address or os.getenv("GROWRING_ADDRESS", "")
 
     if not auction_address or not growring_address:
         logger.warning("Auction/GrowRing addresses not set, listing skipped")
@@ -149,7 +149,7 @@ async def _create_dutch_auction(
         }
 
     w3 = Web3(Web3.HTTPProvider(settings.monad_rpc))
-    pk = os.getenv("MONAD_PRIVATE_KEY", os.getenv("PRIVATE_KEY", ""))
+    pk = settings.private_key or os.getenv("MONAD_PRIVATE_KEY", "")
     if not pk:
         logger.warning("MONAD_PRIVATE_KEY not set, listing skipped")
         return {

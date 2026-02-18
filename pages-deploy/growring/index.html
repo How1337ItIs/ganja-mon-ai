@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowRing | On-Chain Grow Journal NFTs | GanjaMon</title>
+    <meta name="description" content="GrowRing NFT Gallery — AI-generated art from real cannabis sensor data, minted daily on Monad. Each ring captures a living moment in the grow cycle.">
+    <meta property="og:title" content="GrowRing NFT Gallery">
+    <meta property="og:description" content="On-chain grow journal NFTs. Each ring is a day in the life of a living plant — sensor data, AI art, Rasta narrative — all on Monad.">
+    <meta property="og:image" content="https://grokandmon.com/assets/MON_official_logo.jpg">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://grokandmon.com/growring">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ganjamonai">
+    <link rel="icon" type="image/png" href="/assets/MON_official_logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           TOKENS
+           ========================================================= */
+        :root {
+            --bg-void:      #050607;
+            --bg-surface:   #0c0e12;
+            --bg-card:      #111418;
+            --bg-card-up:   #181c22;
+            --border:       #1e2430;
+            --border-light: #2a3040;
+
+            --green-100:    #b2f5c8;
+            --green-300:    #3ddc84;
+            --green-500:    #1db954;
+            --green-700:    #0e7a35;
+            --green-900:    #063d1a;
+            --green-glow:   rgba(29,185,84,0.35);
+
+            --gold-100:     #fff4cc;
+            --gold-300:     #ffd966;
+            --gold-500:     #ffb800;
+            --gold-700:     #cc9200;
+            --gold-glow:    rgba(255,184,0,0.25);
+
+            --purple-400:   #b388ff;
+            --purple-glow:  rgba(179,136,255,0.25);
+
+            --red-400:      #ff5252;
+            --red-glow:     rgba(255,82,82,0.2);
+
+            --blue-400:     #64b5f6;
+            --blue-glow:    rgba(100,181,246,0.25);
+
+            --text-primary:   #eceef2;
+            --text-secondary: #8b92a5;
+            --text-muted:     #555d72;
+
+            --radius-sm:  6px;
+            --radius-md:  12px;
+            --radius-lg:  18px;
+            --radius-xl:  24px;
+
+            --mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --sans: 'Space Grotesk', -apple-system, sans-serif;
+            --serif: 'DM Serif Display', Georgia, serif;
+        }
+
+        /* =========================================================
+           RESET
+           ========================================================= */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--sans);
+            background: var(--bg-void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+
+        /* =========================================================
+           TOP BAR (rasta stripe)
+           ========================================================= */
+        .rasta-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+            height: 3px;
+            background: linear-gradient(90deg, #e31c3d 0%, #e31c3d 33%, #fcd116 33%, #fcd116 66%, #00a651 66%);
+        }
+
+        /* =========================================================
+           AMBIENT BG
+           ========================================================= */
+        .ambient {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+        }
+        .ambient::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 900px 600px at 15% 20%, rgba(29,185,84,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 700px 500px at 85% 60%, rgba(255,184,0,0.05) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 50% 90%, rgba(179,136,255,0.04) 0%, transparent 70%);
+            animation: ambientPulse 8s ease-in-out infinite alternate;
+        }
+        @keyframes ambientPulse {
+            0%   { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* =========================================================
+           NAVIGATION
+           ========================================================= */
+        .site-nav {
+            position: fixed; top: 3px; left: 0; right: 0; z-index: 800;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 28px;
+            background: rgba(5,6,7,0.88);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-brand {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .nav-brand img {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--border-light);
+        }
+        .nav-brand-text {
+            font-family: var(--mono); font-size: 14px; font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .nav-brand-text span { color: var(--green-300); }
+        .nav-links { display: flex; gap: 6px; }
+        .nav-links a {
+            font-size: 12px; font-weight: 500;
+            color: var(--text-muted);
+            padding: 6px 14px; border-radius: 99px;
+            transition: all 0.25s;
+            letter-spacing: 0.02em;
+        }
+        .nav-links a:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+        .nav-links a.active {
+            color: var(--green-300);
+            background: rgba(29,185,84,0.1);
+            border: 1px solid rgba(29,185,84,0.2);
+        }
+
+        /* =========================================================
+           HERO
+           ========================================================= */
+        .hero {
+            position: relative; z-index: 1;
+            padding: 140px 24px 80px;
+            text-align: center;
+        }
+        .hero-ring {
+            width: 100px; height: 100px; margin: 0 auto 32px;
+            border-radius: 50%;
+            border: 3px solid var(--green-500);
+            box-shadow:
+                0 0 30px var(--green-glow),
+                0 0 80px rgba(29,185,84,0.12),
+                inset 0 0 30px var(--green-glow);
+            animation: ringPulse 3s ease-in-out infinite;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hero-ring-inner {
+            width: 54px; height: 54px; border-radius: 50%;
+            background: radial-gradient(circle, var(--green-900) 0%, var(--bg-void) 70%);
+            border: 1px solid var(--green-700);
+        }
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 30px var(--green-glow), 0 0 80px rgba(29,185,84,0.12), inset 0 0 30px var(--green-glow); }
+            50%      { box-shadow: 0 0 50px var(--green-glow), 0 0 120px rgba(29,185,84,0.18), inset 0 0 50px var(--green-glow); }
+        }
+        .hero-overline {
+            font-family: var(--mono); font-size: 11px; font-weight: 500;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: var(--green-500);
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-family: var(--serif); font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 400; line-height: 1.05;
+            background: linear-gradient(180deg, #fff 0%, var(--green-100) 40%, var(--green-300) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            filter: drop-shadow(0 4px 60px var(--green-glow));
+            margin-bottom: 20px;
+        }
+        .hero-sub {
+            font-size: 17px; color: var(--text-secondary);
+            max-width: 560px; margin: 0 auto 36px;
+            line-height: 1.7;
+        }
+        .hero-stats {
+            display: flex; justify-content: center; gap: 40px;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-val {
+            font-family: var(--mono); font-size: 28px; font-weight: 700;
+            color: var(--gold-500);
+            line-height: 1.2;
+        }
+        .hero-stat-label {
+            font-family: var(--mono); font-size: 10px; font-weight: 500;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .hero-contract {
+            margin-top: 28px; display: inline-flex; align-items: center; gap: 8px;
+            font-family: var(--mono); font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            transition: all 0.3s;
+        }
+        .hero-contract:hover {
+            border-color: var(--green-500);
+            color: var(--green-300);
+        }
+        .hero-contract .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--green-500);
+            box-shadow: 0 0 8px var(--green-glow);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 0.6; }
+            50%      { opacity: 1; }
+        }
+
+        /* =========================================================
+           FILTER BAR
+           ========================================================= */
+        .filter-bar {
+            position: relative; z-index: 1;
+            max-width: 1320px; margin: 0 auto;
+            padding: 0 24px 40px;
+            display: flex; align-items: center; gap: 12px;
+            flex-wrap: wrap;
+        }
+        .filter-bar label {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        .filter-btn {
+            font-family: var(--mono); font-size: 12px; font-weight: 500;
+            padding: 7px 16px; border-radius: 99px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .filter-btn:hover { color: var(--text-secondary); border-color: var(--border-light); }
+        .filter-btn.active {
+            color: var(--green-300);
+            border-color: var(--green-500);
+            background: rgba(29,185,84,0.08);
+        }
+        .sort-select {
+            font-family: var(--mono); font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 12px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .sort-select:focus { outline: none; border-color: var(--green-500); }
+
+        /* =========================================================
+           GALLERY GRID
+           ========================================================= */
+        .gallery-wrap {
+            position: relative; z-index: 1;
+            max-width: 1320px; margin: 0 auto;
+            padding: 0 24px 100px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        /* =========================================================
+           NFT CARD
+           ========================================================= */
+        .nft-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+        }
+        .nft-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-light);
+            box-shadow:
+                0 24px 80px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(29,185,84,0.08);
+        }
+        .nft-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--green-500), var(--gold-500));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .nft-card:hover::before { opacity: 1; }
+
+        /* Image area */
+        .nft-img-wrap {
+            position: relative;
+            aspect-ratio: 1;
+            background: var(--bg-surface);
+            overflow: hidden;
+        }
+        .nft-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .nft-card:hover .nft-img-wrap img { transform: scale(1.04); }
+
+        .nft-img-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(5,6,7,0.85) 100%);
+            pointer-events: none;
+        }
+
+        /* Token ID badge */
+        .nft-token-id {
+            position: absolute; top: 14px; left: 14px;
+            font-family: var(--mono); font-size: 11px; font-weight: 600;
+            color: var(--text-primary);
+            background: rgba(5,6,7,0.75);
+            backdrop-filter: blur(12px);
+            padding: 5px 12px;
+            border-radius: 99px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* Rarity badge */
+        .nft-rarity {
+            position: absolute; top: 14px; right: 14px;
+            font-family: var(--mono); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 99px;
+            backdrop-filter: blur(12px);
+        }
+        .rarity-common {
+            color: var(--green-300);
+            background: rgba(29,185,84,0.2);
+            border: 1px solid rgba(29,185,84,0.3);
+            box-shadow: 0 0 12px rgba(29,185,84,0.15);
+        }
+        .rarity-uncommon {
+            color: var(--blue-400);
+            background: rgba(100,181,246,0.2);
+            border: 1px solid rgba(100,181,246,0.3);
+            box-shadow: 0 0 12px var(--blue-glow);
+        }
+        .rarity-rare {
+            color: var(--purple-400);
+            background: rgba(179,136,255,0.2);
+            border: 1px solid rgba(179,136,255,0.3);
+            box-shadow: 0 0 12px var(--purple-glow);
+        }
+        .rarity-legendary {
+            color: var(--gold-300);
+            background: rgba(255,184,0,0.2);
+            border: 1px solid rgba(255,184,0,0.4);
+            box-shadow: 0 0 20px var(--gold-glow);
+            animation: legendaryShimmer 3s ease-in-out infinite;
+        }
+        @keyframes legendaryShimmer {
+            0%, 100% { box-shadow: 0 0 20px var(--gold-glow); }
+            50%      { box-shadow: 0 0 35px var(--gold-glow), 0 0 60px rgba(255,184,0,0.12); }
+        }
+
+        /* Bottom image labels */
+        .nft-img-labels {
+            position: absolute; bottom: 14px; left: 14px; right: 14px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        .nft-milestone-type {
+            font-family: var(--mono); font-size: 11px; font-weight: 600;
+            color: var(--gold-300);
+            background: rgba(5,6,7,0.7);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,184,0,0.15);
+        }
+        .nft-day-badge {
+            font-family: var(--mono); font-size: 24px; font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+            line-height: 1;
+        }
+        .nft-day-badge small {
+            display: block; font-size: 9px; font-weight: 500;
+            color: var(--text-secondary); letter-spacing: 0.15em;
+            text-transform: uppercase; text-shadow: none;
+        }
+
+        /* Card body */
+        .nft-body {
+            padding: 20px;
+        }
+        .nft-art-style {
+            font-family: var(--serif); font-size: 18px; font-style: italic;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        /* Sensor data row */
+        .nft-sensors {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .sensor-cell {
+            padding: 10px 8px;
+            text-align: center;
+            background: var(--bg-card);
+        }
+        .sensor-cell:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+        .sensor-cell:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+        .sensor-val {
+            font-family: var(--mono); font-size: 16px; font-weight: 700;
+            line-height: 1.2;
+        }
+        .sensor-label {
+            font-family: var(--mono); font-size: 9px; font-weight: 500;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--text-muted); margin-top: 2px;
+        }
+        .sensor-temp .sensor-val { color: var(--red-400); }
+        .sensor-hum .sensor-val  { color: var(--blue-400); }
+        .sensor-vpd .sensor-val  { color: var(--purple-400); }
+        .sensor-hp .sensor-val   { color: var(--green-300); }
+
+        /* Health bar */
+        .nft-health-wrap {
+            margin-bottom: 16px;
+        }
+        .nft-health-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px;
+        }
+        .nft-health-header span {
+            font-family: var(--mono); font-size: 10px; font-weight: 500;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .nft-health-header strong {
+            font-family: var(--mono); font-size: 13px; font-weight: 700;
+            color: var(--green-300);
+        }
+        .health-bar {
+            width: 100%; height: 4px;
+            background: var(--bg-surface);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .health-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.6s ease;
+        }
+
+        /* Narrative */
+        .nft-narrative {
+            font-size: 14px; line-height: 1.65;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 14px;
+            max-height: 4.95em;
+            overflow: hidden;
+            position: relative;
+        }
+        .nft-narrative.expanded { max-height: none; }
+        .nft-narrative::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 2em;
+            background: linear-gradient(transparent, var(--bg-card));
+            pointer-events: none;
+        }
+        .nft-narrative.expanded::after { display: none; }
+        .narrative-toggle {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--green-500); cursor: pointer;
+            border: none; background: none;
+            padding: 0; margin-bottom: 12px;
+            transition: color 0.2s;
+        }
+        .narrative-toggle:hover { color: var(--green-300); }
+
+        /* Footer meta */
+        .nft-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .nft-timestamp {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--text-muted);
+        }
+        .nft-links a {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        .nft-links a:hover {
+            color: var(--green-300);
+            border-color: var(--green-500);
+        }
+
+        /* =========================================================
+           LOADING STATE
+           ========================================================= */
+        .loading-wrap {
+            position: relative; z-index: 1;
+            max-width: 1320px; margin: 0 auto;
+            padding: 0 24px 100px;
+            text-align: center;
+        }
+        .loading-rings {
+            position: relative; width: 100px; height: 100px;
+            margin: 0 auto 28px;
+        }
+        .loading-ring {
+            position: absolute; inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .loading-ring:nth-child(1) {
+            border-top-color: var(--green-500);
+            animation: spin 1.2s linear infinite;
+        }
+        .loading-ring:nth-child(2) {
+            inset: 10px;
+            border-right-color: var(--gold-500);
+            animation: spin 1.8s linear infinite reverse;
+        }
+        .loading-ring:nth-child(3) {
+            inset: 20px;
+            border-bottom-color: var(--purple-400);
+            animation: spin 2.4s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text {
+            font-family: var(--mono); font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+        .loading-sub {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            opacity: 0.6;
+        }
+
+        /* skeleton cards */
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+        .skeleton-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        .skeleton-img {
+            aspect-ratio: 1;
+            background: linear-gradient(110deg, var(--bg-surface) 30%, var(--bg-card-up) 50%, var(--bg-surface) 70%);
+            background-size: 200% 100%;
+            animation: shimmer 1.8s ease-in-out infinite;
+        }
+        .skeleton-body { padding: 20px; }
+        .skeleton-line {
+            height: 12px; border-radius: 6px;
+            background: linear-gradient(110deg, var(--bg-surface) 30%, var(--bg-card-up) 50%, var(--bg-surface) 70%);
+            background-size: 200% 100%;
+            animation: shimmer 1.8s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        .skeleton-line:nth-child(1) { width: 70%; }
+        .skeleton-line:nth-child(2) { width: 100%; height: 50px; }
+        .skeleton-line:nth-child(3) { width: 85%; }
+        .skeleton-line:nth-child(4) { width: 55%; }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* =========================================================
+           ERROR STATE
+           ========================================================= */
+        .error-state {
+            position: relative; z-index: 1;
+            text-align: center;
+            padding: 60px 24px;
+        }
+        .error-state h3 {
+            font-family: var(--mono); font-size: 16px;
+            color: var(--red-400); margin-bottom: 8px;
+        }
+        .error-state p {
+            font-size: 14px; color: var(--text-muted); max-width: 400px; margin: 0 auto 20px;
+        }
+        .retry-btn {
+            font-family: var(--mono); font-size: 12px; font-weight: 600;
+            color: var(--green-300);
+            background: rgba(29,185,84,0.1);
+            border: 1px solid var(--green-500);
+            padding: 10px 28px;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .retry-btn:hover {
+            background: rgba(29,185,84,0.2);
+            box-shadow: 0 0 20px var(--green-glow);
+        }
+
+        /* =========================================================
+           EMPTY STATE
+           ========================================================= */
+        .empty-state {
+            position: relative; z-index: 1;
+            text-align: center; padding: 80px 24px;
+        }
+        .empty-state p {
+            font-family: var(--mono); font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+        .site-footer {
+            position: relative; z-index: 1;
+            text-align: center;
+            padding: 40px 24px 60px;
+            border-top: 1px solid var(--border);
+        }
+        .footer-links {
+            display: flex; justify-content: center; gap: 24px;
+            margin-bottom: 16px;
+        }
+        .footer-links a {
+            font-family: var(--mono); font-size: 12px;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--green-300); }
+        .footer-copy {
+            font-family: var(--mono); font-size: 11px;
+            color: var(--text-muted); opacity: 0.5;
+        }
+
+        /* =========================================================
+           NO-IMAGE PLACEHOLDER
+           ========================================================= */
+        .no-image {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%);
+            color: var(--text-muted);
+        }
+        .no-image svg {
+            width: 48px; height: 48px; margin-bottom: 8px; opacity: 0.3;
+        }
+        .no-image span {
+            font-family: var(--mono); font-size: 11px; opacity: 0.4;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+        @media (max-width: 900px) {
+            .gallery { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+            .skeleton-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .site-nav { padding: 10px 16px; }
+            .nav-links { display: none; }
+            .hero { padding: 120px 16px 50px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-stats { gap: 24px; }
+            .gallery { grid-template-columns: 1fr; gap: 16px; }
+            .skeleton-grid { grid-template-columns: 1fr; }
+            .filter-bar { padding: 0 16px 24px; }
+            .gallery-wrap { padding: 0 16px 60px; }
+            .nft-sensors { grid-template-columns: repeat(2, 1fr); }
+            .sensor-cell:first-child { border-radius: var(--radius-md) 0 0 0; }
+            .sensor-cell:nth-child(2) { border-radius: 0 var(--radius-md) 0 0; }
+            .sensor-cell:nth-child(3) { border-radius: 0 0 0 var(--radius-md); }
+            .sensor-cell:last-child { border-radius: 0 0 var(--radius-md) 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="rasta-bar"></div>
+    <div class="ambient"></div>
+
+    <!-- Nav -->
+    <nav class="site-nav">
+        <a href="/" class="nav-brand">
+            <img src="/assets/MON_official_logo.jpg" alt="GanjaMon" onerror="this.style.display='none'">
+            <div class="nav-brand-text"><span>ganja</span>mon</div>
+        </a>
+        <div class="nav-links">
+            <a href="/">Grow</a>
+            <a href="/trading.html">Trading</a>
+            <a href="/art.html">Art</a>
+            <a href="/growring" class="active">GrowRing</a>
+            <a href="/a2a.html">A2A</a>
+            <a href="/brain.html">Brain</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-ring">
+            <div class="hero-ring-inner"></div>
+        </div>
+        <div class="hero-overline">On-Chain Grow Journal</div>
+        <h1>GrowRing</h1>
+        <p class="hero-sub">
+            Every day, real sensor data from a living cannabis plant is captured, transformed into
+            AI-generated art, and minted permanently on Monad. Each ring is a day in the life.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-val" id="stat-total">--</div>
+                <div class="hero-stat-label">Rings Minted</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val" id="stat-chain">Monad</div>
+                <div class="hero-stat-label">Blockchain</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-val" id="stat-standard">ERC-721</div>
+                <div class="hero-stat-label">Standard</div>
+            </div>
+        </div>
+        <a class="hero-contract"
+           href="https://monadscan.com/address/0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b"
+           target="_blank" rel="noopener">
+            <span class="dot"></span>
+            0x1e43...E43b
+        </a>
+    </section>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar" id="filterBar" style="display:none;">
+        <label>Filter</label>
+        <button class="filter-btn active" data-rarity="all">All</button>
+        <button class="filter-btn" data-rarity="0">Common</button>
+        <button class="filter-btn" data-rarity="1">Uncommon</button>
+        <button class="filter-btn" data-rarity="2">Rare</button>
+        <button class="filter-btn" data-rarity="3">Legendary</button>
+        <select class="sort-select" id="sortSelect">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="health-desc">Highest Health</option>
+            <option value="health-asc">Lowest Health</option>
+            <option value="day-desc">Latest Day</option>
+            <option value="rarity-desc">Rarest First</option>
+        </select>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-wrap" id="loadingState">
+        <div class="loading-rings">
+            <div class="loading-ring"></div>
+            <div class="loading-ring"></div>
+            <div class="loading-ring"></div>
+        </div>
+        <div class="loading-text">Reading from Monad...</div>
+        <div class="loading-sub" id="loadingProgress">Connecting to RPC</div>
+        <div class="skeleton-grid">
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-state" id="errorState" style="display:none;">
+        <h3>Connection Failed</h3>
+        <p id="errorMsg">Could not read from the Monad blockchain.</p>
+        <button class="retry-btn" onclick="loadGrowRings()">Retry</button>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery-wrap" style="display:none;" id="galleryWrap">
+        <div class="gallery" id="gallery"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <p>No GrowRings minted yet. The first ring will appear after the daily mint pipeline runs.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="https://x.com/ganjamonai" target="_blank" rel="noopener">X / Twitter</a>
+            <a href="https://t.me/ganjamonai" target="_blank" rel="noopener">Telegram</a>
+            <a href="https://monadscan.com/address/0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b" target="_blank" rel="noopener">Contract</a>
+            <a href="/">GanjaMon Home</a>
+        </div>
+        <div class="footer-copy">GanjaMon -- AI Autonomous Cannabis Cultivation on Monad</div>
+    </footer>
+
+    <!-- ethers.js v6 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+
+    <script>
+    /* ================================================================
+       GrowRing Gallery — reads live from Monad
+       ================================================================ */
+    (function() {
+        'use strict';
+
+        const RPC          = 'https://rpc.monad.xyz';
+        const CHAIN_ID     = 143;
+        const CONTRACT     = '0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b';
+        const EXPLORER     = 'https://monadscan.com';
+        const IPFS_GATEWAY = 'https://gateway.pinata.cloud/ipfs/';
+
+        const ABI = [
+            'function nextTokenId() view returns (uint256)',
+            'function milestones(uint256 tokenId) view returns (uint8 milestoneType, uint8 rarity, uint16 dayNumber, uint16 temperature, uint16 humidity, uint16 vpd, uint8 healthScore, uint8 growCycleId, string imageURI, string rawImageURI, string artStyle, string narrative, uint48 timestamp)'
+        ];
+
+        const MILESTONE_NAMES = [
+            'Daily Journal', 'Germination', 'Transplant', 'Veg Start',
+            'Flower Start', 'First Pistils', 'Flush', 'Cure Start',
+            'Harvest', 'Topping', 'First Node', 'Trichomes', 'Anomaly'
+        ];
+        const RARITY_NAMES  = ['Common', 'Uncommon', 'Rare', 'Legendary'];
+        const RARITY_CLASSES = ['rarity-common', 'rarity-uncommon', 'rarity-rare', 'rarity-legendary'];
+
+        let allTokens = [];
+        let currentFilter = 'all';
+
+        /* ---- DOM refs ---- */
+        const $loading    = document.getElementById('loadingState');
+        const $error      = document.getElementById('errorState');
+        const $errorMsg   = document.getElementById('errorMsg');
+        const $gallery    = document.getElementById('gallery');
+        const $galleryWrap= document.getElementById('galleryWrap');
+        const $filterBar  = document.getElementById('filterBar');
+        const $empty      = document.getElementById('emptyState');
+        const $statTotal  = document.getElementById('stat-total');
+        const $progress   = document.getElementById('loadingProgress');
+        const $sortSelect = document.getElementById('sortSelect');
+
+        /* ---- IPFS helper ---- */
+        function ipfsToHttp(uri) {
+            if (!uri) return '';
+            if (uri.startsWith('ipfs://')) return IPFS_GATEWAY + uri.slice(7);
+            if (uri.startsWith('https://') || uri.startsWith('http://')) return uri;
+            return IPFS_GATEWAY + uri;
+        }
+
+        /* ---- Health color ---- */
+        function healthColor(score) {
+            if (score >= 80) return 'var(--green-300)';
+            if (score >= 60) return 'var(--gold-500)';
+            if (score >= 40) return 'var(--gold-700)';
+            return 'var(--red-400)';
+        }
+
+        function healthGradient(score) {
+            if (score >= 80) return 'linear-gradient(90deg, var(--green-700), var(--green-500))';
+            if (score >= 60) return 'linear-gradient(90deg, var(--gold-700), var(--gold-500))';
+            if (score >= 40) return 'linear-gradient(90deg, var(--gold-700), var(--gold-300))';
+            return 'linear-gradient(90deg, var(--red-400), var(--red-400))';
+        }
+
+        /* ---- Format timestamp ---- */
+        function fmtTime(ts) {
+            if (!ts) return 'Unknown';
+            const d = new Date(Number(ts) * 1000);
+            return d.toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        /* ---- Render a card ---- */
+        function renderCard(token) {
+            const imgUrl = ipfsToHttp(token.imageURI);
+            const rarityIdx = token.rarity;
+            const rarityName = RARITY_NAMES[rarityIdx] || 'Common';
+            const rarityClass = RARITY_CLASSES[rarityIdx] || 'rarity-common';
+            const mileName = MILESTONE_NAMES[token.milestoneType] || 'Unknown';
+            const temp = (token.temperature / 100).toFixed(1);
+            const hum  = (token.humidity / 100).toFixed(1);
+            const vpd  = (token.vpd / 1000).toFixed(2);
+            const hp   = token.healthScore;
+            const narrativeId = 'nar-' + token.id;
+
+            const imgHtml = imgUrl
+                ? `<img src="${imgUrl}" alt="GrowRing #${token.id}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=no-image><svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.5\\'><circle cx=\\'12\\' cy=\\'12\\' r=\\'10\\'/><path d=\\'M12 6v6l4 2\\'/></svg><span>Image loading...</span></div>'">`
+                : `<div class="no-image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>No image URI</span></div>`;
+
+            return `
+            <article class="nft-card" data-rarity="${rarityIdx}" data-token="${token.id}">
+                <div class="nft-img-wrap">
+                    ${imgHtml}
+                    <div class="nft-img-overlay"></div>
+                    <div class="nft-token-id">#${token.id}</div>
+                    <div class="nft-rarity ${rarityClass}">${rarityName}</div>
+                    <div class="nft-img-labels">
+                        <div class="nft-milestone-type">${mileName}</div>
+                        <div class="nft-day-badge">
+                            ${token.dayNumber}
+                            <small>Day</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="nft-body">
+                    <div class="nft-art-style">${escHtml(token.artStyle || 'Untitled')}</div>
+                    <div class="nft-sensors">
+                        <div class="sensor-cell sensor-temp">
+                            <div class="sensor-val">${temp}&deg;</div>
+                            <div class="sensor-label">Temp (F)</div>
+                        </div>
+                        <div class="sensor-cell sensor-hum">
+                            <div class="sensor-val">${hum}%</div>
+                            <div class="sensor-label">Humidity</div>
+                        </div>
+                        <div class="sensor-cell sensor-vpd">
+                            <div class="sensor-val">${vpd}</div>
+                            <div class="sensor-label">VPD (kPa)</div>
+                        </div>
+                        <div class="sensor-cell sensor-hp">
+                            <div class="sensor-val">${hp}</div>
+                            <div class="sensor-label">Health</div>
+                        </div>
+                    </div>
+                    <div class="nft-health-wrap">
+                        <div class="nft-health-header">
+                            <span>Plant Health</span>
+                            <strong style="color:${healthColor(hp)}">${hp}/100</strong>
+                        </div>
+                        <div class="health-bar">
+                            <div class="health-bar-fill" style="width:${hp}%;background:${healthGradient(hp)}"></div>
+                        </div>
+                    </div>
+                    ${token.narrative ? `
+                    <div class="nft-narrative" id="${narrativeId}">${escHtml(token.narrative)}</div>
+                    <button class="narrative-toggle" onclick="toggleNarrative('${narrativeId}', this)">Read more</button>
+                    ` : ''}
+                    <div class="nft-meta">
+                        <div class="nft-timestamp">${fmtTime(token.timestamp)}</div>
+                        <div class="nft-links">
+                            <a href="${EXPLORER}/token/${CONTRACT}?a=${token.id}" target="_blank" rel="noopener">Explorer</a>
+                        </div>
+                    </div>
+                </div>
+            </article>`;
+        }
+
+        /* ---- Escape HTML ---- */
+        function escHtml(s) {
+            const div = document.createElement('div');
+            div.textContent = s;
+            return div.innerHTML;
+        }
+
+        /* ---- Toggle narrative ---- */
+        window.toggleNarrative = function(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('expanded');
+            btn.textContent = el.classList.contains('expanded') ? 'Show less' : 'Read more';
+        };
+
+        /* ---- Sort / Filter ---- */
+        function applyFilterAndSort() {
+            let tokens = [...allTokens];
+            if (currentFilter !== 'all') {
+                tokens = tokens.filter(t => String(t.rarity) === currentFilter);
+            }
+            const sort = $sortSelect.value;
+            switch (sort) {
+                case 'newest':     tokens.sort((a,b) => b.timestamp - a.timestamp); break;
+                case 'oldest':     tokens.sort((a,b) => a.timestamp - b.timestamp); break;
+                case 'health-desc':tokens.sort((a,b) => b.healthScore - a.healthScore); break;
+                case 'health-asc': tokens.sort((a,b) => a.healthScore - b.healthScore); break;
+                case 'day-desc':   tokens.sort((a,b) => b.dayNumber - a.dayNumber); break;
+                case 'rarity-desc':tokens.sort((a,b) => b.rarity - a.rarity); break;
+            }
+            $gallery.innerHTML = tokens.map(renderCard).join('');
+        }
+
+        /* ---- Filter buttons ---- */
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.rarity;
+                applyFilterAndSort();
+            });
+        });
+        $sortSelect.addEventListener('change', applyFilterAndSort);
+
+        /* ---- Main loader ---- */
+        async function loadGrowRings() {
+            $loading.style.display = '';
+            $error.style.display = 'none';
+            $galleryWrap.style.display = 'none';
+            $filterBar.style.display = 'none';
+            $empty.style.display = 'none';
+            $progress.textContent = 'Connecting to RPC';
+
+            try {
+                const provider = new ethers.JsonRpcProvider(RPC, CHAIN_ID, { staticNetwork: true });
+                const contract = new ethers.Contract(CONTRACT, ABI, provider);
+
+                $progress.textContent = 'Reading token count...';
+                const nextId = await contract.nextTokenId();
+                const total = Number(nextId);
+                $statTotal.textContent = total > 0 ? String(total) : '0';
+
+                if (total === 0) {
+                    $loading.style.display = 'none';
+                    $empty.style.display = '';
+                    return;
+                }
+
+                const count = total; // tokens are 0-indexed (0 to nextTokenId-1)
+                $progress.textContent = `Loading ${count} ring${count > 1 ? 's' : ''}...`;
+
+                // Fetch all milestones in parallel batches
+                allTokens = [];
+                const BATCH = 6;
+                for (let start = 0; start < total; start += BATCH) {
+                    const end = Math.min(start + BATCH, total);
+                    const promises = [];
+                    for (let id = start; id < end; id++) {
+                        promises.push(
+                            contract.milestones(id).then(m => ({
+                                id,
+                                milestoneType: Number(m.milestoneType),
+                                rarity: Number(m.rarity),
+                                dayNumber: Number(m.dayNumber),
+                                temperature: Number(m.temperature),
+                                humidity: Number(m.humidity),
+                                vpd: Number(m.vpd),
+                                healthScore: Number(m.healthScore),
+                                growCycleId: Number(m.growCycleId),
+                                imageURI: m.imageURI,
+                                rawImageURI: m.rawImageURI,
+                                artStyle: m.artStyle,
+                                narrative: m.narrative,
+                                timestamp: Number(m.timestamp)
+                            })).catch(err => {
+                                console.warn(`Failed to load token ${id}:`, err);
+                                return null;
+                            })
+                        );
+                    }
+                    const results = await Promise.all(promises);
+                    allTokens.push(...results.filter(Boolean));
+                    $progress.textContent = `Loaded ${allTokens.length} of ${count} rings...`;
+                }
+
+                if (allTokens.length === 0) {
+                    $loading.style.display = 'none';
+                    $empty.style.display = '';
+                    return;
+                }
+
+                // Default sort: newest first
+                allTokens.sort((a, b) => b.timestamp - a.timestamp);
+
+                $loading.style.display = 'none';
+                $filterBar.style.display = '';
+                $galleryWrap.style.display = '';
+                applyFilterAndSort();
+
+            } catch (err) {
+                console.error('GrowRing load error:', err);
+                $loading.style.display = 'none';
+                $errorMsg.textContent = err.message || 'Could not read from the Monad blockchain.';
+                $error.style.display = '';
+            }
+        }
+
+        window.loadGrowRings = loadGrowRings;
+        loadGrowRings();
+    })();
+    </script>
+</body>
+</html>

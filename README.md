@@ -12,6 +12,21 @@ One agent. One soul. Three sacred works: **The Garden**, **The Market**, **The C
 
 ---
 
+## ETH Denver 2026 — GrowRing NFTs
+
+**Daily autonomous NFT minting on Monad + Hedera.** Every day, the AI agent captures a webcam photo, generates original artwork via Gemini 3 Pro, and mints a GrowRing NFT — a permanent on-chain grow journal.
+
+| | |
+|-|-|
+| **GrowRing Gallery** | [grokandmon.com/growring](https://grokandmon.com/growring) |
+| **GrowRing Contract** | [`0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b`](https://monadscan.com/address/0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b) (Monad) |
+| **GrowOracle** | [`0xc532820dE55363633263f6a95Fa0762eD86E8425`](https://monadscan.com/address/0xc532820dE55363633263f6a95Fa0762eD86E8425) (Monad) |
+| **Hedera Testnet** | [3 contracts deployed](docs/ETHDENVER_MONAD_BLITZ.md#hedera-testnet-multi-chain-demo) |
+| **Hackathon Submission** | [docs/ETHDENVER_MONAD_BLITZ.md](docs/ETHDENVER_MONAD_BLITZ.md) |
+| **Mon Skills** | [monskills.pages.dev](https://monskills.pages.dev) — Monad knowledge for AI agents |
+
+---
+
 ## What It Does
 
 ### The Garden — Autonomous Plant Management

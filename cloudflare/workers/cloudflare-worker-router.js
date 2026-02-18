@@ -24,6 +24,8 @@ const STATIC_PATHS = [
   '/swap',
   '/swap.html',
   '/dashboard',
+  '/growring',
+  '/api/growring',
   '/css/',
   '/js/',
   '/assets/',
@@ -472,6 +474,107 @@ async function handleMCP(request) {
 
 // ─── Main Router ───────────────────────────────────────────────────
 
+// ─── QuickNode Streams Webhook Handler ─────────────────────────────
+// Receives real-time GrowRing events from QuickNode Streams on Monad.
+// Events: MilestoneMinted, GrowStateUpdated, AuctionCreated, Transfer
+// Forwards to Chromebook agent for social posting and analytics.
+
+const QN_MILESTONE_MINTED_TOPIC = '0xef2e64b382d24fff9ba66c43a7b16c65379eba5f3586b31bc014ccebd2e91f1c';
+const QN_GROW_STATE_TOPIC = '0xc7d6f7db626b33182a5a7193002ea098ea96e9859ad0aef9206090309eea2af3';
+const QN_TRANSFER_TOPIC = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+
+async function handleQuickNodeWebhook(request) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, x-qn-signature',
+  };
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }
+
+  if (request.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'POST only' }), {
+      status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+
+  try {
+    const events = await request.json();
+    const processed = [];
+
+    // Handle both array and single-event payloads
+    const eventList = Array.isArray(events) ? events : [events];
+
+    for (const event of eventList) {
+      // Handle nested arrays from Streams logs dataset
+      const logs = Array.isArray(event) ? event : (event.logs || [event]);
+
+      for (const log of logs) {
+        if (!log.topics || !log.topics[0]) continue;
+
+        const topic0 = log.topics[0];
+        let decoded = null;
+
+        if (topic0 === QN_MILESTONE_MINTED_TOPIC) {
+          decoded = {
+            event: 'MilestoneMinted',
+            tokenId: parseInt(log.topics[1], 16),
+            milestoneType: parseInt(log.topics[2], 16),
+            milestoneLabel: MILESTONE_LABELS[parseInt(log.topics[2], 16)] || 'Unknown',
+            blockNumber: typeof log.blockNumber === 'string' ? parseInt(log.blockNumber, 16) : log.blockNumber,
+            txHash: log.transactionHash,
+          };
+        } else if (topic0 === QN_GROW_STATE_TOPIC) {
+          decoded = {
+            event: 'GrowStateUpdated',
+            blockNumber: typeof log.blockNumber === 'string' ? parseInt(log.blockNumber, 16) : log.blockNumber,
+            txHash: log.transactionHash,
+          };
+        } else if (topic0 === QN_TRANSFER_TOPIC && log.address?.toLowerCase() === GROWRING_CONTRACT.toLowerCase()) {
+          decoded = {
+            event: 'Transfer',
+            from: '0x' + (log.topics[1] || '').slice(26),
+            to: '0x' + (log.topics[2] || '').slice(26),
+            tokenId: parseInt(log.topics[3], 16),
+            blockNumber: typeof log.blockNumber === 'string' ? parseInt(log.blockNumber, 16) : log.blockNumber,
+            txHash: log.transactionHash,
+          };
+        }
+
+        if (decoded) processed.push(decoded);
+      }
+    }
+
+    // Try forwarding to Chromebook agent (fire-and-forget)
+    if (processed.length > 0) {
+      try {
+        await fetch('https://grokandmon.com/api/webhook/stream-events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ source: 'quicknode-streams', events: processed, timestamp: Date.now() }),
+        });
+      } catch (_) {
+        // Chromebook offline — events still acknowledged to QuickNode
+      }
+    }
+
+    return new Response(JSON.stringify({
+      received: true,
+      processed: processed.length,
+      events: processed,
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -497,6 +600,21 @@ export default {
     const isStatic = STATIC_PATHS.some(p => path === p || path.startsWith(p));
     const isAPI = API_PATHS.some(p => path.startsWith(p));
 
+    // QuickNode Streams webhook — receives GrowRing events in real-time
+    if (path === '/webhook/quicknode-stream' || path === '/webhook/quicknode-stream/') {
+      return handleQuickNodeWebhook(request);
+    }
+
+    // GrowRing metadata API — reads directly from Monad RPC (no Chromebook needed)
+    if (path.startsWith('/api/growring')) {
+      return handleGrowRingAPI(request, path);
+    }
+
+    // GrowRing gallery page served from Pages
+    if (path.startsWith('/growring')) {
+      return fetchFromPages(request, path);
+    }
+
     if (isStatic && !isAPI) {
       return fetchFromPages(request, path);
     } else {
@@ -504,6 +622,92 @@ export default {
     }
   }
 };
+
+// ─── GrowRing Metadata API ─────────────────────────────────────────
+
+const MONAD_RPC = "https://rpc.monad.xyz";
+const GROWRING_CONTRACT = "0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b";
+const IPFS_GW = "https://gateway.pinata.cloud/ipfs/";
+const MILESTONE_LABELS = ["DailyJournal","Germination","Transplant","VegStart","FlowerStart","FirstPistils","Flush","CureStart","Harvest","Topping","FirstNode","Trichomes","Anomaly"];
+const RARITY_LABELS = ["Common","Uncommon","Rare","Legendary"];
+
+async function monadCall(data) {
+  const r = await fetch(MONAD_RPC, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", method: "eth_call", params: [{ to: GROWRING_CONTRACT, data }, "latest"], id: 1 }),
+  });
+  const j = await r.json();
+  if (j.error) throw new Error(j.error.message);
+  return j.result;
+}
+
+function pad256(n) { return n.toString(16).padStart(64, "0"); }
+function ipfs(uri) { return uri && uri.startsWith("ipfs://") ? IPFS_GW + uri.slice(7) : uri || ""; }
+
+function decodeStr(hex, slotIdx) {
+  const off = parseInt(hex.slice(slotIdx * 64, slotIdx * 64 + 64), 16);
+  const wOff = off / 32;
+  const len = parseInt(hex.slice(wOff * 64, wOff * 64 + 64), 16);
+  if (len === 0) return "";
+  const start = (wOff + 1) * 64;
+  const bytes = [];
+  for (let i = 0; i < len * 2; i += 2) bytes.push(parseInt(hex.slice(start + i, start + i + 2), 16));
+  return new TextDecoder().decode(new Uint8Array(bytes));
+}
+
+async function handleGrowRingAPI(request, path) {
+  const cors = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" };
+  if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+
+  try {
+    const sub = path.replace("/api/growring", "").replace(/^\//, "");
+
+    // Collection info
+    if (!sub) {
+      const nextId = parseInt(await monadCall("0x75794a3c"), 16);
+      return new Response(JSON.stringify({
+        name: "GrowRing", description: "Daily 1-of-1 grow journal NFTs minted by the GanjaMon AI agent on Monad.",
+        total_supply: nextId, contract: GROWRING_CONTRACT, chain: "Monad", chain_id: 143,
+        website: "https://grokandmon.com", gallery: "https://grokandmon.com/growring",
+      }), { headers: cors });
+    }
+
+    // Token metadata
+    const tokenId = parseInt(sub, 10);
+    if (isNaN(tokenId) || tokenId < 0) return new Response(JSON.stringify({ error: "Invalid token ID" }), { status: 400, headers: cors });
+
+    const nextId = parseInt(await monadCall("0x75794a3c"), 16);
+    if (tokenId >= nextId) return new Response(JSON.stringify({ error: "Token not yet minted", next_token_id: nextId }), { status: 404, headers: cors });
+
+    const hex = (await monadCall("0xe89e4ed6" + pad256(tokenId))).slice(2);
+    const u = (i) => parseInt(hex.slice(i * 64, i * 64 + 64), 16);
+    const mt = u(0), rar = u(1), day = u(2), temp = u(3), hum = u(4), vpd = u(5), hs = u(6), gc = u(7), ts = u(12);
+    const imgURI = decodeStr(hex, 8), rawURI = decodeStr(hex, 9), style = decodeStr(hex, 10), narr = decodeStr(hex, 11);
+
+    return new Response(JSON.stringify({
+      name: `GrowRing #${tokenId} — Day ${day}`,
+      description: narr || `GrowRing Day ${day}: ${MILESTONE_LABELS[mt]} (${RARITY_LABELS[rar]})`,
+      image: ipfs(imgURI),
+      external_url: `https://grokandmon.com/growring#token-${tokenId}`,
+      attributes: [
+        { trait_type: "Day Number", value: day, display_type: "number" },
+        { trait_type: "Milestone", value: MILESTONE_LABELS[mt] || "Unknown" },
+        { trait_type: "Rarity", value: RARITY_LABELS[rar] || "Unknown" },
+        { trait_type: "Art Style", value: style },
+        { trait_type: "Temperature (F)", value: +(temp / 100).toFixed(1), display_type: "number" },
+        { trait_type: "Humidity (%)", value: +(hum / 100).toFixed(1), display_type: "number" },
+        { trait_type: "VPD (kPa)", value: +(vpd / 1000).toFixed(3), display_type: "number" },
+        { trait_type: "Health Score", value: hs, display_type: "number" },
+        { trait_type: "Grow Cycle", value: gc, display_type: "number" },
+      ],
+      properties: { raw_image: ipfs(rawURI), art_style: style, narrative: narr, timestamp: ts, milestone_type: mt, rarity: rar },
+    }, null, 2), { headers: cors });
+
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: cors });
+  }
+}
 
 // ─── Pages Proxy ───────────────────────────────────────────────────
 
@@ -517,6 +721,8 @@ async function fetchFromPages(request, path) {
     pagesUrl.pathname = '/swap.html';
   } else if (path === '/hud') {
     pagesUrl.pathname = '/hud.html';
+  } else if (path === '/growring' || path === '/growring/') {
+    pagesUrl.pathname = '/growring/index.html';
   } else if (path === '/' ) {
     pagesUrl.pathname = '/index.html';
   } else if (path.startsWith('/dashboard') && !path.includes('.')) {

@@ -14,3 +14,9 @@ remappings = [
 
 [profile.default.rpc_endpoints]
 monad = "${MONAD_RPC}"
+hedera_testnet = "https://testnet.hashio.io/api"
+hedera_mainnet = "https://mainnet.hashio.io/api"
+kiteai_testnet = "https://rpc-testnet.gokite.ai/"
+
+[etherscan]
+hedera_testnet = { key = "unused", chain = 296, url = "https://server-verify.hashscan.io/" }

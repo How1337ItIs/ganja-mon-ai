@@ -825,6 +825,108 @@ def register_routes(app: FastAPI):
 
         return "\n\n".join(parts)
 
+    def _format_grow_decision_wisdom(bullets: list, section_title: str, current_day: int = 1) -> str:
+        """Transform grow-related cron decision bullets into patois commentary.
+
+        Unlike mirror entries (pure sensor snapshots), decision entries contain
+        a mix of sensor readings AND action notes (watering, light schedule, etc.).
+        We parse both and present Grok-style wisdom.
+        """
+        import re
+
+        sensors = {}
+        actions = []
+        observations = []
+
+        for b in bullets:
+            b_text = b.lstrip("- ").strip()
+            b_lower = b_text.lower()
+
+            # Try to extract sensor values
+            num_match = re.search(r':\s*([\d.]+)', b_text)
+            val = float(num_match.group(1)) if num_match else None
+
+            if ('air temp' in b_lower or 'temperature' in b_lower or 'temp:' in b_lower) and val is not None:
+                sensors['temp'] = val
+            elif ('humidity' in b_lower or 'rh' in b_lower) and val is not None:
+                sensors['humidity'] = val
+            elif 'vpd' in b_lower and val is not None:
+                sensors['vpd'] = val
+            elif ('soil' in b_lower or 'moisture' in b_lower) and val is not None:
+                sensors['soil'] = val
+            elif 'water' in b_lower or 'pump' in b_lower or 'dispensed' in b_lower:
+                actions.append(b_text)
+            elif 'stage' in b_lower or 'photoperiod' in b_lower or 'light' in b_lower or 'day' in b_lower:
+                observations.append(b_text)
+            elif val is not None:
+                # Generic numeric reading
+                observations.append(b_text)
+            else:
+                observations.append(b_text)
+
+        parts = []
+
+        # Use sensor wisdom if we got readings
+        if sensors:
+            temp = sensors.get('temp')
+            rh = sensors.get('humidity')
+            if temp is not None:
+                temp_f = temp * 9 / 5 + 32
+                if rh is not None:
+                    if 22 <= temp <= 28 and 55 <= rh <= 75:
+                        parts.append(f"Mon chillin' at {temp:.1f}°C ({temp_f:.0f}°F) with {rh:.0f}% humidity — irie conditions right now.")
+                    elif temp < 20:
+                        parts.append(f"Mon feelin' cold at {temp:.1f}°C ({temp_f:.0f}°F), {rh:.0f}% RH — she could use some warmth.")
+                    elif temp > 28:
+                        parts.append(f"Mon runnin' hot at {temp:.1f}°C ({temp_f:.0f}°F), {rh:.0f}% RH — watch di ventilation.")
+                    else:
+                        parts.append(f"Mon vibin' at {temp:.1f}°C ({temp_f:.0f}°F) with {rh:.0f}% humidity.")
+                else:
+                    parts.append(f"Temp reading {temp:.1f}°C ({temp_f:.0f}°F).")
+
+            vpd = sensors.get('vpd')
+            if vpd is not None:
+                if 0.8 <= vpd <= 1.2:
+                    parts.append(f"VPD at {vpd:.2f} kPa — perfect transpiration zone for veg.")
+                elif vpd < 0.8:
+                    parts.append(f"VPD low at {vpd:.2f} kPa — she nah breathin' hard enough, bump di temp or drop humidity.")
+                else:
+                    parts.append(f"VPD high at {vpd:.2f} kPa — ease up, she might stress.")
+
+            soil = sensors.get('soil')
+            if soil is not None:
+                if soil < 35:
+                    parts.append(f"Soil at {soil:.0f}% — dry side, she thirsty. Drink comin' soon.")
+                elif soil > 70:
+                    parts.append(f"Soil at {soil:.0f}% — well saturated, let her dry back.")
+                elif soil < 40:
+                    parts.append(f"Soil at {soil:.0f}% — gettin' dry, keep an eye on her.")
+                else:
+                    parts.append(f"Soil moisture at {soil:.0f}% — comfortable range.")
+
+        # Add action summaries in patois
+        for a in actions[:2]:
+            a_lower = a.lower()
+            if 'no watering' in a_lower or 'respected' in a_lower or 'cooldown' in a_lower:
+                parts.append("No water today — respecting di rest period. Patience is wisdom.")
+            elif 'dispensed' in a_lower:
+                parts.append(f"Gave her a drink — {a}")
+            else:
+                parts.append(a)
+
+        # Add key observations
+        for o in observations[:2]:
+            o_lower = o.lower()
+            if 'stage' in o_lower or 'vegetative' in o_lower or 'veg' in o_lower:
+                day_match = re.search(r'day\s*(\d+)', o_lower)
+                day_num = day_match.group(1) if day_match else str(current_day)
+                parts.append(f"Day {day_num} of veg — she growin' strong under di lights.")
+
+        if not parts:
+            return f"Grok checkin' on Mon — Day {current_day}. Everything runnin' smooth."
+
+        return "\n\n".join(parts)
+
     def _format_autopilot_wisdom(raw_output: str, current_day: int = 1, current_stage: str = "vegetative") -> Optional[str]:
         """Convert autopilot watering logs into user-facing patois guidance."""
         import re
@@ -967,6 +1069,10 @@ def register_routes(app: FastAPI):
                 if bullets and is_mirror_entry:
                     # Transform raw sensor mirrors into Grok personality commentary
                     output_text = _format_sensor_wisdom(bullets, default_day)
+                elif bullets and grow_title_re.search(section_title + " " + body):
+                    # Grow-related cron entries (decisions, watering, etc.)
+                    # also deserve patois — not raw bullet dumps
+                    output_text = _format_grow_decision_wisdom(bullets, section_title, default_day)
                 elif bullets:
                     lines = [f"OpenClaw {section_title}", "", "Latest notes:"]
                     lines.extend([f"  {ln}" for ln in bullets[:6]])

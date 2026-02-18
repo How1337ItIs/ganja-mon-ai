@@ -2,15 +2,13 @@
 IPFS Pinning via Pinata
 ========================
 
-Pins images and metadata to IPFS using the Pinata API.
+Pins images and metadata to IPFS using the Pinata v2 API.
 Returns IPFS URIs (ipfs://...) for on-chain storage.
 """
 
-import base64
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
 import httpx
 
@@ -18,81 +16,83 @@ from src.core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-PINATA_API = "https://api.pinata.cloud"
+PINATA_UPLOAD_API = "https://uploads.pinata.cloud/v3/files"
 
 
 async def pin_image(image_path: Path, name: str) -> str:
-    """Pin an image file to IPFS via Pinata.
+    """Pin an image file to IPFS via Pinata v2 API.
 
     Args:
         image_path: Path to the image file
         name: Descriptive name for the pin
 
     Returns:
-        IPFS URI string (ipfs://Qm...)
+        IPFS URI string (ipfs://...)
     """
     settings = get_settings()
     if not settings.pinata_jwt:
         logger.warning("PINATA_JWT not set, returning placeholder URI")
         return f"ipfs://placeholder-{name}"
 
+    suffix = image_path.suffix.lower()
+    mime = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+            ".webp": "image/webp"}.get(suffix, "image/png")
+
     async with httpx.AsyncClient(timeout=120) as client:
         with open(image_path, "rb") as f:
-            files = {"file": (f"{name}.png", f, "image/png")}
-            headers = {"Authorization": f"Bearer {settings.pinata_jwt}"}
-            metadata = json.dumps({"name": name, "keyvalues": {"project": "growring"}})
-
             response = await client.post(
-                f"{PINATA_API}/pinning/pinFileToIPFS",
-                files=files,
-                data={"pinataMetadata": metadata},
-                headers=headers,
+                PINATA_UPLOAD_API,
+                headers={"Authorization": f"Bearer {settings.pinata_jwt}"},
+                files={"file": (f"{name}{suffix}", f, mime)},
+                data={"name": name, "network": "public"},
             )
             response.raise_for_status()
             result = response.json()
 
-    ipfs_hash = result["IpfsHash"]
-    uri = f"ipfs://{ipfs_hash}"
-    logger.info(f"📌 Pinned {name} → {uri}")
+    cid = result["data"]["cid"]
+    uri = f"ipfs://{cid}"
+    logger.info(f"Pinned {name} -> {uri}")
     return uri
 
 
 async def pin_metadata(metadata: dict, name: str) -> str:
-    """Pin JSON metadata to IPFS via Pinata.
+    """Pin JSON metadata to IPFS via Pinata v2 API.
 
     Args:
         metadata: The metadata dictionary (follows OpenSea/ERC-721 standard)
         name: Descriptive name for the pin
 
     Returns:
-        IPFS URI string (ipfs://Qm...)
+        IPFS URI string (ipfs://...)
     """
     settings = get_settings()
     if not settings.pinata_jwt:
         logger.warning("PINATA_JWT not set, returning placeholder URI")
         return f"ipfs://placeholder-meta-{name}"
 
-    async with httpx.AsyncClient(timeout=60) as client:
-        headers = {
-            "Authorization": f"Bearer {settings.pinata_jwt}",
-            "Content-Type": "application/json",
-        }
-        payload = {
-            "pinataContent": metadata,
-            "pinataMetadata": {"name": name, "keyvalues": {"project": "growring"}},
-        }
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
+        json.dump(metadata, tmp)
+        tmp_path = tmp.name
 
-        response = await client.post(
-            f"{PINATA_API}/pinning/pinJSONToIPFS",
-            json=payload,
-            headers=headers,
-        )
-        response.raise_for_status()
-        result = response.json()
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            with open(tmp_path, "rb") as f:
+                response = await client.post(
+                    PINATA_UPLOAD_API,
+                    headers={"Authorization": f"Bearer {settings.pinata_jwt}"},
+                    files={"file": (f"{name}.json", f, "application/json")},
+                    data={"name": name, "network": "public"},
+                )
+                response.raise_for_status()
+                result = response.json()
+    finally:
+        import os
+        os.unlink(tmp_path)
 
-    ipfs_hash = result["IpfsHash"]
-    uri = f"ipfs://{ipfs_hash}"
-    logger.info(f"📌 Pinned metadata {name} → {uri}")
+    cid = result["data"]["cid"]
+    uri = f"ipfs://{cid}"
+    logger.info(f"Pinned metadata {name} -> {uri}")
     return uri
 
 
