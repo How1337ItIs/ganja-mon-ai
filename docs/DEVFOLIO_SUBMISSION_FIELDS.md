@@ -64,10 +64,10 @@ https://github.com/How1337ItIs/ganja-mon-ai
 - [x] Verifiable agent identity (wallet-based, ERC-8004)
 - [x] Autonomous execution (no manual wallet clicking)
 - [x] Open-source (MIT license)
-- [ ] Build on Kite AI Testnet/mainnet (need to deploy contracts)
+- [x] Build on Kite AI Testnet/mainnet (3 contracts deployed + verified)
 
 **Deliverables needed:**
-- [ ] Deploy contracts on Kite AI testnet (Chain ID 2368, need faucet CAPTCHA)
+- [x] Deploy contracts on Kite AI testnet (Chain ID 2368, all 3 deployed)
 - [ ] <3 min demo video showing x402 payments
 - [x] Live demo: https://grokandmon.com
 - [x] Agent identity + payment flow visible at /a2a/v1
@@ -111,8 +111,14 @@ https://github.com/How1337ItIs/ganja-mon-ai
 | GrowRing | `0x65280F502196065994f98c796e4173DA8D46728f` |
 | GrowAuction | `0x22dA4b9c392DF2a03D0c03a2c8642EB0aC6249fD` |
 
-### Kite AI Testnet (Chain ID 2368) — TODO
-Deploy same 3 contracts after getting faucet tokens from https://faucet.gokite.ai
+### Kite AI Testnet (Chain ID 2368) — DEPLOYED
+| Contract | Address |
+|----------|---------|
+| GrowOracle | `0xd358D5ff00140A8b7cD7Bd277804858AC88336dA` |
+| GrowRing | `0xae47189DAA74ef2CBFD15dDE853151b7D0458b99` |
+| GrowAuction | `0x65280F502196065994f98c796e4173DA8D46728f` |
+
+Verified: `recordState()` working — [tx 0xd5c756a1...](https://testnet.kitescan.ai/tx/0xd5c756a1fed0d0040a79b40761dad670c6adfafce2499c8ae392e8d7bc8ecb65)
 
 ## Team
 - Nathan Liow (@nathanliow)

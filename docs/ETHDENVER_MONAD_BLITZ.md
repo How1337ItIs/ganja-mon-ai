@@ -73,6 +73,18 @@ Same contracts deployed to Hedera EVM (Chain ID 296) for the "Killer App for the
 
 GrowOracle `recordState()` verified working on Hedera testnet ([tx](https://hashscan.io/testnet/transaction/0x05f13c5f8ec20d5d6478ea3e25b2556c4d201f1a4b14f8ed06909c0137aa6270)). Deployed with Foundry `forge create` via Hedera JSON-RPC Relay.
 
+### Kite AI Testnet (x402 Agent Payments Demo)
+
+Same contracts deployed to Kite AI EVM (Chain ID 2368) for the "Agent-Native Payments & Identity" bounty.
+
+| Contract | Address | TX Hash |
+|----------|---------|---------|
+| **GrowOracle** | [`0xd358D5ff00140A8b7cD7Bd277804858AC88336dA`](https://testnet.kitescan.ai/address/0xd358D5ff00140A8b7cD7Bd277804858AC88336dA) | `0xb48b674e752bc42647863e4b15e717c358638bb164087925fafcb180b252f6d3` |
+| **GrowRing** | [`0xae47189DAA74ef2CBFD15dDE853151b7D0458b99`](https://testnet.kitescan.ai/address/0xae47189DAA74ef2CBFD15dDE853151b7D0458b99) | `0xe768a37b04742252cbc82ac7f6677b64a178e40b64dc3898484d21a2e42ed936` |
+| **GrowAuction** | [`0x65280F502196065994f98c796e4173DA8D46728f`](https://testnet.kitescan.ai/address/0x65280F502196065994f98c796e4173DA8D46728f) | `0xee2412b38ae12448ebca2678ea4d4d5d826710bf10a96cab9f53c5aaa67411c4` |
+
+GrowOracle `recordState()` verified working on Kite AI testnet ([tx](https://testnet.kitescan.ai/tx/0xd5c756a1fed0d0040a79b40761dad670c6adfafce2499c8ae392e8d7bc8ecb65)).
+
 ### GrowRing Rarity System
 
 | Rarity | Milestone Types | Drop Rate |

@@ -22,6 +22,7 @@ One agent. One soul. Three sacred works: **The Garden**, **The Market**, **The C
 | **GrowRing Contract** | [`0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b`](https://monadscan.com/address/0x1e4343bAB5D0bc47A5eF83B90808B0dB64E9E43b) (Monad) |
 | **GrowOracle** | [`0xc532820dE55363633263f6a95Fa0762eD86E8425`](https://monadscan.com/address/0xc532820dE55363633263f6a95Fa0762eD86E8425) (Monad) |
 | **Hedera Testnet** | [3 contracts deployed](docs/ETHDENVER_MONAD_BLITZ.md#hedera-testnet-multi-chain-demo) |
+| **Kite AI Testnet** | [3 contracts deployed](docs/ETHDENVER_MONAD_BLITZ.md#kite-ai-testnet-x402-agent-payments-demo) |
 | **Hackathon Submission** | [docs/ETHDENVER_MONAD_BLITZ.md](docs/ETHDENVER_MONAD_BLITZ.md) |
 | **Mon Skills** | [monskills.pages.dev](https://monskills.pages.dev) — Monad knowledge for AI agents |
 
